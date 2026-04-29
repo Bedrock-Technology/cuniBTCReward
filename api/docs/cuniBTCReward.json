@@ -296,7 +296,12 @@
     "CurrentEpochResp": {
       "type": "object",
       "required": [
-        "epoch"
+        "epoch",
+        "operateStartTimestamp",
+        "operatePeriod",
+        "lockupStartTimestamp",
+        "lockupPeriod",
+        "symbol"
       ],
       "properties": {
         "epoch": {
@@ -304,8 +309,28 @@
           "type": "integer",
           "example": 10
         },
+        "lockupPeriod": {
+          "description": "lockup period in second",
+          "type": "integer",
+          "example": 86400
+        },
+        "lockupStartTimestamp": {
+          "description": "lockup startTime",
+          "type": "integer",
+          "example": 1777649793
+        },
+        "operatePeriod": {
+          "description": "operate period in second",
+          "type": "integer",
+          "example": 86400
+        },
+        "operateStartTimestamp": {
+          "description": "operate startTime",
+          "type": "integer",
+          "example": 1777349793
+        },
         "symbol": {
-          "description": "symbol of the strategy",
+          "description": "symbol of the stratedy",
           "type": "string",
           "example": "cuniBTC"
         }
@@ -457,7 +482,7 @@
       }
     }
   },
-  "x-date": "2026-04-29 07:45:25",
+  "x-date": "2026-04-29 14:10:37",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

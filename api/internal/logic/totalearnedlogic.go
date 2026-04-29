@@ -58,6 +58,7 @@ func (l *TotalEarnedLogic) TotalEarned(req *types.TotalEarnedReq) (resp []types.
 	if len(stratedy) == 0 {
 		return resp, errors.New("no stratedy")
 	}
+
 	if req.Symbol != "" {
 		s, err := getStratedy(req.Symbol, stratedy)
 		if err != nil {
@@ -65,32 +66,28 @@ func (l *TotalEarnedLogic) TotalEarned(req *types.TotalEarnedReq) (resp []types.
 		}
 		stratedy = []model.Strategy{*s}
 	}
+
 	type ContractSummary struct {
 		Contract    string
 		TotalAmount decimal.Decimal
 	}
 
 	var summaries []ContractSummary
-	if req.Symbol == "" {
-		l.svcCtx.Database.WithContext(l.ctx).Model(&model.AirDropRecord{}).
-			Select("contract, SUM(amount) as total_amount").
-			Where("address = ?", req.Address).
-			Group("contract").
-			Scan(&summaries)
-	} else {
-		l.svcCtx.Database.WithContext(l.ctx).Model(&model.AirDropRecord{}).
-			Select("contract, SUM(amount) as total_amount").
-			Where("address = ?", req.Address).
-			Where("contract = ?", getAirDropContract(req.Symbol, stratedy)).
-			Group("contract").
-			Scan(&summaries)
-	}
+	l.svcCtx.Database.WithContext(l.ctx).Model(&model.AirDropRecord{}).
+		Select("contract, SUM(amount) as total_amount").
+		Where("address = ?", req.Address).
+		Where("contract = ?", lo.Map(stratedy, func(item model.Strategy, _ int) string {
+			return item.Airdrop
+		})).
+		Group("contract").
+		Scan(&summaries)
 	totalEarned := lo.Map(summaries, func(item ContractSummary, index int) types.TotalEarnedResp {
 		return types.TotalEarnedResp{
 			Symbol:      getAirDropSymbol(item.Contract, stratedy),
 			TotalEarned: item.TotalAmount.Mul(decimal.New(1, -8)).String(),
 		}
 	})
+
 	resp = totalEarned
 	return
 }

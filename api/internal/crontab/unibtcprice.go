@@ -22,7 +22,7 @@ type BitcoinResp struct {
 
 type CoinGeckoUniBTC struct {
 	config      config.Config
-	UniBTCPrice uint64
+	uniBTCPrice uint64
 	lock        sync.RWMutex
 }
 
@@ -34,7 +34,7 @@ func NewCoinGeckoUniBTC(c config.Config) *CoinGeckoUniBTC {
 
 func (c *CoinGeckoUniBTC) GetUniBTCPrice() uint64 {
 	c.lock.RLock()
-	price := c.UniBTCPrice
+	price := c.uniBTCPrice
 	c.lock.RUnlock()
 	return price
 }
@@ -71,7 +71,7 @@ func (c *CoinGeckoUniBTC) CoinGeckoUniBTCCron() {
 		return
 	}
 	c.lock.Lock()
-	c.UniBTCPrice = bitcoin.Bitcoin.Usd
+	c.uniBTCPrice = bitcoin.Bitcoin.Usd
 	c.lock.Unlock()
 	logx.Infof("Set uniBTC price:%d", bitcoin.Bitcoin.Usd)
 }

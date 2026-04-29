@@ -23,18 +23,18 @@ type (
 	CurrentEpochReq {
 		Symbol string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy, empty indicate all
 	}
+	// CurrentEpochResp {
+	//  Symbol string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy
+	//  Epoch  uint64 `json:"epoch,example=10"` //epoch number
+	// }
 	CurrentEpochResp {
-		Symbol string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy
-		Epoch  uint64 `json:"epoch,example=10"` //epoch number
+		Epoch                 uint64 `json:"epoch,example=10"` //epoch number
+		OperateStartTimestamp uint64 `json:"operateStartTimestamp,example=1777349793"` // operate startTime
+		OperatePeriod         uint64 `json:"operatePeriod,example=86400"` // operate period in second
+		LockupStartTimestamp  uint64 `json:"lockupStartTimestamp,example=1777649793"` //lockup startTime
+		LockupPeriod          uint64 `json:"lockupPeriod,example=86400"` //lockup period in second
+		Symbol                string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 	}
-// CurrentEpochResp {
-//  Epoch                 uint64 `json:"epoch,example=10"` //epoch number
-//  OperateStartTimestamp uint64 `json:"operateStartTimestamp,example=1777349793"` // operate startTime
-//  OperatePeriod         uint64 `json:"operatePeriod,example=86400"` // operate period in second
-//  LockupStartTimestamp  uint64 `json:"lockupStartTimestamp,example=1777649793"` //lockup startTime
-//  LockupPeriod          uint64 `json:"lockupPeriod,example=86400"` //lockup period in second
-//  Symbol                string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
-// }
 )
 
 type (

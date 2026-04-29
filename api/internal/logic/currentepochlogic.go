@@ -37,6 +37,7 @@ func getVaultContract(symbol string, stratedy []model.Strategy) string {
 	}
 	return ""
 }
+
 func getVaultSymbol(vaultContract string, stratedy []model.Strategy) string {
 	for _, v := range stratedy {
 		if v.Vault == vaultContract {
@@ -45,6 +46,7 @@ func getVaultSymbol(vaultContract string, stratedy []model.Strategy) string {
 	}
 	return ""
 }
+
 func getStratedy(symbol string, stratedy []model.Strategy) (*model.Strategy, error) {
 	for k, v := range stratedy {
 		if v.Symbol == symbol {
@@ -53,7 +55,8 @@ func getStratedy(symbol string, stratedy []model.Strategy) (*model.Strategy, err
 	}
 	return nil, errors.New("not found")
 }
-func (l *CurrentEpochLogic) CurrentEpoch(req *types.CurrentEpochReq) (resp []types.CurrentEpochResp, err error) {
+
+/* func (l *CurrentEpochLogic) CurrentEpoch(req *types.CurrentEpochReq) (resp []types.CurrentEpochResp, err error) {
 	//find all stratedy
 	var stratedy []model.Strategy
 	err = l.svcCtx.Database.WithContext(l.ctx).Model(&model.Strategy{}).Where("chain_id = ?", l.svcCtx.Config.DefaultChainId).Find(&stratedy).Error
@@ -110,9 +113,9 @@ WHERE (contract, epoch) IN (
 
 	resp = currentEpoch
 	return
-}
+} */
 
-/* func (l *CurrentEpochLogic) CurrentEpoch(req *types.CurrentEpochReq) (resp []types.CurrentEpochResp, err error) {
+func (l *CurrentEpochLogic) CurrentEpoch(req *types.CurrentEpochReq) (resp []types.CurrentEpochResp, err error) {
 	// todo: add your logic here and delete this line
 	//find all stratedy
 	var stratedy []model.Strategy
@@ -120,45 +123,35 @@ WHERE (contract, epoch) IN (
 	if err != nil {
 		return
 	}
+
 	if len(stratedy) == 0 {
 		return resp, errors.New("no stratedy")
 	}
-	_, err = getStratedy(req.Symbol, stratedy)
-	if err != nil {
-		return resp, errors.New("no stratedy")
-	}
-	var latestEpoches []model.Epoch
-	if req.Symbol == "" {
-		err = l.svcCtx.Database.WithContext(l.ctx).Raw(`SELECT * FROM epoches
-WHERE (contract, epoch) IN (
-    SELECT contract, MAX(epoch)
-    FROM epoches
-    WHERE deleted_at IS NULL
-    GROUP BY contract
-) AND deleted_at IS NULL`).Scan(&latestEpoches).Error
+	if req.Symbol != "" {
+		s, err := getStratedy(req.Symbol, stratedy)
 		if err != nil {
-			return
-		}
-		if len(latestEpoches) == 0 {
 			return resp, errors.New("no stratedy")
 		}
-	} else {
-		err = l.svcCtx.Database.WithContext(l.ctx).Raw(`SELECT * FROM epoches
-WHERE (contract, epoch) IN (
-    SELECT contract, MAX(epoch)
-    FROM epoches
-    WHERE contract = ? AND deleted_at IS NULL
-    GROUP BY contract
-) AND deleted_at IS NULL`, getVaultContract(req.Symbol, stratedy)).Scan(&latestEpoches).Error
-		if err != nil {
-			return
-		}
-		if len(latestEpoches) == 0 {
-			return resp, errors.New("no stratedy")
-		}
+		stratedy = []model.Strategy{*s}
 	}
 
-	currentEpoch := lo.Map(latestEpoches, func(item model.Epoch, index int) types.CurrentEpochResp {
+	var latestEpoches []model.Epoch
+	err = l.svcCtx.Database.WithContext(l.ctx).Raw(
+		`SELECT * FROM epoches
+		WHERE (contract, epoch) IN (
+    	SELECT contract, MAX(epoch)
+    	FROM epoches
+    	WHERE contract in ? AND deleted_at IS NULL
+    	GROUP BY contract
+		) AND deleted_at IS NULL`,
+		lo.Map(stratedy, func(item model.Strategy, _ int) string {
+			return item.Vault
+		})).Scan(&latestEpoches).Error
+	if err != nil {
+		return
+	}
+
+	currentEpoch := lo.Map(latestEpoches, func(item model.Epoch, _ int) types.CurrentEpochResp {
 		epoch := types.CurrentEpochResp{
 			Epoch:                 item.Epoch,
 			OperateStartTimestamp: item.OperateStartTimestamp,
@@ -175,4 +168,4 @@ WHERE (contract, epoch) IN (
 
 	resp = currentEpoch
 	return
-} */
+}
