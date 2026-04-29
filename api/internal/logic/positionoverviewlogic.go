@@ -154,6 +154,39 @@ func getDelayRedeemContract(symbol string, stratedy []model.Strategy) string {
 	return ""
 }
 
+func (l *PositionOverviewLogic) PositionOverviewOverLoad(req *types.PositionOverviewReq) (resp []types.PositionOverviewResp, err error) {
+	var stratedy []model.Strategy
+	err = l.svcCtx.Database.WithContext(l.ctx).Model(&model.Strategy{}).Where("chain_id = ?", l.svcCtx.Config.DefaultChainId).Find(&stratedy).Error
+	if err != nil {
+		return
+	}
+	if len(stratedy) == 0 {
+		return resp, errors.New("no stratedy")
+	}
+	if req.Symbol != "" {
+		s, err := getStratedy(req.Symbol, stratedy)
+		if err != nil {
+			return resp, errors.New("no stratedy")
+		}
+		stratedy = []model.Strategy{*s}
+	}
+	for _, v := range stratedy {
+		userStatus, err := l.strategyPosition(v.Symbol, req.Address, stratedy)
+		if err != nil {
+			return resp, err
+		}
+		resp = append(resp, types.PositionOverviewResp{
+			Symbol:      v.Symbol,
+			Amount:      userStatus.Amount.Mul(decimal.New(1, -8)).String(),
+			Earning:     userStatus.Earning.Mul(decimal.New(1, -8)).String(),
+			Queued:      userStatus.Queued.Mul(decimal.New(1, -8)).String(),
+			Withdrawing: userStatus.Withdrawing.Mul(decimal.New(1, -8)).String(),
+			Rewards:     userStatus.Rewards.Mul(decimal.New(1, -8)).String(),
+		})
+	}
+	return
+}
+
 func (l *PositionOverviewLogic) strategyPosition(symbol string, address string, stratedy []model.Strategy) (userStatus UserStrategyStats, err error) {
 	var epoch []model.Epoch
 	err = l.svcCtx.Database.WithContext(l.ctx).Where("chain_id = ? AND contract = ?", l.svcCtx.Config.DefaultChainId, getVaultContract(symbol, stratedy)).
