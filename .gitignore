@@ -1,0 +1,20 @@
+# Ignore node_modules
+node_modules/
+
+# Ignore environment variables
+.env
+.env.local
+
+# Ignore build artifacts
+dist/
+*.exe
+*.csv
+
+# Ignore OS temporary files
+.DS_Store
+Thumbs.db
+
+cuniBTCReward
+config-hoodi.yaml
+logs/
+api/api

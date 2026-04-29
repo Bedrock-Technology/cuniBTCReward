@@ -1,0 +1,465 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "cuniBTCReward API",
+    "version": "1.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/api/v1/currentEpoch": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "CurrentEpoch",
+        "operationId": "currentEpoch",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CurrentEpochReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/positionOverview": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "PositionOverview",
+        "operationId": "positionOverview",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PositionOverviewReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "symbol",
+                      "amount",
+                      "earning",
+                      "queued",
+                      "withdrawing",
+                      "rewards"
+                    ],
+                    "properties": {
+                      "amount": {
+                        "description": "amount of this symbol",
+                        "type": "string",
+                        "example": "0.023"
+                      },
+                      "earning": {
+                        "description": "amount earning human readable",
+                        "type": "string",
+                        "example": "0.023243"
+                      },
+                      "queued": {
+                        "description": "amount queued human readable",
+                        "type": "string",
+                        "example": "0.023243"
+                      },
+                      "rewards": {
+                        "description": "amount withdrawing human readable",
+                        "type": "string",
+                        "example": "0.023243"
+                      },
+                      "symbol": {
+                        "description": "symbol of the stratedy",
+                        "type": "string",
+                        "example": "cuniBTC"
+                      },
+                      "withdrawing": {
+                        "description": "amount withdrawing human readable",
+                        "type": "string",
+                        "example": "0.023243"
+                      }
+                    }
+                  },
+                  "$ref": "#/definitions/PositionOverviewResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/totalEarned": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "TotalEarned",
+        "operationId": "totalEarned",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TotalEarnedReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "symbol",
+                      "totalEarned"
+                    ],
+                    "properties": {
+                      "symbol": {
+                        "description": "symbol of the stratedy",
+                        "type": "string",
+                        "example": "cuniBTC"
+                      },
+                      "totalEarned": {
+                        "description": "amount earned human readable",
+                        "type": "string",
+                        "example": "0.023243"
+                      }
+                    }
+                  },
+                  "$ref": "#/definitions/TotalEarnedResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/uniBTCPrice": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "UniBTCPrice",
+        "operationId": "uniBTCPrice",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "integer"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ping": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "healthCheck"
+        ],
+        "summary": "ping",
+        "operationId": "ping",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CurrentEpochReq": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "description": "symbol of the strategy, empty indicate all",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "CurrentEpochResp": {
+      "type": "object",
+      "required": [
+        "epoch"
+      ],
+      "properties": {
+        "epoch": {
+          "description": "epoch number",
+          "type": "integer",
+          "example": 10
+        },
+        "symbol": {
+          "description": "symbol of the strategy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "ListReq": {
+      "type": "object",
+      "required": [
+        "limit",
+        "offset"
+      ],
+      "properties": {
+        "limit": {
+          "description": "Number of items per page",
+          "type": "integer",
+          "default": 10,
+          "maximum": 50,
+          "minimum": 1,
+          "example": 10
+        },
+        "offset": {
+          "description": "Data offset",
+          "type": "integer",
+          "default": 0,
+          "example": 0
+        }
+      }
+    },
+    "PageData": {
+      "type": "object",
+      "required": [
+        "total",
+        "limit",
+        "offset"
+      ],
+      "properties": {
+        "limit": {
+          "description": "Number of items per page, consistent with the request",
+          "type": "integer",
+          "example": 10
+        },
+        "offset": {
+          "description": "Data offset, consistent with the request",
+          "type": "integer",
+          "default": 0,
+          "example": 0
+        },
+        "total": {
+          "description": "Total data count",
+          "type": "integer",
+          "example": 1234
+        }
+      }
+    },
+    "PositionOverviewReq": {
+      "type": "object",
+      "required": [
+        "address"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0x8cb37518330014E027396E3ED59A231FBe3B011A"
+        },
+        "symbol": {
+          "description": "symbol of the strategy, empty indicate all",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "PositionOverviewResp": {
+      "type": "object",
+      "required": [
+        "symbol",
+        "amount",
+        "earning",
+        "queued",
+        "withdrawing",
+        "rewards"
+      ],
+      "properties": {
+        "amount": {
+          "description": "amount of this symbol",
+          "type": "string",
+          "example": "0.023"
+        },
+        "earning": {
+          "description": "amount earning human readable",
+          "type": "string",
+          "example": "0.023243"
+        },
+        "queued": {
+          "description": "amount queued human readable",
+          "type": "string",
+          "example": "0.023243"
+        },
+        "rewards": {
+          "description": "amount withdrawing human readable",
+          "type": "string",
+          "example": "0.023243"
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        },
+        "withdrawing": {
+          "description": "amount withdrawing human readable",
+          "type": "string",
+          "example": "0.023243"
+        }
+      }
+    },
+    "TotalEarnedReq": {
+      "type": "object",
+      "required": [
+        "address"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0x8cb37518330014E027396E3ED59A231FBe3B011A"
+        },
+        "symbol": {
+          "description": "symbol of the strategy, empty indicate all",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "TotalEarnedResp": {
+      "type": "object",
+      "required": [
+        "symbol",
+        "totalEarned"
+      ],
+      "properties": {
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        },
+        "totalEarned": {
+          "description": "amount earned human readable",
+          "type": "string",
+          "example": "0.023243"
+        }
+      }
+    }
+  },
+  "x-date": "2026-04-29 07:45:25",
+  "x-description": "This is a goctl generated swagger file.",
+  "x-github": "https://github.com/zeromicro/go-zero",
+  "x-go-zero-doc": "https://go-zero.dev/",
+  "x-goctl-version": "1.10.1"
+}

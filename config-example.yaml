@@ -1,0 +1,34 @@
+Name: cuniBTCReward/hoodi/run
+Log:
+  Mode: file
+  Encoding: json
+  Path: logs/
+  Level: info
+  KeepDays: 7
+  Rotation: daily
+Mode: dev
+Telemetry:
+  Disabled: true
+DevServer:
+  Enabled: false
+Shutdown:
+  WaitTime: 15s
+
+# self global config
+LogSlack: 
+NotifySlack: 
+DataSource: 
+SqlLog: true
+
+# evmscan
+EvmScanConf:
+  ChainInfo:
+    - Client:
+        ChainId: 560048
+        ChainName: Hoodi
+        Host: 
+        Request: 10
+        PeriodSec: 10
+      CuniBTCVault: 
+      DelayRedeemRouter: 
+  LogsScanSpec: "@every 12s"
