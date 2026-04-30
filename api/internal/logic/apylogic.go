@@ -89,6 +89,8 @@ func (l *ApyLogic) Apy(req *types.ApyReq) (resp []types.ApyResp, err error) {
 			Mul(decimal.NewFromInt32(31536000))
 		if apr.IsZero() {
 			apyResp.Apy = 0.05
+		} else {
+			apyResp.Apy = apr.InexactFloat64()
 		}
 		resp = append(resp, apyResp)
 	}
