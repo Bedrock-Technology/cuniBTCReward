@@ -5,6 +5,7 @@ package logic
 
 import (
 	"context"
+	"errors"
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
@@ -69,6 +70,9 @@ func (l *ApyLogic) Apy(req *types.ApyReq) (resp []types.ApyResp, err error) {
 	err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&rows).Error
 	if err != nil {
 		return
+	}
+	if len(rows) == 0 {
+		return resp, errors.New("no strategy")
 	}
 
 	for _, v := range rows {
