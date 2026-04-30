@@ -81,11 +81,15 @@ func (l *ApyLogic) Apy(req *types.ApyReq) (resp []types.ApyResp, err error) {
 			Apy:    0,
 		}
 		if v.Shares.IsZero() {
+			apyResp.Apy = 0.05
 			resp = append(resp, apyResp)
 			continue
 		}
-		apyResp.Apy = v.Rewards.Div(v.Shares).Div(decimal.NewFromUint64(v.LockupPeriod)).
-			Mul(decimal.NewFromInt32(31536000)).InexactFloat64()
+		apr := v.Rewards.Div(v.Shares).Div(decimal.NewFromUint64(v.LockupPeriod)).
+			Mul(decimal.NewFromInt32(31536000))
+		if apr.IsZero() {
+			apyResp.Apy = 0.05
+		}
 		resp = append(resp, apyResp)
 	}
 
