@@ -76,7 +76,7 @@ func (l *TotalEarnedLogic) TotalEarned(req *types.TotalEarnedReq) (resp []types.
 	l.svcCtx.Database.WithContext(l.ctx).Model(&model.AirDropRecord{}).
 		Select("contract, SUM(amount) as total_amount").
 		Where("address = ?", req.Address).
-		Where("contract = ?", lo.Map(stratedy, func(item model.Strategy, _ int) string {
+		Where("contract in ?", lo.Map(stratedy, func(item model.Strategy, _ int) string {
 			return item.Airdrop
 		})).
 		Group("contract").
