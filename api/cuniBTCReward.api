@@ -63,6 +63,16 @@ type (
 	}
 )
 
+type (
+	ApyReq {
+		Symbol string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy, empty indicate all
+	}
+	ApyResp {
+		Symbol string  `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+		Apy    float64 `json:"apy,example=0.05"`
+	}
+)
+
 @server (
 	prefix: /api/v1
 )
@@ -78,6 +88,9 @@ service cuniBTCReward {
 
 	@handler UniBTCPrice
 	post /uniBTCPrice returns (uint64)
+
+	@handler Apy
+	post /apy (ApyReq) returns ([]ApyResp)
 }
 
 @server (

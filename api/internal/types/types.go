@@ -3,6 +3,15 @@
 
 package types
 
+type ApyReq struct {
+	Symbol string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy, empty indicate all
+}
+
+type ApyResp struct {
+	Symbol string  `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	Apy    float64 `json:"apy,example=0.05"`
+}
+
 type CurrentEpochReq struct {
 	Symbol string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy, empty indicate all
 }

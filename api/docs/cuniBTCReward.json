@@ -16,6 +16,72 @@
   },
   "basePath": "/",
   "paths": {
+    "/api/v1/apy": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "Apy",
+        "operationId": "apy",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApyReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "symbol",
+                      "apy"
+                    ],
+                    "properties": {
+                      "apy": {
+                        "type": "number",
+                        "example": 0.05
+                      },
+                      "symbol": {
+                        "description": "symbol of the stratedy",
+                        "type": "string",
+                        "example": "cuniBTC"
+                      }
+                    }
+                  },
+                  "$ref": "#/definitions/ApyResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/currentEpoch": {
       "post": {
         "consumes": [
@@ -283,6 +349,34 @@
     }
   },
   "definitions": {
+    "ApyReq": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "description": "symbol of the strategy, empty indicate all",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "ApyResp": {
+      "type": "object",
+      "required": [
+        "symbol",
+        "apy"
+      ],
+      "properties": {
+        "apy": {
+          "type": "number",
+          "example": 0.05
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
     "CurrentEpochReq": {
       "type": "object",
       "properties": {
@@ -482,7 +576,7 @@
       }
     }
   },
-  "x-date": "2026-04-29 14:10:37",
+  "x-date": "2026-04-30 15:24:53",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

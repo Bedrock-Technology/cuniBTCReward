@@ -16,6 +16,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
+				Path:    "/apy",
+				Handler: ApyHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/currentEpoch",
 				Handler: CurrentEpochHandler(serverCtx),
 			},
