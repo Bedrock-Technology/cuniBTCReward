@@ -93,17 +93,14 @@ type AirDropEpoch struct {
 
 type Epoch struct {
 	gorm.Model
-	ChainId               uint   `gorm:"not null;default:0;index:t_chainid_epoch,unique"`
-	Epoch                 uint64 `gorm:"default:0;index:t_chainid_epoch"`
-	Contract              string `gorm:"size:255;index:t_chainid_epoch"`
-	OperateStart          uint64 `gorm:"default:0"`
-	OperateStartTimestamp uint64 `gorm:"default:0"`
-	LockupStart           uint64 `gorm:"default:0"`
-	LockupStartTimestamp  uint64 `gorm:"default:0"`
-	StartGenesis          uint64 `gorm:"default:0"`
-	StartGenesisTimestamp uint64 `gorm:"default:0"`
-	OperatePeriod         uint64 `gorm:"default:0"`
-	LockupPeriod          uint64 `gorm:"default:0"`
+	ChainId       uint   `gorm:"not null;default:0;index:t_chainid_epoch,unique"`
+	Epoch         uint64 `gorm:"default:0;index:t_chainid_epoch"`
+	Contract      string `gorm:"size:255;index:t_chainid_epoch"`
+	OperateStart  uint64 `gorm:"default:0"`
+	LockupStart   uint64 `gorm:"default:0"`
+	StartGenesis  uint64 `gorm:"default:0"`
+	OperatePeriod uint64 `gorm:"default:0"`
+	LockupPeriod  uint64 `gorm:"default:0"`
 }
 
 func GetCursor(database *gorm.DB, chainID uint) (*Cursor, error) {

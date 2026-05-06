@@ -214,57 +214,6 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 			}
 		}
 	}
-	_ = s.updateEpochTimestamp(evmClient, chainInfo, blockNumber)
-	return nil
-}
-
-func (s *Scanner) updateEpochTimestamp(evmClient *EvmClient, chainInfo config.ChainInfo, blockNumber uint64) error {
-	//update startGenesis timestamp
-	var epochStartGenesisEmpty []model.Epoch
-	err := s.database.Where("chain_id = ?", chainInfo.Client.ChainId).Where("start_genesis <= ?", blockNumber).
-		Where("start_genesis_timestamp = ?", 0).Find(&epochStartGenesisEmpty).Error
-	if err != nil {
-		return err
-	}
-	for _, v := range epochStartGenesisEmpty {
-		//get block timestamp
-		block, err := evmClient.Client.BlockByNumber(context.Background(), big.NewInt(int64(v.StartGenesis)))
-		if err != nil {
-			continue
-		}
-		v.StartGenesisTimestamp = block.Header().Time
-		s.database.Save(v)
-	}
-	var epochOperateEmpty []model.Epoch
-	err = s.database.Where("chain_id = ?", chainInfo.Client.ChainId).Where("operate_start <= ?", blockNumber).
-		Where("operate_start_timestamp = ?", 0).Find(&epochOperateEmpty).Error
-	if err != nil {
-		return err
-	}
-	for _, v := range epochOperateEmpty {
-		//get block timestamp
-		block, err := evmClient.Client.BlockByNumber(context.Background(), big.NewInt(int64(v.OperateStart)))
-		if err != nil {
-			continue
-		}
-		v.OperateStartTimestamp = block.Header().Time
-		s.database.Save(v)
-	}
-	var epochLockupEmpty []model.Epoch
-	err = s.database.Where("chain_id = ?", chainInfo.Client.ChainId).Where("lockup_start <= ?", blockNumber).
-		Where("lockup_start_timestamp = ?", 0).Find(&epochLockupEmpty).Error
-	if err != nil {
-		return err
-	}
-	for _, v := range epochLockupEmpty {
-		//get block timestamp
-		block, err := evmClient.Client.BlockByNumber(context.Background(), big.NewInt(int64(v.LockupStart)))
-		if err != nil {
-			continue
-		}
-		v.LockupStartTimestamp = block.Header().Time
-		s.database.Save(v)
-	}
 	return nil
 }
 
