@@ -155,9 +155,9 @@ func (l *CurrentEpochLogic) CurrentEpoch(req *types.CurrentEpochReq) (resp []typ
 		epoch := types.CurrentEpochResp{
 			Epoch:                 item.Epoch,
 			OperateStartTimestamp: item.OperateStart,
-			OperatePeriod:         item.OperatePeriod * 12,
+			OperatePeriod:         item.OperatePeriod,
 			LockupStartTimestamp:  item.LockupStart,
-			LockupPeriod:          item.LockupPeriod * 12,
+			LockupPeriod:          item.LockupPeriod,
 			Symbol:                getVaultSymbol(item.Contract, stratedy),
 		}
 		return epoch
