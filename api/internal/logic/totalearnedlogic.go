@@ -9,7 +9,6 @@ import (
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
-	"cuniBTCReward/model"
 
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
@@ -30,60 +29,45 @@ func NewTotalEarnedLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Total
 	}
 }
 
-func getAirDropContract(symbol string, stratedy []model.Strategy) string {
-	for _, v := range stratedy {
-		if v.Symbol == symbol {
-			return v.Airdrop
-		}
-	}
-	return ""
-}
-
-func getAirDropSymbol(airdropContract string, stratedy []model.Strategy) string {
-	for _, v := range stratedy {
-		if v.Airdrop == airdropContract {
-			return v.Symbol
-		}
-	}
-	return ""
-}
-
 func (l *TotalEarnedLogic) TotalEarned(req *types.TotalEarnedReq) (resp []types.TotalEarnedResp, err error) {
 	// todo: add your logic here and delete this line
-	var stratedy []model.Strategy
-	err = l.svcCtx.Database.WithContext(l.ctx).Model(&model.Strategy{}).Where("chain_id = ?", l.svcCtx.Config.DefaultChainId).Find(&stratedy).Error
-	if err != nil {
-		return
+	// Use a single CTE to select strategies and aggregate air drop amounts per symbol
+	type summaryRow struct {
+		Symbol      string
+		TotalAmount decimal.Decimal `gorm:"column:total_amount"`
 	}
-	if len(stratedy) == 0 {
-		return resp, errors.New("no stratedy")
+	chainID := l.svcCtx.Config.DefaultChainId
+
+	var rows []summaryRow
+	sql := `WITH strat AS (
+				SELECT airdrop AS contract, symbol
+				FROM strategies
+				WHERE chain_id = ? AND deleted_at IS NULL
+			)
+			SELECT s.symbol, SUM(ar.amount) AS total_amount
+			FROM strat s
+			JOIN air_drop_records ar ON ar.contract = s.contract AND ar.address = ? AND ar.deleted_at IS NULL`
+
+	args := []interface{}{
+		chainID,
 	}
 
 	if req.Symbol != "" {
-		s, err := getStratedy(req.Symbol, stratedy)
-		if err != nil {
-			return resp, errors.New("no stratedy")
-		}
-		stratedy = []model.Strategy{*s}
+		sql += " AND s.symbol = ?"
+		args = append(args, req.Symbol)
+	}
+	sql += " GROUP BY s.symbol"
+	err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&rows).Error
+	if err != nil {
+		return
+	}
+	if len(rows) == 0 {
+		return resp, errors.New("no stratedy")
 	}
 
-	type ContractSummary struct {
-		Contract    string
-		TotalAmount decimal.Decimal
-	}
-
-	var summaries []ContractSummary
-	l.svcCtx.Database.WithContext(l.ctx).Model(&model.AirDropRecord{}).
-		Select("contract, SUM(amount) as total_amount").
-		Where("address = ?", req.Address).
-		Where("contract in ?", lo.Map(stratedy, func(item model.Strategy, _ int) string {
-			return item.Airdrop
-		})).
-		Group("contract").
-		Scan(&summaries)
-	totalEarned := lo.Map(summaries, func(item ContractSummary, index int) types.TotalEarnedResp {
+	totalEarned := lo.Map(rows, func(item summaryRow, _ int) types.TotalEarnedResp {
 		return types.TotalEarnedResp{
-			Symbol:      getAirDropSymbol(item.Contract, stratedy),
+			Symbol:      item.Symbol,
 			TotalEarned: item.TotalAmount.Mul(decimal.New(1, -8)).String(),
 		}
 	})

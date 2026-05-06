@@ -29,24 +29,6 @@ func NewCurrentEpochLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Curr
 	}
 }
 
-func getVaultContract(symbol string, stratedy []model.Strategy) string {
-	for _, v := range stratedy {
-		if v.Symbol == symbol {
-			return v.Vault
-		}
-	}
-	return ""
-}
-
-func getStratedy(symbol string, stratedy []model.Strategy) (*model.Strategy, error) {
-	for k, v := range stratedy {
-		if v.Symbol == symbol {
-			return &stratedy[k], nil
-		}
-	}
-	return nil, errors.New("not found")
-}
-
 func (l *CurrentEpochLogic) CurrentEpoch(req *types.CurrentEpochReq) (resp []types.CurrentEpochResp, err error) {
 	// todo: add your logic here and delete this line
 	// Use a single SQL (WITH) to fetch strategies and their latest epoch
