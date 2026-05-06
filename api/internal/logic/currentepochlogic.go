@@ -154,14 +154,11 @@ func (l *CurrentEpochLogic) CurrentEpoch(req *types.CurrentEpochReq) (resp []typ
 	currentEpoch := lo.Map(latestEpoches, func(item model.Epoch, _ int) types.CurrentEpochResp {
 		epoch := types.CurrentEpochResp{
 			Epoch:                 item.Epoch,
-			OperateStartTimestamp: item.OperateStartTimestamp,
+			OperateStartTimestamp: item.OperateStart,
 			OperatePeriod:         item.OperatePeriod * 12,
-			LockupStartTimestamp:  item.LockupStartTimestamp,
+			LockupStartTimestamp:  item.LockupStart,
 			LockupPeriod:          item.LockupPeriod * 12,
 			Symbol:                getVaultSymbol(item.Contract, stratedy),
-		}
-		if epoch.LockupStartTimestamp == 0 {
-			epoch.LockupStartTimestamp = epoch.OperateStartTimestamp + epoch.OperatePeriod*12
 		}
 		return epoch
 	})
