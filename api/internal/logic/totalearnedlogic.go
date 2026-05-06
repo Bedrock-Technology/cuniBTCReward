@@ -5,7 +5,6 @@ package logic
 
 import (
 	"context"
-	"errors"
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
@@ -61,9 +60,6 @@ func (l *TotalEarnedLogic) TotalEarned(req *types.TotalEarnedReq) (resp []types.
 	err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&rows).Error
 	if err != nil {
 		return
-	}
-	if len(rows) == 0 {
-		return resp, errors.New("no stratedy")
 	}
 
 	totalEarned := lo.Map(rows, func(item summaryRow, _ int) types.TotalEarnedResp {
