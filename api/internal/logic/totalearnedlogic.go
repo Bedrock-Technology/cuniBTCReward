@@ -50,6 +50,7 @@ func (l *TotalEarnedLogic) TotalEarned(req *types.TotalEarnedReq) (resp []types.
 
 	args := []interface{}{
 		chainID,
+		req.Address,
 	}
 
 	if req.Symbol != "" {
