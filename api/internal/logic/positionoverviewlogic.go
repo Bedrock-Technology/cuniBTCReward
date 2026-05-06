@@ -55,8 +55,8 @@ func (l *PositionOverviewLogic) PositionOverview(req *types.PositionOverviewReq)
 	tx_agg_vault AS (
 		SELECT t.contract,
 			   COALESCE(SUM(t.amount), 0) AS amount,
-			   COALESCE(SUM(CASE WHEN t.block_number > COALESCE(le.lockup_start,0) THEN t.amount ELSE 0 END), 0) AS queued,
-			   COALESCE(SUM(CASE WHEN t.block_number <= COALESCE(le.lockup_start,0) THEN t.amount ELSE 0 END), 0) AS earning
+			   COALESCE(SUM(CASE WHEN t.block_timestamp > COALESCE(le.lockup_start,0) THEN t.amount ELSE 0 END), 0) AS queued,
+			   COALESCE(SUM(CASE WHEN t.block_timestamp <= COALESCE(le.lockup_start,0) THEN t.amount ELSE 0 END), 0) AS earning
 		FROM evm_transactions t
 		LEFT JOIN latest_epoch le ON le.contract = t.contract
 		WHERE t.address = ? AND t.chain_id = ? AND t.deleted_at IS NULL
@@ -66,8 +66,8 @@ func (l *PositionOverviewLogic) PositionOverview(req *types.PositionOverviewReq)
 	tx_agg_delay AS (
 		SELECT t.contract,
 			   COALESCE(SUM(t.amount), 0) AS amount,
-			   COALESCE(SUM(CASE WHEN t.block_number > COALESCE(le.lockup_start,0) THEN t.amount ELSE 0 END), 0) AS queued,
-			   COALESCE(SUM(CASE WHEN t.block_number <= COALESCE(le.lockup_start,0) THEN t.amount ELSE 0 END), 0) AS earning
+			   COALESCE(SUM(CASE WHEN t.block_timestamp >= COALESCE(le.lockup_start,0) THEN t.amount ELSE 0 END), 0) AS queued,
+			   COALESCE(SUM(CASE WHEN t.block_timestamp < COALESCE(le.lockup_start,0) THEN t.amount ELSE 0 END), 0) AS earning
 		FROM evm_transactions t
 		LEFT JOIN strategies s2 ON s2.delay_redeem_router = t.contract AND s2.chain_id = ? AND s2.deleted_at IS NULL
 		LEFT JOIN latest_epoch le ON le.contract = s2.vault
@@ -220,8 +220,8 @@ func (l *PositionOverviewLogic) strategyPosition(symbol string, address string, 
 	var txAgg TxAgg
 	l.svcCtx.Database.WithContext(l.ctx).Model(&model.EvmTransaction{}).
 		Select(`
-        SUM(CASE WHEN block_number > ? THEN amount ELSE 0 END) as queued,
-        SUM(CASE WHEN block_number <= ? THEN amount ELSE 0 END) as earning,
+        SUM(CASE WHEN block_timestamp > ? THEN amount ELSE 0 END) as queued,
+        SUM(CASE WHEN block_timestamp <= ? THEN amount ELSE 0 END) as earning,
         COALESCE(SUM(amount), 0) as amount
     `, epoch[0].LockupStart, epoch[0].LockupStart).
 		Where("address = ? AND contract in ?", address,
