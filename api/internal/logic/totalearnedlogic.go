@@ -43,9 +43,9 @@ func (l *TotalEarnedLogic) TotalEarned(req *types.TotalEarnedReq) (resp []types.
 				FROM strategies
 				WHERE chain_id = ? AND deleted_at IS NULL
 			)
-			SELECT s.symbol, SUM(ar.amount) AS total_amount
+			SELECT s.symbol, COALESCE(SUM(ar.amount),0) AS total_amount
 			FROM strat s
-			JOIN air_drop_records ar ON ar.contract = s.contract AND ar.address = ? AND ar.deleted_at IS NULL`
+			LEFT JOIN air_drop_records ar ON ar.contract = s.contract AND ar.address = ? AND ar.deleted_at IS NULL`
 
 	args := []interface{}{
 		chainID,
