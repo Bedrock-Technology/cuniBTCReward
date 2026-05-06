@@ -144,6 +144,10 @@ func (s *Scanner) LogScan() {
 }
 
 func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, blockNumber uint64, stratigies []model.Strategy) error {
+	block, err := evmClient.Client.BlockByNumber(context.Background(), big.NewInt(int64(blockNumber)))
+	if err != nil {
+		return err
+	}
 	for _, strategy := range stratigies {
 		var epoch []model.Epoch
 		err := s.database.Where("chain_id = ? AND contract = ?", chainInfo.Client.ChainId, strategy.Vault).
@@ -168,7 +172,7 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 			logx.Errorf("get lockup period failed, err: %v", err)
 			return err
 		}
-		epochNumber := (blockNumber - startGenesis.Uint64()) / (operatePeriod.Uint64() + lockupPeriod.Uint64())
+		epochNumber := (block.Time() - startGenesis.Uint64()) / (operatePeriod.Uint64() + lockupPeriod.Uint64())
 
 		if len(epoch) == 0 {
 			for i := uint64(0); i <= epochNumber; i++ {
