@@ -342,7 +342,24 @@
         "responses": {
           "200": {
             "description": "",
-            "schema": {}
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "string"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
           }
         }
       }
@@ -576,7 +593,7 @@
       }
     }
   },
-  "x-date": "2026-04-30 15:24:53",
+  "x-date": "2026-05-07 12:11:21",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
