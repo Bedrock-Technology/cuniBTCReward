@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"cuniBTCReward/api/internal/svc"
+
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -24,8 +25,8 @@ func NewPingLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PingLogic {
 	}
 }
 
-func (l *PingLogic) Ping() error {
+func (l *PingLogic) Ping() (resp string, err error) {
 	// todo: add your logic here and delete this line
-
-	return nil
+	resp = "pong"
+	return
 }

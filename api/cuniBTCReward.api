@@ -98,6 +98,6 @@ service cuniBTCReward {
 )
 service cuniBTCReward {
 	@handler ping
-	get /ping
+	get /ping returns (string)
 }
 
