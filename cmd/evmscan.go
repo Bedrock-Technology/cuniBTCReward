@@ -41,12 +41,9 @@ to quickly create a Cobra application.`,
 
 		//cron
 		crontab := crons.New()
+
 		evmScan := evmscan.NewScanner(&c.EvmScanConf)
-		if c.EvmScanConf.LogsScanSpec != "" {
-			_, err := crontab.AddFunc(c.EvmScanConf.LogsScanSpec, evmScan.LogScan)
-			logx.Must(err)
-			logx.Infof("add cron evmlogs scan spec: %v", c.EvmScanConf.LogsScanSpec)
-		}
+		evmScan.CronInit(crontab)
 
 		//servers
 		serverGroup := service.NewServiceGroup()

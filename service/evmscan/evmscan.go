@@ -10,9 +10,12 @@ import (
 	"cuniBTCReward/service/contract/cunibtcvault"
 	"cuniBTCReward/service/contract/delayredeemrouter"
 	"cuniBTCReward/service/contract/factory"
+	"cuniBTCReward/service/crons"
 	"cuniBTCReward/service/evmscan/config"
 	"fmt"
 	"math/big"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/ethereum/go-ethereum"
@@ -25,6 +28,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/rest/httpc"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -77,6 +81,51 @@ func NewScanner(c *config.EvmScanConf) *Scanner {
 		airDropAbi:      airDropAbi,
 		factoryAbi:      factoryAbi,
 	}
+}
+
+func (s *Scanner) CronInit(crontab *crons.ScanCron) {
+	_, err := crontab.AddFunc(s.config.LogsScanSpec, s.LogScan)
+	logx.Must(err)
+	logx.Infof("add cron evmlogs scan spec: %v", s.config.LogsScanSpec)
+
+	if s.config.ReportSpec != "" {
+		_, err := crontab.AddFunc(s.config.ReportSpec, s.ReportSpec)
+		logx.Must(err)
+		logx.Infof("add cron report scan spec: %v", s.config.ReportSpec)
+	}
+}
+
+func (s *Scanner) ReportSpec() {
+	var reportStr strings.Builder
+	fmt.Fprintf(&reportStr, "[%s] ", s.config.Name)
+	for k, chain := range s.config.ChainInfo {
+		cursor, err := model.GetCursor(s.database, chain.Client.ChainId)
+		if err != nil {
+			logx.Errorf("get chain: %v, cursor failed, err: %v", chain.Client.ChainId, err)
+			return
+		}
+		block, err := s.evmClients[k].Client.BlockNumber(context.Background())
+		if err != nil {
+			logx.Errorf("get chain: %v, blockNumber, err: %v", chain.Client.ChainId, err)
+			return
+		}
+		diff := block - cursor.BlockNumber
+		fmt.Fprintf(&reportStr, " %s diff[%d]", cursor.ChainName, diff)
+	}
+	resp, err := httpc.Do(context.Background(),
+		http.MethodGet, s.config.ApiCheckUrl, nil)
+	if err != nil {
+		logx.Errorf("get api error")
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		logx.Errorf("not ok")
+		return
+	}
+	fmt.Fprint(&reportStr, " api ok")
+	slack.SendTo(s.config.NotifySlack, reportStr.String())
 }
 
 func (s *Scanner) LogScan() {

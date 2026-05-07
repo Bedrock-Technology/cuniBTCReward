@@ -12,6 +12,8 @@ type EvmScanConf struct {
 	SqlLog       bool   `json:",optional,default=false,inherit"`
 	ChainInfo    []ChainInfo
 	LogsScanSpec string
+	ReportSpec   string `json:",optional"`
+	ApiCheckUrl  string `json:",optional"`
 	NotifySlack  string `json:",optional,inherit"`
 	LogSlack     string `json:",optional,inherit"`
 }
