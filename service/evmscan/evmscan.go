@@ -247,13 +247,14 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 			if epoch[0].OperatePeriod != operatePeriod.Uint64() || epoch[0].LockupPeriod != lockupPeriod.Uint64() || epoch[0].StartGenesis != startGenesis.Uint64() {
 				return fmt.Errorf("epoch parameters updated for vault: %s", strategy.Vault)
 			}
-			for i := uint64(epoch[0].Epoch + 1); ; i++ {
+			latest := epoch[0]
+			for {
 				newEpoch := model.Epoch{
 					ChainId:       chainInfo.Client.ChainId,
-					Epoch:         i,
+					Epoch:         latest.Epoch + 1,
 					Contract:      strategy.Vault,
-					OperateStart:  startGenesis.Uint64() + i*(operatePeriod.Uint64()+lockupPeriod.Uint64()),
-					LockupStart:   startGenesis.Uint64() + i*(operatePeriod.Uint64()+lockupPeriod.Uint64()) + operatePeriod.Uint64(),
+					OperateStart:  latest.OperateStart + latest.OperatePeriod + latest.LockupPeriod,
+					LockupStart:   latest.OperateStart + latest.OperatePeriod,
 					StartGenesis:  startGenesis.Uint64(),
 					OperatePeriod: operatePeriod.Uint64(),
 					LockupPeriod:  lockupPeriod.Uint64(),
@@ -273,6 +274,7 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 				} else {
 					break
 				}
+				latest = newEpoch
 			}
 		}
 	}
