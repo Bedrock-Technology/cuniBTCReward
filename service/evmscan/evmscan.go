@@ -222,6 +222,8 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 			return err
 		}
 		epochNumber := (block.Time() - startGenesis.Uint64()) / (operatePeriod.Uint64() + lockupPeriod.Uint64())
+		logx.Infof("epochNumber: %d, blockNumber: %d, blockTime: %d, startGenesis: %d, operatePeriod: %d, lockupPeriod: %d",
+			epochNumber, blockNumber, block.Time(), startGenesis.Uint64(), operatePeriod.Uint64(), lockupPeriod.Uint64())
 
 		if len(epoch) == 0 {
 			for i := uint64(0); i <= epochNumber; i++ {
