@@ -249,7 +249,7 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 			if epoch[0].OperatePeriod != operatePeriod.Uint64() || epoch[0].LockupPeriod != lockupPeriod.Uint64() || epoch[0].StartGenesis != startGenesis.Uint64() {
 				return fmt.Errorf("epoch parameters updated for vault: %s", strategy.Vault)
 			}
-			for i := uint64(epoch[0].Epoch + 1); i <= epochNumber; i++ {
+			for i := uint64(epoch[0].Epoch + 1); i <= uint64(epoch[0].Epoch)+epochNumber; i++ {
 				newEpoch := model.Epoch{
 					ChainId:       chainInfo.Client.ChainId,
 					Epoch:         i,
