@@ -260,11 +260,18 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 					OperatePeriod: operatePeriod.Uint64(),
 					LockupPeriod:  lockupPeriod.Uint64(),
 				}
-				if block.Time() <= newEpoch.OperateStart {
+				if block.Time() >= newEpoch.LockupPeriod+newEpoch.LockupStart {
 					if err := s.database.Create(&newEpoch).Error; err != nil {
 						logx.Errorf("create epoch failed, err: %v", err)
 						return err
 					}
+				} else if block.Time() >= newEpoch.OperateStart {
+					if err := s.database.Create(&newEpoch).Error; err != nil {
+						logx.Errorf("create epoch failed, err: %v", err)
+						return err
+					}
+				} else {
+					break
 				}
 			}
 		}
