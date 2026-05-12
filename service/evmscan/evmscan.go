@@ -249,7 +249,7 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 			if epoch[0].OperatePeriod != operatePeriod.Uint64() || epoch[0].LockupPeriod != lockupPeriod.Uint64() || epoch[0].StartGenesis != startGenesis.Uint64() {
 				return fmt.Errorf("epoch parameters updated for vault: %s", strategy.Vault)
 			}
-			for i := uint64(epoch[0].Epoch + 1); i <= uint64(epoch[0].Epoch)+epochNumber; i++ {
+			for i := uint64(epoch[0].Epoch + 1); ; i++ {
 				newEpoch := model.Epoch{
 					ChainId:       chainInfo.Client.ChainId,
 					Epoch:         i,
@@ -260,12 +260,12 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 					OperatePeriod: operatePeriod.Uint64(),
 					LockupPeriod:  lockupPeriod.Uint64(),
 				}
-				if err := s.database.Create(&newEpoch).Error; err != nil {
-					logx.Errorf("create epoch failed, err: %v", err)
-					return err
+				if block.Time() <= newEpoch.OperateStart {
+					if err := s.database.Create(&newEpoch).Error; err != nil {
+						logx.Errorf("create epoch failed, err: %v", err)
+						return err
+					}
 				}
-				slack.SendTo(s.config.NotifySlack, fmt.Sprintf("[%s] New epoch created for vault: %s, epoch: %d, operate start: %d, lockup start: %d", s.config.Name,
-					strategy.Vault, newEpoch.Epoch, newEpoch.OperateStart, newEpoch.LockupStart))
 			}
 		}
 	}
