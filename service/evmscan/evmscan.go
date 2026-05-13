@@ -254,7 +254,7 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 					Epoch:         latest.Epoch + 1,
 					Contract:      strategy.Vault,
 					OperateStart:  latest.OperateStart + latest.OperatePeriod + latest.LockupPeriod,
-					LockupStart:   latest.OperateStart + latest.OperatePeriod,
+					LockupStart:   latest.OperateStart + latest.OperatePeriod + latest.LockupPeriod + latest.OperatePeriod,
 					StartGenesis:  startGenesis.Uint64(),
 					OperatePeriod: operatePeriod.Uint64(),
 					LockupPeriod:  lockupPeriod.Uint64(),
@@ -262,6 +262,8 @@ func (s *Scanner) EpochSpin(evmClient *EvmClient, chainInfo config.ChainInfo, bl
 				logx.Infof("blockNumber: %d, blockTime: %d, OperateStart: %d, LockupStart: %d",
 					blockNumber, block.Time(), newEpoch.OperateStart, newEpoch.LockupStart)
 				if block.Time() >= newEpoch.OperateStart {
+					slack.SendTo(s.config.NotifySlack, fmt.Sprintf("[%s] New epoch created for vault: %s, epoch: %d, operate start: %d, lockup start: %d", s.config.Name,
+						strategy.Vault, newEpoch.Epoch, newEpoch.OperateStart, newEpoch.LockupStart))
 					if err := s.database.Create(&newEpoch).Error; err != nil {
 						logx.Errorf("create epoch failed, err: %v", err)
 						return err
