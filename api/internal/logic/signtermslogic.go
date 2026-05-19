@@ -44,6 +44,7 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 	if message.Address == "" || message.Content == "" || message.ExpireTime == 0 {
 		return nil, fmt.Errorf("message error")
 	}
+	l.Infof("address:%s, sig: %s, message: %s", common.HexToAddress(message.Address).String(), req.Signature, req.Message)
 	if !verifySig(common.HexToAddress(message.Address).String(), req.Signature, []byte(req.Message)) {
 		return nil, fmt.Errorf("sign error")
 	}
@@ -66,7 +67,10 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 }
 
 func verifySig(from, sigHex string, msg []byte) bool {
-	sig := hexutil.MustDecode(sigHex)
+	sig, err := hexutil.Decode(sigHex)
+	if err != nil {
+		return false
+	}
 
 	msg = accounts.TextHash(msg)
 	if sig[crypto.RecoveryIDOffset] == 27 || sig[crypto.RecoveryIDOffset] == 28 {
