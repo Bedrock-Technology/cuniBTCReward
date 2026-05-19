@@ -30,6 +30,13 @@ type ListReq struct {
 	Offset int `json:"offset,example=0,default=0"`               //Data offset
 }
 
+type Message struct {
+	Address    string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	Nonce      uint64 `json:"nonce,example=1"`
+	Content    string `json:"content,example=agree to Bedrock’s Terms of Service"`
+	ExpireTime uint64 `json:"expireTime,example=1779169253"`
+}
+
 type PageData struct {
 	Total  int64 `json:"total,example=1234"`         //Total data count
 	Limit  int   `json:"limit,example=10"`           //Number of items per page, consistent with the request
@@ -48,6 +55,23 @@ type PositionOverviewResp struct {
 	Queued      string `json:"queued,example=0.023243"`      //amount queued human readable
 	Withdrawing string `json:"withdrawing,example=0.023243"` //amount withdrawing human readable
 	Rewards     string `json:"rewards,example=0.023243"`     //amount withdrawing human readable
+}
+
+type SignTermsIteamReq struct {
+	Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+}
+
+type SignTermsIteamResp struct {
+	Message
+}
+
+type SignTermsReq struct {
+	Message   string `json:"message,example={\"address\":\"0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD\",\"nonce\":1,\"content\":\"agree to Bedrock’s Terms of Service\",\"expireTime\":1779169253}" validate:"max=8192"`
+	Signature string `json:"signature,example=H3x5bM2MpXK9MyLLbIGWQjZQNTP6lfuIjmPqMrU7YZ5CCm5bS9L+zCtrfIOJaloDb0mf9QBSEDIs4UCd/jou1VI=" validate:"max=256"`
+}
+
+type SignTermsResp struct {
+	Message
 }
 
 type TotalEarnedReq struct {

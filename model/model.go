@@ -103,6 +103,14 @@ type Epoch struct {
 	LockupPeriod  uint64 `gorm:"default:0"`
 }
 
+type SignTerms struct {
+	gorm.Model
+	Address    string `gorm:"size:255;index:t_address_nonce,unique"`
+	Nonce      uint64 `gorm:"default:0;index:t_address_nonce"`
+	ExpireTime time.Time
+	Content    string `gorm:"type:longblob"`
+}
+
 func GetCursor(database *gorm.DB, chainID uint) (*Cursor, error) {
 	var cursor Cursor
 	err := database.Model(&Cursor{}).Where("chain_id = ?", chainID).First(&cursor).Error

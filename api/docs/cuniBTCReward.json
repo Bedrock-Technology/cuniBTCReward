@@ -224,6 +224,102 @@
         }
       }
     },
+    "/api/v1/signTerms": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "SignTerms",
+        "operationId": "signTerms",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignTermsReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/SignTermsResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/signTerms/iteam": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "SignTermsIteam",
+        "operationId": "signTermsIteam",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignTermsIteamReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/SignTermsIteamResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/totalEarned": {
       "post": {
         "consumes": [
@@ -470,6 +566,33 @@
         }
       }
     },
+    "Message": {
+      "type": "object",
+      "required": [
+        "address",
+        "nonce",
+        "content",
+        "expireTime"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "content": {
+          "type": "string",
+          "example": "agree to Bedrock’s Terms of Service"
+        },
+        "expireTime": {
+          "type": "integer",
+          "example": 1779169253
+        },
+        "nonce": {
+          "type": "integer",
+          "example": 1
+        }
+      }
+    },
     "PageData": {
       "type": "object",
       "required": [
@@ -556,6 +679,89 @@
         }
       }
     },
+    "SignTermsIteamReq": {
+      "type": "object",
+      "required": [
+        "address"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        }
+      }
+    },
+    "SignTermsIteamResp": {
+      "type": "object",
+      "required": [
+        "address",
+        "nonce",
+        "content",
+        "expireTime"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "content": {
+          "type": "string",
+          "example": "agree to Bedrock’s Terms of Service"
+        },
+        "expireTime": {
+          "type": "integer",
+          "example": 1779169253
+        },
+        "nonce": {
+          "type": "integer",
+          "example": 1
+        }
+      }
+    },
+    "SignTermsReq": {
+      "type": "object",
+      "required": [
+        "message",
+        "signature"
+      ],
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "{\"address\":\"0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD\""
+        },
+        "signature": {
+          "type": "string",
+          "example": "H3x5bM2MpXK9MyLLbIGWQjZQNTP6lfuIjmPqMrU7YZ5CCm5bS9L+zCtrfIOJaloDb0mf9QBSEDIs4UCd/jou1VI="
+        }
+      }
+    },
+    "SignTermsResp": {
+      "type": "object",
+      "required": [
+        "address",
+        "nonce",
+        "content",
+        "expireTime"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "content": {
+          "type": "string",
+          "example": "agree to Bedrock’s Terms of Service"
+        },
+        "expireTime": {
+          "type": "integer",
+          "example": 1779169253
+        },
+        "nonce": {
+          "type": "integer",
+          "example": 1
+        }
+      }
+    },
     "TotalEarnedReq": {
       "type": "object",
       "required": [
@@ -593,7 +799,7 @@
       }
     }
   },
-  "x-date": "2026-05-07 12:11:21",
+  "x-date": "2026-05-19 13:53:10",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
