@@ -66,8 +66,8 @@ type SignTermsIteamResp struct {
 }
 
 type SignTermsReq struct {
-	Message   string `json:"message,example={\"address\":\"0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD\",\"nonce\":1,\"content\":\"agree to Bedrock’s Terms of Service\",\"expireTime\":1779169253} validate:"max=8192"`
-	Signature string `json:"signature,example=H3x5bM2MpXK9MyLLbIGWQjZQNTP6lfuIjmPqMrU7YZ5CCm5bS9L+zCtrfIOJaloDb0mf9QBSEDIs4UCd/jou1VI=" validate:"max=256"`
+	Message   string `json:"message,example={\"address\":\"0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD\",\"nonce\":1,\"content\":\"agree to Bedrock’s Terms of Service\",\"expireTime\":1779169253}" validate:"max=8192"`
+	Signature string `json:"signature,example=0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c" validate:"max=256"`
 }
 
 type SignTermsResp struct {

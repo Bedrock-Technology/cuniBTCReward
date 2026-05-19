@@ -731,7 +731,7 @@
         },
         "signature": {
           "type": "string",
-          "example": "H3x5bM2MpXK9MyLLbIGWQjZQNTP6lfuIjmPqMrU7YZ5CCm5bS9L+zCtrfIOJaloDb0mf9QBSEDIs4UCd/jou1VI="
+          "example": "0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c"
         }
       }
     },
@@ -799,7 +799,7 @@
       }
     }
   },
-  "x-date": "2026-05-19 13:53:10",
+  "x-date": "2026-05-19 16:10:57",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
