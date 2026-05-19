@@ -75,7 +75,7 @@ type (
 
 type (
 	SignTermsReq {
-		Message   string `json:"message,example={\"address\":\"0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD\",\"nonce\":1,\"content\":\"agree to Bedrock’s Terms of Service\",\"expireTime\":1779169253}" validate:"max=8192"`
+		Message   string `json:"message,example={\"address\":\"0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD\",\"nonce\":1,\"content\":\"agree to Bedrock’s Terms of Service\",\"expireTime\":1779169253} validate:"max=8192"`
 		Signature string `json:"signature,example=H3x5bM2MpXK9MyLLbIGWQjZQNTP6lfuIjmPqMrU7YZ5CCm5bS9L+zCtrfIOJaloDb0mf9QBSEDIs4UCd/jou1VI=" validate:"max=256"`
 	}
 	SignTermsResp {

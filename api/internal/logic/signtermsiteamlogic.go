@@ -30,7 +30,7 @@ func NewSignTermsIteamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Si
 func (l *SignTermsIteamLogic) SignTermsIteam(req *types.SignTermsIteamReq) (resp *types.SignTermsIteamResp, err error) {
 	// todo: add your logic here and delete this line
 	signTerms := []model.SignTerms{}
-	err = l.svcCtx.Database.WithContext(l.ctx).Where("address = ?", req.Address).Order("nonce desc").Limit(1).Error
+	err = l.svcCtx.Database.WithContext(l.ctx).Where("address = ?", req.Address).Order("nonce desc").Limit(1).Find(&signTerms).Error
 	if err != nil {
 		return nil, err
 	}
