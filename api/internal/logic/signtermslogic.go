@@ -44,9 +44,26 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 	if message.Address == "" || message.Content == "" || message.ExpireTime == 0 {
 		return nil, fmt.Errorf("message error")
 	}
+	// verfiy expireTime
+	if int64(message.ExpireTime)-time.Now().Unix() <= 7*86400 {
+		return nil, fmt.Errorf("expire must 7days later")
+	}
+
 	l.Infof("address:%s, sig: %s, message: %s", common.HexToAddress(message.Address).String(), req.Signature, req.Message)
 	if !verifySig(common.HexToAddress(message.Address).String(), req.Signature, []byte(req.Message)) {
 		return nil, fmt.Errorf("sign error")
+	}
+
+	//latest one
+	latestSignTerms := []model.SignTerms{}
+	err = l.svcCtx.Database.WithContext(l.ctx).Where("address = ?", message.Address).Order("nonce desc").Limit(1).Find(&latestSignTerms).Error
+	if err != nil {
+		return nil, err
+	}
+	if len(latestSignTerms) != 0 {
+		if latestSignTerms[0].ExpireTime.Unix() > time.Now().Unix() {
+			return nil, fmt.Errorf("not expired yet")
+		}
 	}
 	//write to db
 	signTerms := model.SignTerms{
