@@ -13,6 +13,7 @@ import (
 	"cuniBTCReward/api/internal/types"
 	"cuniBTCReward/model"
 
+	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -43,16 +44,12 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 	if message.Address == "" || message.Content == "" || message.ExpireTime == 0 {
 		return nil, fmt.Errorf("message error")
 	}
-	recoverAddress, err := l.evmSignVerify(req.Message, req.Signature)
-	if err != nil {
-		return nil, err
-	}
-	if recoverAddress != common.HexToAddress(message.Address).String() {
+	if !verifySig(common.HexToAddress(message.Address).String(), req.Signature, []byte(req.Message)) {
 		return nil, fmt.Errorf("sign error")
 	}
 	//write to db
 	signTerms := model.SignTerms{
-		Address:    recoverAddress,
+		Address:    common.HexToAddress(message.Address).String(),
 		Nonce:      message.Nonce,
 		ExpireTime: time.Unix(int64(message.ExpireTime), 0),
 		Content:    req.Message,
@@ -68,28 +65,20 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 	return
 }
 
-func (l *SignTermsLogic) evmSignVerify(message, sig string) (string, error) {
-	prefixedMessage := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(message), message)
-	messageHash := crypto.Keccak256Hash([]byte(prefixedMessage))
-	signature, err := hexutil.Decode(sig)
+func verifySig(from, sigHex string, msg []byte) bool {
+	sig := hexutil.MustDecode(sigHex)
+
+	msg = accounts.TextHash(msg)
+	if sig[crypto.RecoveryIDOffset] == 27 || sig[crypto.RecoveryIDOffset] == 28 {
+		sig[crypto.RecoveryIDOffset] -= 27 // Transform yellow paper V from 27/28 to 0/1
+	}
+
+	recovered, err := crypto.SigToPub(msg, sig)
 	if err != nil {
-		return "", err
+		return false
 	}
-	// Adjust the recovery ID (v) if needed (e.g., if v is 27/28)
-	if signature[64] == 27 || signature[64] == 28 {
-		signature[64] -= 27
-	}
-	// 3. Recover the public key
-	pubKeyBytes, err := crypto.Ecrecover(messageHash.Bytes(), signature)
-	if err != nil {
-		return "", err
-	}
-	publicKey, err := crypto.UnmarshalPubkey(pubKeyBytes)
-	if err != nil {
-		return "", err
-	}
-	// 4. Derive the address and verify
-	recoveredAddress := crypto.PubkeyToAddress(*publicKey)
-	l.Infof("recoverAddress:%v", recoveredAddress)
-	return recoveredAddress.String(), nil
+
+	recoveredAddr := crypto.PubkeyToAddress(*recovered)
+
+	return from == recoveredAddr.Hex()
 }
