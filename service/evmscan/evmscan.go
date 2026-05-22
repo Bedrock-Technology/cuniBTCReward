@@ -50,11 +50,9 @@ type EvmClient struct {
 }
 
 func NewScanner(c *config.EvmScanConf) *Scanner {
-	gormConfig := &gorm.Config{}
-	if c.SqlLog {
-		gormConfig.Logger = gormz.NewGormLogger()
-	}
-	db, err := gorm.Open(mysql.Open(c.DataSource), gormConfig)
+	db, err := gorm.Open(mysql.Open(c.DataSource), &gorm.Config{
+		Logger: gormz.NewGormLogger(c.SqlLog),
+	})
 	logx.Must(err)
 
 	evmClients := lo.Map(c.ChainInfo, func(item config.ChainInfo, index int) *EvmClient {

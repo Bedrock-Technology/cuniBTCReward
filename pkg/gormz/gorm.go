@@ -14,12 +14,14 @@ import (
 type GormLogger struct {
 	slowThreshold time.Duration
 	log           logx.Logger
+	sqlLog        bool
 }
 
-func NewGormLogger() *GormLogger {
+func NewGormLogger(sqlLog bool) *GormLogger {
 	return &GormLogger{
 		slowThreshold: 200 * time.Millisecond,
 		log:           logx.WithCallerSkip(3),
+		sqlLog:        sqlLog,
 	}
 }
 
@@ -61,5 +63,7 @@ func (g *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 	if g.slowThreshold != 0 && elapsed > g.slowThreshold {
 		g.log.WithContext(ctx).Slowf("%v", logFields)
 	}
-	g.log.WithContext(ctx).Infof("%v", logFields)
+	if g.sqlLog {
+		g.log.WithContext(ctx).Infof("%v", logFields)
+	}
 }

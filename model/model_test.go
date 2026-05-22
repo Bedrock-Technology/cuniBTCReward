@@ -11,7 +11,7 @@ import (
 
 func TestMigrate(t *testing.T) {
 	db, err := gorm.Open(mysql.Open("root:123456@tcp(127.0.0.1:3317)/cunibtcreward?charset=utf8mb4&parseTime=True&loc=Local"), &gorm.Config{
-		Logger: gormz.NewGormLogger(),
+		Logger: gormz.NewGormLogger(true),
 	})
 	if err != nil {
 		t.Fatalf("failed to connect database: %v", err)

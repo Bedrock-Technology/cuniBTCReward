@@ -22,11 +22,9 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	gormConfig := &gorm.Config{}
-	if c.SqlLog {
-		gormConfig.Logger = gormz.NewGormLogger()
-	}
-	db, err := gorm.Open(mysql.Open(c.DataSource), gormConfig)
+	db, err := gorm.Open(mysql.Open(c.DataSource), &gorm.Config{
+		Logger: gormz.NewGormLogger(c.SqlLog),
+	})
 	logx.Must(err)
 
 	uniBtcPriceCron := unibtcprice.NewCoinGeckoUniBTC(c)

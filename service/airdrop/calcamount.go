@@ -67,9 +67,7 @@ type EvmClient struct {
 
 func NewAirdrop(c *config.AirdropConf) *Airdrop {
 	gormConfig := &gorm.Config{}
-	if c.SqlLog {
-		gormConfig.Logger = gormz.NewGormLogger()
-	}
+	gormConfig.Logger = gormz.NewGormLogger(c.SqlLog)
 	db, err := gorm.Open(mysql.Open(c.DataSource), gormConfig)
 	logx.Must(err)
 
