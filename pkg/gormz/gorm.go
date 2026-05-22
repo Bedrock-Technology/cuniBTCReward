@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -47,8 +48,9 @@ func (g *GormLogger) Error(ctx context.Context, msg string, data ...any) {
 func (g *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
 	elapsed := time.Since(begin)
 	sql, rows := fc()
+	cleanSql := strings.Join(strings.Fields(sql), " ")
 	logFields := []logx.LogField{
-		logx.Field("sql", sql),
+		logx.Field("sql", cleanSql),
 		logx.Field("elapsed", fmt.Sprintf("%.3fms", float64(elapsed.Nanoseconds())/1e6)),
 		logx.Field("rows", rows),
 	}
