@@ -57,11 +57,11 @@ type PositionOverviewResp struct {
 	Rewards     string `json:"rewards,example=0.023243"`     //amount withdrawing human readable
 }
 
-type SignTermsIteamReq struct {
+type SignTermsItemReq struct {
 	Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
 }
 
-type SignTermsIteamResp struct {
+type SignTermsItemResp struct {
 	Message
 }
 

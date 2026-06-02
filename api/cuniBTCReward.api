@@ -90,10 +90,10 @@ type (
 )
 
 type (
-	SignTermsIteamReq {
+	SignTermsItemReq {
 		Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
 	}
-	SignTermsIteamResp {
+	SignTermsItemResp {
 		Message
 	}
 )
@@ -120,8 +120,8 @@ service cuniBTCReward {
 	@handler SignTerms
 	post /signTerms (SignTermsReq) returns (SignTermsResp)
 
-	@handler SignTermsIteam
-	post /signTerms/iteam (SignTermsIteamReq) returns (SignTermsIteamResp)
+	@handler SignTermsItem
+	post /signTerms/item (SignTermsItemReq) returns (SignTermsItemResp)
 }
 
 @server (

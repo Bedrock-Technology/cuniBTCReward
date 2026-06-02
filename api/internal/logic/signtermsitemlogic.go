@@ -13,21 +13,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type SignTermsIteamLogic struct {
+type SignTermsItemLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewSignTermsIteamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignTermsIteamLogic {
-	return &SignTermsIteamLogic{
+func NewSignTermsItemLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignTermsItemLogic {
+	return &SignTermsItemLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *SignTermsIteamLogic) SignTermsIteam(req *types.SignTermsIteamReq) (resp *types.SignTermsIteamResp, err error) {
+func (l *SignTermsItemLogic) SignTermsItem(req *types.SignTermsItemReq) (resp *types.SignTermsItemResp, err error) {
 	// todo: add your logic here and delete this line
 	signTerms := []model.SignTerms{}
 	err = l.svcCtx.Database.WithContext(l.ctx).Where("address = ?", req.Address).Order("nonce desc").Limit(1).Find(&signTerms).Error
@@ -38,7 +38,7 @@ func (l *SignTermsIteamLogic) SignTermsIteam(req *types.SignTermsIteamReq) (resp
 		return nil, nil
 	}
 	iteam := signTerms[0]
-	resp = &types.SignTermsIteamResp{
+	resp = &types.SignTermsItemResp{
 		Message: types.Message{
 			Address:    iteam.Address,
 			Nonce:      iteam.Nonce,

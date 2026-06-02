@@ -10,16 +10,16 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func SignTermsIteamHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func SignTermsItemHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.SignTermsIteamReq
+		var req types.SignTermsItemReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.Error(w, err)
 			return
 		}
 
-		l := logic.NewSignTermsIteamLogic(r.Context(), svcCtx)
-		resp, err := l.SignTermsIteam(&req)
+		l := logic.NewSignTermsItemLogic(r.Context(), svcCtx)
+		resp, err := l.SignTermsItem(&req)
 		response.Response(w, resp, err)
 
 	}

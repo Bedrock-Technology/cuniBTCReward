@@ -272,7 +272,7 @@
         }
       }
     },
-    "/api/v1/signTerms/iteam": {
+    "/api/v1/signTerms/item": {
       "post": {
         "consumes": [
           "application/json"
@@ -283,15 +283,15 @@
         "schemes": [
           "https"
         ],
-        "summary": "SignTermsIteam",
-        "operationId": "signTermsIteam",
+        "summary": "SignTermsItem",
+        "operationId": "signTermsItem",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/SignTermsIteamReq"
+              "$ref": "#/definitions/SignTermsItemReq"
             }
           }
         ],
@@ -307,7 +307,7 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/SignTermsIteamResp"
+                  "$ref": "#/definitions/SignTermsItemResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -679,7 +679,7 @@
         }
       }
     },
-    "SignTermsIteamReq": {
+    "SignTermsItemReq": {
       "type": "object",
       "required": [
         "address"
@@ -691,7 +691,7 @@
         }
       }
     },
-    "SignTermsIteamResp": {
+    "SignTermsItemResp": {
       "type": "object",
       "required": [
         "address",
@@ -799,7 +799,7 @@
       }
     }
   },
-  "x-date": "2026-05-19 16:10:57",
+  "x-date": "2026-06-02 17:32:12",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
