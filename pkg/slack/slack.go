@@ -2,13 +2,17 @@ package slack
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/zeromicro/go-zero/rest/httpc"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type slackWriter struct {
-	client *http.Client
+	client httpc.Service
 	url    string
 	queue  chan []byte
 }
@@ -19,7 +23,7 @@ type slackMessage struct {
 
 func NewSlackWriter(url string) *slackWriter {
 	slackWriter := &slackWriter{
-		client: &http.Client{},
+		client: httpc.NewService("slackAsync"),
 		url:    url,
 		queue:  make(chan []byte, 128),
 	}
@@ -52,9 +56,18 @@ func (s *slackWriter) send() {
 			m := slackMessage{
 				Text: text,
 			}
-			dataJson, _ := json.Marshal(&m)
-			req, _ := http.NewRequest("POST", s.url, bytes.NewReader(dataJson))
-			_, _ = s.client.Do(req)
+			ctx := context.Background()
+			if entry["trace"] != "" && entry["span"] != "" {
+				traceID, _ := trace.TraceIDFromHex(entry["trace"].(string))
+				spanID, _ := trace.SpanIDFromHex(entry["span"].(string))
+				spanContext := trace.NewSpanContext(trace.SpanContextConfig{
+					TraceID:    traceID,
+					SpanID:     spanID,
+					TraceFlags: trace.FlagsSampled,
+				})
+				ctx = trace.ContextWithSpanContext(ctx, spanContext)
+			}
+			_, _ = s.client.Do(ctx, http.MethodPost, s.url, &m)
 		}
 	}
 }
@@ -66,7 +79,5 @@ func SendTo(url, message string) {
 	m := slackMessage{
 		Text: message,
 	}
-	dataJson, _ := json.Marshal(&m)
-	req, _ := http.NewRequest("POST", url, bytes.NewReader(dataJson))
-	_, _ = http.DefaultClient.Do(req)
+	_, _ = httpc.Do(context.Background(), http.MethodPost, url, &m)
 }
