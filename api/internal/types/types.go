@@ -30,13 +30,6 @@ type ListReq struct {
 	Offset int `json:"offset,example=0,default=0"`               //Data offset
 }
 
-type Message struct {
-	Address    string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
-	Nonce      uint64 `json:"nonce,example=1"`
-	Content    string `json:"content,example=agree to Bedrock’s Terms of Service"`
-	ExpireTime uint64 `json:"expireTime,example=1779169253"`
-}
-
 type PageData struct {
 	Total  int64 `json:"total,example=1234"`         //Total data count
 	Limit  int   `json:"limit,example=10"`           //Number of items per page, consistent with the request
@@ -59,19 +52,38 @@ type PositionOverviewResp struct {
 
 type SignTermsItemReq struct {
 	Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	Symbol  string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 }
 
 type SignTermsItemResp struct {
-	Message
-}
-
-type SignTermsReq struct {
-	Message   string `json:"message,example={\"address\":\"0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD\",\"nonce\":1,\"content\":\"agree to Bedrock’s Terms of Service\",\"expireTime\":1779169253}" validate:"max=8192"`
+	Address   string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	Message   string `json:"message,example=SIWE exposes a Message struct which implements EIP-4361" validate:"max=81920"`
+	Symbol    string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 	Signature string `json:"signature,example=0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c" validate:"max=256"`
 }
 
+type SignTermsReq struct {
+	Message   string `json:"message,example=SIWE exposes a Message struct which implements EIP-4361" validate:"max=81920"`
+	Signature string `json:"signature,example=0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c" validate:"max=256"`
+	Symbol    string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+}
+
 type SignTermsResp struct {
-	Message
+	Address  string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	TermsMd5 string `json:"termsMd5,example=5eb63bbbe01eeed093cb22bb8f5acdc3"`
+	Symbol   string `json:"symbol"`
+}
+
+type SignTermsStatusReq struct {
+	Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	Symbol  string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+}
+
+type SignTermsStatusResp struct {
+	Signed   bool   `json:"signed,example=false|true"`
+	TermsMd5 string `json:"termsMd5,example=5eb63bbbe01eeed093cb22bb8f5acdc3"`
+	Symbol   string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	Address  string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
 }
 
 type TotalEarnedReq struct {

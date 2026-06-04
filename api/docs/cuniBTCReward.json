@@ -320,6 +320,54 @@
         }
       }
     },
+    "/api/v1/signTerms/status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "SignTermsStatus",
+        "operationId": "signTermsStatus",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignTermsStatusReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/SignTermsStatusResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/totalEarned": {
       "post": {
         "consumes": [
@@ -566,33 +614,6 @@
         }
       }
     },
-    "Message": {
-      "type": "object",
-      "required": [
-        "address",
-        "nonce",
-        "content",
-        "expireTime"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "content": {
-          "type": "string",
-          "example": "agree to Bedrock’s Terms of Service"
-        },
-        "expireTime": {
-          "type": "integer",
-          "example": 1779169253
-        },
-        "nonce": {
-          "type": "integer",
-          "example": 1
-        }
-      }
-    },
     "PageData": {
       "type": "object",
       "required": [
@@ -682,12 +703,18 @@
     "SignTermsItemReq": {
       "type": "object",
       "required": [
-        "address"
+        "address",
+        "symbol"
       ],
       "properties": {
         "address": {
           "type": "string",
           "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
         }
       }
     },
@@ -695,26 +722,27 @@
       "type": "object",
       "required": [
         "address",
-        "nonce",
-        "content",
-        "expireTime"
+        "message",
+        "symbol",
+        "signature"
       ],
       "properties": {
         "address": {
           "type": "string",
           "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
         },
-        "content": {
+        "message": {
           "type": "string",
-          "example": "agree to Bedrock’s Terms of Service"
+          "example": "SIWE exposes a Message struct which implements EIP-4361"
         },
-        "expireTime": {
-          "type": "integer",
-          "example": 1779169253
+        "signature": {
+          "type": "string",
+          "example": "0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c"
         },
-        "nonce": {
-          "type": "integer",
-          "example": 1
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
         }
       }
     },
@@ -722,16 +750,22 @@
       "type": "object",
       "required": [
         "message",
-        "signature"
+        "signature",
+        "symbol"
       ],
       "properties": {
         "message": {
           "type": "string",
-          "example": "{\"address\":\"0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD\""
+          "example": "SIWE exposes a Message struct which implements EIP-4361"
         },
         "signature": {
           "type": "string",
           "example": "0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c"
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
         }
       }
     },
@@ -739,26 +773,66 @@
       "type": "object",
       "required": [
         "address",
-        "nonce",
-        "content",
-        "expireTime"
+        "termsMd5",
+        "symbol"
       ],
       "properties": {
         "address": {
           "type": "string",
           "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
         },
-        "content": {
+        "symbol": {
+          "type": "string"
+        },
+        "termsMd5": {
           "type": "string",
-          "example": "agree to Bedrock’s Terms of Service"
+          "example": "5eb63bbbe01eeed093cb22bb8f5acdc3"
+        }
+      }
+    },
+    "SignTermsStatusReq": {
+      "type": "object",
+      "required": [
+        "address",
+        "symbol"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
         },
-        "expireTime": {
-          "type": "integer",
-          "example": 1779169253
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "SignTermsStatusResp": {
+      "type": "object",
+      "required": [
+        "signed",
+        "termsMd5",
+        "symbol",
+        "address"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
         },
-        "nonce": {
-          "type": "integer",
-          "example": 1
+        "signed": {
+          "type": "boolean",
+          "example": false
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        },
+        "termsMd5": {
+          "type": "string",
+          "example": "5eb63bbbe01eeed093cb22bb8f5acdc3"
         }
       }
     },
@@ -799,7 +873,7 @@
       }
     }
   },
-  "x-date": "2026-06-02 17:32:12",
+  "x-date": "2026-06-05 10:38:53",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

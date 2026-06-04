@@ -105,10 +105,11 @@ type Epoch struct {
 
 type SignTerms struct {
 	gorm.Model
-	Address    string `gorm:"size:255;index:t_address_nonce,unique"`
-	Nonce      uint64 `gorm:"default:0;index:t_address_nonce"`
-	ExpireTime time.Time
-	Content    string `gorm:"type:longblob"`
+	Address   string `gorm:"size:128;index:t_address_nonce,unique"`
+	Symbol    string `gorm:"size:128;index:t_address_nonce"`
+	TermHash  string `gorm:"size:64;index:t_address_nonce"`
+	Message   string `gorm:"type:longblob"`
+	Signature string `gorm:"size:255"`
 }
 
 func GetCursor(database *gorm.DB, chainID uint) (*Cursor, error) {

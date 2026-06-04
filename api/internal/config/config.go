@@ -12,4 +12,10 @@ type Config struct {
 	DefaultChainId int64  `json:""`
 	PriceCronSpec  string `json:",default=@every 30m"`
 	CoinGecoKey    string `json:""`
+	Terms          []Term `json:""`
+}
+
+type Term struct {
+	Symbol  string
+	TermMd5 string //terms content hash. md5
 }

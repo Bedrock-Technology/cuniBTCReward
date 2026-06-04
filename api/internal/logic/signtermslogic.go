@@ -5,18 +5,15 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
-	"time"
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
 	"cuniBTCReward/model"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/spruceid/siwe-go"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -36,70 +33,50 @@ func NewSignTermsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignTer
 
 func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTermsResp, err error) {
 	// todo: add your logic here and delete this line
-	var message types.Message
-	err = json.Unmarshal([]byte(req.Message), &message)
+	message, err := siwe.ParseMessage(req.Message)
 	if err != nil {
-		return nil, fmt.Errorf("message unmarshal:%v", err)
+		return
 	}
-	if message.Address == "" || message.Content == "" || message.ExpireTime == 0 {
-		return nil, fmt.Errorf("message error")
+	if *message.GetStatement() == "" || message.GetAddress().String() == "" {
+		return resp, fmt.Errorf("not contain, statement or address")
 	}
-	// verfiy expireTime
-	if int64(message.ExpireTime)-time.Now().Unix() <= 7*86400 {
-		return nil, fmt.Errorf("expire must 7days later")
-	}
+	statementMd5 := md5.Sum([]byte(*message.GetStatement()))
+	statementMd5Str := hex.EncodeToString(statementMd5[:])
 
-	l.Infof("address:%s, sig: %s, message: %s", common.HexToAddress(message.Address).String(), req.Signature, req.Message)
-	if !verifySig(common.HexToAddress(message.Address).String(), req.Signature, []byte(req.Message)) {
-		return nil, fmt.Errorf("sign error")
-	}
-
-	//latest one
-	latestSignTerms := []model.SignTerms{}
-	err = l.svcCtx.Database.WithContext(l.ctx).Where("address = ?", message.Address).Order("nonce desc").Limit(1).Find(&latestSignTerms).Error
-	if err != nil {
-		return nil, err
-	}
-	if len(latestSignTerms) != 0 {
-		if latestSignTerms[0].ExpireTime.Unix() > time.Now().Unix() {
-			return nil, fmt.Errorf("not expired yet")
+	var symbolStatementMd5 string
+	for _, v := range l.svcCtx.Config.Terms {
+		if v.Symbol == req.Symbol {
+			symbolStatementMd5 = v.TermMd5
 		}
 	}
-	//write to db
-	signTerms := model.SignTerms{
-		Address:    common.HexToAddress(message.Address).String(),
-		Nonce:      message.Nonce,
-		ExpireTime: time.Unix(int64(message.ExpireTime), 0),
-		Content:    req.Message,
+
+	if statementMd5Str != symbolStatementMd5 {
+		l.Infof("address: %s, symbolStatementMd5: %s, statementMd5Str: %s, message: %s",
+			message.GetAddress().String(), symbolStatementMd5, statementMd5Str, req.Message)
+		l.Errorf("address: %s, signTerms error")
+		return nil, fmt.Errorf("statement not equal")
 	}
-	err = l.svcCtx.Database.WithContext(l.ctx).Create(&signTerms).Error
+
+	_, err = message.VerifyEIP191(req.Signature)
 	if err != nil {
+		return
+	}
+	//save into db
+	term := model.SignTerms{
+		Address:   message.GetAddress().String(),
+		Symbol:    req.Symbol,
+		TermHash:  statementMd5Str,
+		Message:   req.Message,
+		Signature: req.Signature,
+	}
+	if err := l.svcCtx.Database.WithContext(l.ctx).Save(&term).Error; err != nil {
 		return nil, err
 	}
 
 	resp = &types.SignTermsResp{
-		Message: message,
+		Address:  message.GetAddress().String(),
+		TermsMd5: statementMd5Str,
+		Symbol:   req.Symbol,
 	}
 	return
-}
-
-func verifySig(from, sigHex string, msg []byte) bool {
-	sig, err := hexutil.Decode(sigHex)
-	if err != nil {
-		return false
-	}
-
-	msg = accounts.TextHash(msg)
-	if sig[crypto.RecoveryIDOffset] == 27 || sig[crypto.RecoveryIDOffset] == 28 {
-		sig[crypto.RecoveryIDOffset] -= 27 // Transform yellow paper V from 27/28 to 0/1
-	}
-
-	recovered, err := crypto.SigToPub(msg, sig)
-	if err != nil {
-		return false
-	}
-
-	recoveredAddr := crypto.PubkeyToAddress(*recovered)
-
-	return from == recoveredAddr.Hex()
 }
