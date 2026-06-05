@@ -51,9 +51,9 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 	}
 
 	if statementMd5Str != symbolStatementMd5 {
-		l.Infof("address: %s, symbolStatementMd5: %s, statementMd5Str: %s, message: %s",
-			message.GetAddress().String(), symbolStatementMd5, statementMd5Str, req.Message)
-		logx.Errorf("address: %s, signTerms error", message.GetAddress().String())
+		l.Infof("address: %s, symbolStatementMd5: %s, statementMd5Str: %s, message: %s, statement: %s",
+			message.GetAddress().String(), symbolStatementMd5, statementMd5Str, req.Message, *message.GetStatement())
+		l.Errorf("address: %s, signTerms error", message.GetAddress().String())
 		return nil, fmt.Errorf("statement not equal")
 	}
 
