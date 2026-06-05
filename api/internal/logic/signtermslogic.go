@@ -93,6 +93,19 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq, r *http.Request) (re
 	if err != nil {
 		return
 	}
+	//limiter
+	realIp := getRealIP(r)
+	l.Infof("signTerm ip:%s", realIp)
+	code, err := limiter.TakeCtx(r.Context(), realIp)
+	if err != nil {
+		l.Error("signTerm limiter error")
+	}
+
+	switch code {
+	case limit.OverQuota:
+		return nil, fmt.Errorf("too many requests")
+	}
+
 	//save into db
 	term := model.SignTerms{
 		Address:   message.GetAddress().String(),
@@ -109,18 +122,6 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq, r *http.Request) (re
 		Address:  message.GetAddress().String(),
 		TermsMd5: statementMd5Str,
 		Symbol:   req.Symbol,
-	}
-	//limiter
-	realIp := getRealIP(r)
-	l.Infof("signTerm ip:%s", realIp)
-	code, err := limiter.TakeCtx(r.Context(), realIp)
-	if err != nil {
-		l.Error("signTerm limiter error")
-	}
-
-	switch code {
-	case limit.OverQuota:
-		return nil, fmt.Errorf("too many requests")
 	}
 	return
 }
