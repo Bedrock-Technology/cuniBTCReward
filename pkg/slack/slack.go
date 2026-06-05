@@ -11,7 +11,7 @@ import (
 )
 
 type slackWriter struct {
-	client httpc.Service
+	client *http.Client
 	url    string
 	queue  chan []byte
 }
@@ -22,7 +22,7 @@ type slackMessage struct {
 
 func NewSlackWriter(url string) *slackWriter {
 	slackWriter := &slackWriter{
-		client: httpc.NewService("slackAsync"),
+		client: &http.Client{},
 		url:    url,
 		queue:  make(chan []byte, 128),
 	}
@@ -32,7 +32,6 @@ func NewSlackWriter(url string) *slackWriter {
 
 func (s *slackWriter) Write(p []byte) (n int, err error) {
 	if s.url == "" {
-		fmt.Printf("s.url:%s", s.url)
 		return len(p), nil
 	}
 	pc := bytes.Clone(p)
@@ -51,15 +50,14 @@ func (s *slackWriter) send() {
 		if err := json.Unmarshal(msg, &entry); err != nil {
 			continue
 		}
-		fmt.Printf("entry:+%v", entry)
 		if entry["level"] == "error" {
 			text := fmt.Sprintf("[%v] %v", entry["server"], entry["content"])
 			m := slackMessage{
 				Text: text,
 			}
-			ctx := context.Background()
-			fmt.Printf("%s, %v", s.url, m)
-			_, _ = s.client.Do(ctx, http.MethodPost, s.url, &m)
+			dataJson, _ := json.Marshal(&m)
+			req, _ := http.NewRequest("POST", s.url, bytes.NewReader(dataJson))
+			_, _ = s.client.Do(req)
 		}
 	}
 }
