@@ -56,6 +56,7 @@ func (s *slackWriter) send() {
 				Text: text,
 			}
 			ctx := context.Background()
+			fmt.Printf("%s, %v", s.url, m)
 			_, _ = s.client.Do(ctx, http.MethodPost, s.url, &m)
 		}
 	}
