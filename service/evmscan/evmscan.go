@@ -123,6 +123,13 @@ func (s *Scanner) ReportSpec() {
 		return
 	}
 	fmt.Fprint(&reportStr, " api ok")
+	//len of signedTerms
+	var signedTermsCount int64
+	err = s.database.Model(&model.SignTerms{}).Count(&signedTermsCount).Error
+	if err != nil {
+		logx.Errorf("Count signedTerms error: %v", err)
+	}
+	fmt.Fprintf(&reportStr, " signedTerms[%d]", signedTermsCount)
 	slack.SendTo(s.config.NotifySlack, reportStr.String())
 }
 

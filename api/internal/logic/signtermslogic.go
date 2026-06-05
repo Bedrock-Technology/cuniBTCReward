@@ -60,7 +60,12 @@ func getRealIP(r *http.Request) string {
 	}
 
 	// 3. Fallback to direct remote address if not proxied
-	return r.RemoteAddr
+	remoteIP := r.RemoteAddr
+	if strings.Contains(remoteIP, ":") {
+		parts := strings.Split(remoteIP, ":")
+		remoteIP = strings.Join(parts[:len(parts)-1], ":")
+	}
+	return remoteIP
 }
 
 func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq, r *http.Request) (resp *types.SignTermsResp, err error) {
@@ -93,18 +98,6 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq, r *http.Request) (re
 	if err != nil {
 		return
 	}
-	//limiter
-	realIp := getRealIP(r)
-	l.Infof("signTerm ip:%s", realIp)
-	code, err := limiter.TakeCtx(r.Context(), realIp)
-	if err != nil {
-		l.Error("signTerm limiter error")
-	}
-
-	switch code {
-	case limit.OverQuota:
-		return nil, fmt.Errorf("too many requests")
-	}
 
 	//save into db
 	term := model.SignTerms{
@@ -116,6 +109,19 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq, r *http.Request) (re
 	}
 	if err := l.svcCtx.Database.WithContext(l.ctx).Save(&term).Error; err != nil {
 		return nil, err
+	} else {
+		//limiter
+		realIp := getRealIP(r)
+		l.Infof("signTerm ip:%s", realIp)
+		code, err := limiter.TakeCtx(r.Context(), realIp)
+		if err != nil {
+			l.Error("signTerm limiter error")
+		}
+
+		switch code {
+		case limit.OverQuota:
+			return nil, fmt.Errorf("too many requests")
+		}
 	}
 
 	resp = &types.SignTermsResp{
