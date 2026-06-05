@@ -6,11 +6,14 @@ package svc
 import (
 	"cuniBTCReward/api/internal/config"
 	unibtcprice "cuniBTCReward/api/internal/crontab"
+	"cuniBTCReward/api/internal/middleware"
 	"cuniBTCReward/pkg/gormz"
 	"cuniBTCReward/service/crons"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/rest"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -20,6 +23,8 @@ type ServiceContext struct {
 	Database        *gorm.DB
 	Cron            *crons.ScanCron
 	UniBtcPriceCron *unibtcprice.CoinGeckoUniBTC
+	Redis           *redis.Redis
+	RateLimit       rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -36,6 +41,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
+	rds := redis.MustNewRedis(c.Redis)
+
 	uniBtcPriceCron := unibtcprice.NewCoinGeckoUniBTC(c)
 	crontab := crons.New()
 	_, err = crontab.AddFunc(c.PriceCronSpec, uniBtcPriceCron.CoinGeckoUniBTCCron)
@@ -49,5 +56,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Database:        db,
 		Cron:            crontab,
 		UniBtcPriceCron: uniBtcPriceCron,
+		Redis:           rds,
+		RateLimit:       middleware.NewRateLimitMiddleware(rds).Handle,
 	}
 }

@@ -31,11 +31,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/signTerms",
-				Handler: SignTermsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
 				Path:    "/signTerms/item",
 				Handler: SignTermsItemHandler(serverCtx),
 			},
@@ -55,6 +50,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: UniBTCPriceHandler(serverCtx),
 			},
 		},
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.RateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/signTerms",
+					Handler: SignTermsHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 

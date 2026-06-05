@@ -3,16 +3,20 @@
 
 package config
 
-import "github.com/zeromicro/go-zero/rest"
+import (
+	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/rest"
+)
 
 type Config struct {
 	rest.RestConf
-	DataSource     string `json:",inherit"`
-	SqlLog         bool   `json:",optional,default=false,inherit"`
-	DefaultChainId int64  `json:""`
-	PriceCronSpec  string `json:",default=@every 30m"`
-	CoinGecoKey    string `json:""`
-	Terms          []Term `json:""`
+	Redis          redis.RedisConf `json:",inherit"`
+	DataSource     string          `json:",inherit"`
+	SqlLog         bool            `json:",optional,default=false,inherit"`
+	DefaultChainId int64           `json:""`
+	PriceCronSpec  string          `json:",default=@every 30m"`
+	CoinGecoKey    string          `json:""`
+	Terms          []Term          `json:""`
 }
 
 type Term struct {
