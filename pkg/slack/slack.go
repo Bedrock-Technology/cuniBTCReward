@@ -32,6 +32,7 @@ func NewSlackWriter(url string) *slackWriter {
 
 func (s *slackWriter) Write(p []byte) (n int, err error) {
 	if s.url == "" {
+		fmt.Printf("s.url:%s", s.url)
 		return len(p), nil
 	}
 	pc := bytes.Clone(p)
