@@ -50,6 +50,7 @@ func (s *slackWriter) send() {
 		if err := json.Unmarshal(msg, &entry); err != nil {
 			continue
 		}
+		fmt.Printf("entry:+%v", entry)
 		if entry["level"] == "error" {
 			text := fmt.Sprintf("[%v] %v", entry["server"], entry["content"])
 			m := slackMessage{
