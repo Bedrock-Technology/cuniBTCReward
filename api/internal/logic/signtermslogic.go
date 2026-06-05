@@ -34,7 +34,7 @@ var (
 
 func NewSignTermsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignTermsLogic {
 	once.Do(func() {
-		limiter = limit.NewPeriodLimit(60*60, 3, svcCtx.Redis, "cuniBTC:signTerm:rate:")
+		limiter = limit.NewPeriodLimit(60, 3, svcCtx.Redis, "cuniBTC:signTerm:rate:")
 	})
 	return &SignTermsLogic{
 		Logger: logx.WithContext(ctx),
