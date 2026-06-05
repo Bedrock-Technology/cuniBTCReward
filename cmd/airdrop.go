@@ -93,8 +93,8 @@ to quickly create a Cobra application.`,
 		// fmt.Printf("evmscanconfi:%v", c.EvmScanConf)
 
 		//log
+		logx.AddWriter(logx.NewWriter(slack.NewSlackWriter(c.LogSlack)))
 		if c.LogSlack != "" {
-			logx.AddWriter(logx.NewWriter(slack.NewSlackWriter(c.LogSlack)))
 			logx.AddGlobalFields(logx.Field("server", c.AirdropConf.Name))
 			defer logx.Close()
 		}

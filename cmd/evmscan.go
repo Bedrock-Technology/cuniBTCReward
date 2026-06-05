@@ -32,9 +32,9 @@ to quickly create a Cobra application.`,
 		c.EvmScanConf.MustSetUp()
 		// fmt.Printf("evmscanconfi:%v", c.EvmScanConf)
 
+		logx.AddWriter(logx.NewWriter(slack.NewSlackWriter(c.LogSlack)))
 		//log
 		if c.LogSlack != "" {
-			logx.AddWriter(logx.NewWriter(slack.NewSlackWriter(c.LogSlack)))
 			logx.AddGlobalFields(logx.Field("server", c.EvmScanConf.Name))
 			defer logx.Close()
 		}

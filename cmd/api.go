@@ -31,18 +31,17 @@ to quickly create a Cobra application.`,
 		var c ServiceConfig
 		conf.MustLoad(cfgFile, &c)
 
-		//log
-		if c.LogSlack != "" {
-			logx.AddWriter(logx.NewWriter(slack.NewSlackWriter(c.LogSlack)))
-			logx.AddGlobalFields(logx.Field("server", c.ApiConf.Name))
-			defer logx.Close()
-		}
-
 		server := rest.MustNewServer(c.ApiConf.RestConf,
 			rest.WithFileServer("/docs", http.Dir("./api/docs")),
 			rest.WithCors("*"))
 
 		defer server.Stop()
+		//log
+		logx.AddGlobalFields(logx.Field("server", c.ApiConf.Name))
+		if c.LogSlack != "" {
+			logx.AddWriter(logx.NewWriter(slack.NewSlackWriter(c.LogSlack)))
+			defer logx.Close()
+		}
 
 		setupConfig := exportconfig.Config{
 			Config: c.ApiConf.Config,
