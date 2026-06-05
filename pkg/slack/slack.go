@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpc"
-	"go.opentelemetry.io/otel/trace"
 )
 
 type slackWriter struct {
@@ -57,18 +56,6 @@ func (s *slackWriter) send() {
 				Text: text,
 			}
 			ctx := context.Background()
-			if traceId, ok := entry["trace"].(string); ok {
-				if spanId, ok := entry["span"].(string); ok {
-					traceID, _ := trace.TraceIDFromHex(traceId)
-					spanID, _ := trace.SpanIDFromHex(spanId)
-					spanContext := trace.NewSpanContext(trace.SpanContextConfig{
-						TraceID:    traceID,
-						SpanID:     spanID,
-						TraceFlags: trace.FlagsSampled,
-					})
-					ctx = trace.ContextWithSpanContext(ctx, spanContext)
-				}
-			}
 			_, _ = s.client.Do(ctx, http.MethodPost, s.url, &m)
 		}
 	}
