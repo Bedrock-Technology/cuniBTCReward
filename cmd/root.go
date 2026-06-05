@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -51,10 +52,11 @@ func init() {
 }
 
 type ServiceConfig struct {
-	DataSource  string `json:",inherit"`
-	SqlLog      bool   `json:",optional,default=false,inherit"`
-	NotifySlack string `json:",optional,inherit"`
-	LogSlack    string `json:",optional,inherit"`
+	DataSource  string          `json:",inherit"`
+	Redis       redis.RedisConf `json:",inherit"`
+	SqlLog      bool            `json:",optional,default=false,inherit"`
+	NotifySlack string          `json:",optional,inherit"`
+	LogSlack    string          `json:",optional,inherit"`
 	EvmScanConf evmscanconfig.EvmScanConf
 	AirdropConf airdropconfig.AirdropConf
 	ApiConf     apiconfig.Config

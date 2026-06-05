@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"sync"
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
@@ -27,15 +26,7 @@ type SignTermsLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-var (
-	once    sync.Once
-	limiter *limit.PeriodLimit
-)
-
 func NewSignTermsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignTermsLogic {
-	once.Do(func() {
-		limiter = limit.NewPeriodLimit(60, 3, svcCtx.Redis, "cuniBTC:signTerm:rate:")
-	})
 	return &SignTermsLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
@@ -107,21 +98,20 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq, r *http.Request) (re
 		Message:   req.Message,
 		Signature: req.Signature,
 	}
+	//limiter
+	realIp := getRealIP(r)
+	l.Infof("signTerm ip:%s", realIp)
+	code, err := l.svcCtx.SignTermsLimiter.TakeCtx(r.Context(), realIp)
+	if err != nil {
+		l.Error("signTerm limiter error")
+	}
+	switch code {
+	case limit.OverQuota:
+		return nil, fmt.Errorf("too many requests")
+	}
+	//save db
 	if err := l.svcCtx.Database.WithContext(l.ctx).Save(&term).Error; err != nil {
 		return nil, err
-	} else {
-		//limiter
-		realIp := getRealIP(r)
-		l.Infof("signTerm ip:%s", realIp)
-		code, err := limiter.TakeCtx(r.Context(), realIp)
-		if err != nil {
-			l.Error("signTerm limiter error")
-		}
-
-		switch code {
-		case limit.OverQuota:
-			return nil, fmt.Errorf("too many requests")
-		}
 	}
 
 	resp = &types.SignTermsResp{

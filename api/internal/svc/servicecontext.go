@@ -10,6 +10,7 @@ import (
 	"cuniBTCReward/service/crons"
 	"time"
 
+	"github.com/zeromicro/go-zero/core/limit"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"gorm.io/driver/mysql"
@@ -17,11 +18,12 @@ import (
 )
 
 type ServiceContext struct {
-	Config          config.Config
-	Database        *gorm.DB
-	Cron            *crons.ScanCron
-	UniBtcPriceCron *unibtcprice.CoinGeckoUniBTC
-	Redis           *redis.Redis
+	Config           config.Config
+	Database         *gorm.DB
+	Cron             *crons.ScanCron
+	UniBtcPriceCron  *unibtcprice.CoinGeckoUniBTC
+	Redis            *redis.Redis
+	SignTermsLimiter *limit.PeriodLimit
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -49,10 +51,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	crontab.Run()
 
 	return &ServiceContext{
-		Config:          c,
-		Database:        db,
-		Cron:            crontab,
-		UniBtcPriceCron: uniBtcPriceCron,
-		Redis:           rds,
+		Config:           c,
+		Database:         db,
+		Cron:             crontab,
+		UniBtcPriceCron:  uniBtcPriceCron,
+		Redis:            rds,
+		SignTermsLimiter: limit.NewPeriodLimit(60, 3, rds, "cuniBTC:signTerm:rate:"),
 	}
 }
