@@ -6,14 +6,12 @@ package svc
 import (
 	"cuniBTCReward/api/internal/config"
 	unibtcprice "cuniBTCReward/api/internal/crontab"
-	"cuniBTCReward/api/internal/middleware"
 	"cuniBTCReward/pkg/gormz"
 	"cuniBTCReward/service/crons"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
-	"github.com/zeromicro/go-zero/rest"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -24,7 +22,6 @@ type ServiceContext struct {
 	Cron            *crons.ScanCron
 	UniBtcPriceCron *unibtcprice.CoinGeckoUniBTC
 	Redis           *redis.Redis
-	RateLimit       rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -57,6 +54,5 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Cron:            crontab,
 		UniBtcPriceCron: uniBtcPriceCron,
 		Redis:           rds,
-		RateLimit:       middleware.NewRateLimitMiddleware(rds).Handle,
 	}
 }

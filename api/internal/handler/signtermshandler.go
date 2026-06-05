@@ -19,7 +19,7 @@ func SignTermsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := logic.NewSignTermsLogic(r.Context(), svcCtx)
-		resp, err := l.SignTerms(&req)
+		resp, err := l.SignTerms(&req, r)
 		response.Response(w, resp, err)
 
 	}

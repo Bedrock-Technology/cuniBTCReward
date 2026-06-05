@@ -8,12 +8,16 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"net/http"
+	"strings"
+	"sync"
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
 	"cuniBTCReward/model"
 
 	"github.com/spruceid/siwe-go"
+	"github.com/zeromicro/go-zero/core/limit"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -23,7 +27,15 @@ type SignTermsLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
+var (
+	once    sync.Once
+	limiter *limit.PeriodLimit
+)
+
 func NewSignTermsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignTermsLogic {
+	once.Do(func() {
+		limiter = limit.NewPeriodLimit(60*60, 3, svcCtx.Redis, "cuniBTC:signTerm:rate:")
+	})
 	return &SignTermsLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
@@ -31,7 +43,27 @@ func NewSignTermsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignTer
 	}
 }
 
-func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTermsResp, err error) {
+func getRealIP(r *http.Request) string {
+	// 1. Check the standard Cloudflare header
+	if ip := r.Header.Get("CF-Connecting-IP"); ip != "" {
+		return ip
+	}
+
+	// 2. Check the standard proxy chain header if Cloudflare header is missing
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		// X-Forwarded-For can contain multiple IPs separated by commas.
+		// The first IP is always the original client.
+		parts := strings.Split(xff, ",")
+		if len(parts) > 0 {
+			return strings.TrimSpace(parts[0])
+		}
+	}
+
+	// 3. Fallback to direct remote address if not proxied
+	return r.RemoteAddr
+}
+
+func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq, r *http.Request) (resp *types.SignTermsResp, err error) {
 	// todo: add your logic here and delete this line
 	message, err := siwe.ParseMessage(req.Message)
 	if err != nil {
@@ -77,6 +109,18 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 		Address:  message.GetAddress().String(),
 		TermsMd5: statementMd5Str,
 		Symbol:   req.Symbol,
+	}
+	//limiter
+	realIp := getRealIP(r)
+	l.Infof("signTerm ip:%s", realIp)
+	code, err := limiter.TakeCtx(r.Context(), realIp)
+	if err != nil {
+		l.Error("signTerm limiter error")
+	}
+
+	switch code {
+	case limit.OverQuota:
+		return nil, fmt.Errorf("too many requests")
 	}
 	return
 }
