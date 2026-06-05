@@ -10,7 +10,7 @@ import (
 
 type Config struct {
 	rest.RestConf
-	Redis          redis.RedisConf `json:",inherit"`
+	Redis          redis.RedisConf `json:",optional,inherit"`
 	DataSource     string          `json:",inherit"`
 	SqlLog         bool            `json:",optional,default=false,inherit"`
 	DefaultChainId int64           `json:""`
