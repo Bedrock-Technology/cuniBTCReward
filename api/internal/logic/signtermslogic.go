@@ -8,15 +8,12 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"net/http"
-	"strings"
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
 	"cuniBTCReward/model"
 
 	"github.com/spruceid/siwe-go"
-	"github.com/zeromicro/go-zero/core/limit"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -34,32 +31,7 @@ func NewSignTermsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignTer
 	}
 }
 
-func getRealIP(r *http.Request) string {
-	// 1. Check the standard Cloudflare header
-	if ip := r.Header.Get("CF-Connecting-IP"); ip != "" {
-		return ip
-	}
-
-	// 2. Check the standard proxy chain header if Cloudflare header is missing
-	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-		// X-Forwarded-For can contain multiple IPs separated by commas.
-		// The first IP is always the original client.
-		parts := strings.Split(xff, ",")
-		if len(parts) > 0 {
-			return strings.TrimSpace(parts[0])
-		}
-	}
-
-	// 3. Fallback to direct remote address if not proxied
-	remoteIP := r.RemoteAddr
-	if strings.Contains(remoteIP, ":") {
-		parts := strings.Split(remoteIP, ":")
-		remoteIP = strings.Join(parts[:len(parts)-1], ":")
-	}
-	return remoteIP
-}
-
-func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq, r *http.Request) (resp *types.SignTermsResp, err error) {
+func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTermsResp, err error) {
 	// todo: add your logic here and delete this line
 	message, err := siwe.ParseMessage(req.Message)
 	if err != nil {
@@ -98,18 +70,6 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq, r *http.Request) (re
 		Message:   req.Message,
 		Signature: req.Signature,
 	}
-	//limiter
-	realIp := getRealIP(r)
-	l.Infof("signTerm ip:%s", realIp)
-	code, err := l.svcCtx.SignTermsLimiter.TakeCtx(r.Context(), realIp)
-	if err != nil {
-		l.Error("signTerm limiter error")
-	}
-	switch code {
-	case limit.OverQuota:
-		return nil, fmt.Errorf("too many requests")
-	}
-	//save db
 	if err := l.svcCtx.Database.WithContext(l.ctx).Save(&term).Error; err != nil {
 		return nil, err
 	}

@@ -131,14 +131,20 @@ service cuniBTCReward {
 	@handler Apy
 	post /apy (ApyReq) returns ([]ApyResp)
 
-	@handler SignTerms
-	post /signTerms (SignTermsReq) returns (SignTermsResp)
-
 	@handler SignTermsItem
 	post /signTerms/item (SignTermsItemReq) returns (SignTermsItemResp)
 
 	@handler SignTermsStatus
 	post /signTerms/status (SignTermsStatusReq) returns (SignTermsStatusResp)
+}
+
+@server (
+	prefix:     /api/v1
+	middleware: SignTermsLimiter
+)
+service cuniBTCReward {
+	@handler SignTerms
+	post /signTerms (SignTermsReq) returns (SignTermsResp)
 }
 
 @server (
