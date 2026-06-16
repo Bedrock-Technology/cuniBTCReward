@@ -58,7 +58,7 @@ WHERE e.chain_id = ? AND e.deleted_at IS NULL AND s.symbol = ?`
 	// Rebuild sql and args inline to avoid template complexity
 	var rows []epochRow
 	sql := `WITH strat AS (
-    SELECT vault, airdrop, symbol FROM strategies
+    SELECT vault, airdrop, delay_redeem_router, symbol FROM strategies
     WHERE chain_id = ? AND deleted_at IS NULL AND symbol = ?
 ),
 epoch_addr_sum AS (
@@ -67,8 +67,9 @@ epoch_addr_sum AS (
     FROM epoches e
     JOIN strat s ON s.vault = e.contract
     LEFT JOIN evm_transactions t
-        ON t.chain_id = e.chain_id AND t.contract = e.contract
+        ON t.chain_id = e.chain_id
         AND t.deleted_at IS NULL
+        AND (t.contract = s.vault OR t.contract = s.delay_redeem_router)
         AND t.block_timestamp <= e.lockup_start
     WHERE e.chain_id = ? AND e.deleted_at IS NULL
     GROUP BY e.contract, e.epoch, t.address
