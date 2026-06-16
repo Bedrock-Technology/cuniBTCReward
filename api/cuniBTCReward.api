@@ -170,7 +170,8 @@ service cuniBTCReward {
 }
 
 @server (
-	tags: "console"
+	prefix: /api/v1
+	tags:   "console"
 )
 service cuniBTCReward {
 	@handler EpochList
