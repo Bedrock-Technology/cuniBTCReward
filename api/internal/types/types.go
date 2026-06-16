@@ -25,6 +25,24 @@ type CurrentEpochResp struct {
 	Symbol                string `json:"symbol,example=cuniBTC"`                   //symbol of the stratedy
 }
 
+type EpochInfo struct {
+	CurrentEpochResp
+	Participants int64  `json:"participants,example=1234"`
+	Tvl          string `json:"tvl,example=120.13"`
+	Rewards      string `json:"rewards,example=1112.34"`
+	Claimed      string `json:"claimed,example=123.45"`
+}
+
+type EpochListReq struct {
+	ListReq
+	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+}
+
+type EpochListResp struct {
+	PageData
+	Data []EpochInfo `json:"data"`
+}
+
 type ListReq struct {
 	Limit  int `json:"limit,example=10,default=10,range=[1:50]"` //Number of items per page
 	Offset int `json:"offset,example=0,default=0"`               //Data offset

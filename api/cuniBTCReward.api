@@ -23,10 +23,6 @@ type (
 	CurrentEpochReq {
 		Symbol string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy, empty indicate all
 	}
-	// CurrentEpochResp {
-	//  Symbol string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy
-	//  Epoch  uint64 `json:"epoch,example=10"` //epoch number
-	// }
 	CurrentEpochResp {
 		Epoch                 uint64 `json:"epoch,example=10"` //epoch number
 		OperateStartTimestamp uint64 `json:"operateStartTimestamp,example=1777349793"` // operate startTime
@@ -112,6 +108,24 @@ type (
 	}
 )
 
+type (
+	EpochListReq {
+		ListReq
+		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	}
+	EpochListResp {
+		PageData
+		Data []EpochInfo `json:"data"`
+	}
+	EpochInfo {
+		CurrentEpochResp
+		Participants int64  `json:"participants,example=1234"`
+		Tvl          string `json:"tvl,example=120.13"`
+		Rewards      string `json:"rewards,example=1112.34"`
+		Claimed      string `json:"claimed,example=123.45"`
+	}
+)
+
 @server (
 	prefix: /api/v1
 )
@@ -153,5 +167,13 @@ service cuniBTCReward {
 service cuniBTCReward {
 	@handler ping
 	get /ping returns (string)
+}
+
+@server (
+	tags: "console"
+)
+service cuniBTCReward {
+	@handler EpochList
+	post /console/epochList (EpochListReq) returns (EpochListResp)
 }
 

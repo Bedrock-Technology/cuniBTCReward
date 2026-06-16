@@ -470,6 +470,57 @@
         }
       }
     },
+    "/console/epochList": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "EpochList",
+        "operationId": "epochList",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EpochListReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/EpochListResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/ping": {
       "get": {
         "produces": [
@@ -588,6 +639,131 @@
           "description": "symbol of the stratedy",
           "type": "string",
           "example": "cuniBTC"
+        }
+      }
+    },
+    "EpochInfo": {
+      "type": "object",
+      "required": [
+        "epoch",
+        "operateStartTimestamp",
+        "operatePeriod",
+        "lockupStartTimestamp",
+        "lockupPeriod",
+        "symbol",
+        "participants",
+        "tvl",
+        "rewards",
+        "claimed"
+      ],
+      "properties": {
+        "claimed": {
+          "type": "string",
+          "example": "123.45"
+        },
+        "epoch": {
+          "description": "epoch number",
+          "type": "integer",
+          "example": 10
+        },
+        "lockupPeriod": {
+          "description": "lockup period in second",
+          "type": "integer",
+          "example": 86400
+        },
+        "lockupStartTimestamp": {
+          "description": "lockup startTime",
+          "type": "integer",
+          "example": 1777649793
+        },
+        "operatePeriod": {
+          "description": "operate period in second",
+          "type": "integer",
+          "example": 86400
+        },
+        "operateStartTimestamp": {
+          "description": "operate startTime",
+          "type": "integer",
+          "example": 1777349793
+        },
+        "participants": {
+          "type": "integer",
+          "example": 1234
+        },
+        "rewards": {
+          "type": "string",
+          "example": "1112.34"
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        },
+        "tvl": {
+          "type": "string",
+          "example": "120.13"
+        }
+      }
+    },
+    "EpochListReq": {
+      "type": "object",
+      "required": [
+        "limit",
+        "offset",
+        "symbol"
+      ],
+      "properties": {
+        "limit": {
+          "description": "Number of items per page",
+          "type": "integer",
+          "default": 10,
+          "maximum": 50,
+          "minimum": 1,
+          "example": 10
+        },
+        "offset": {
+          "description": "Data offset",
+          "type": "integer",
+          "default": 0,
+          "example": 0
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "EpochListResp": {
+      "type": "object",
+      "required": [
+        "total",
+        "limit",
+        "offset",
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EpochInfo"
+          }
+        },
+        "limit": {
+          "description": "Number of items per page, consistent with the request",
+          "type": "integer",
+          "example": 10
+        },
+        "offset": {
+          "description": "Data offset, consistent with the request",
+          "type": "integer",
+          "default": 0,
+          "example": 0
+        },
+        "total": {
+          "description": "Total data count",
+          "type": "integer",
+          "example": 1234
         }
       }
     },
@@ -873,7 +1049,7 @@
       }
     }
   },
-  "x-date": "2026-06-08 10:03:40",
+  "x-date": "2026-06-16 17:09:33",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
