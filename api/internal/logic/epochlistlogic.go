@@ -61,20 +61,24 @@ WHERE e.chain_id = ? AND e.deleted_at IS NULL AND s.symbol = ?`
     SELECT vault, airdrop, symbol FROM strategies
     WHERE chain_id = ? AND deleted_at IS NULL AND symbol = ?
 ),
-epoch_tx_agg AS (
-    SELECT e.contract, e.epoch,
-           COUNT(DISTINCT t.address) AS participants,
-           COALESCE(SUM(t.amount), 0) AS tvl
+epoch_addr_sum AS (
+    SELECT e.contract, e.epoch, t.address,
+           COALESCE(SUM(t.amount), 0) AS total_amount
     FROM epoches e
     JOIN strat s ON s.vault = e.contract
     LEFT JOIN evm_transactions t
         ON t.chain_id = e.chain_id AND t.contract = e.contract
         AND t.deleted_at IS NULL
-		-- AND t.amount > 0
-        -- AND t.block_timestamp >= e.operate_start
         AND t.block_timestamp <= e.lockup_start
     WHERE e.chain_id = ? AND e.deleted_at IS NULL
-    GROUP BY e.contract, e.epoch
+    GROUP BY e.contract, e.epoch, t.address
+),
+epoch_tx_agg AS (
+    SELECT contract, epoch,
+           COUNT(DISTINCT CASE WHEN total_amount != 0 THEN address END) AS participants,
+           COALESCE(SUM(total_amount), 0) AS tvl
+    FROM epoch_addr_sum
+    GROUP BY contract, epoch
 ),
 airdrop_agg AS (
     SELECT s.vault,
@@ -97,11 +101,11 @@ JOIN strat s ON s.vault = e.contract
 LEFT JOIN epoch_tx_agg eta ON eta.contract = e.contract AND eta.epoch = e.epoch
 LEFT JOIN airdrop_agg aa ON aa.vault = e.contract AND aa.epoch = e.epoch
 WHERE e.chain_id = ? AND e.deleted_at IS NULL
--- ORDER BY e.epoch DESC
+ORDER BY e.epoch DESC
 LIMIT ? OFFSET ?`
 	args := []interface{}{
 		chainID, req.Symbol, // strat CTE
-		chainID, // epoch_tx_agg
+		chainID, // epoch_addr_sum
 		chainID, // airdrop_agg
 		chainID, // main query
 		req.Limit, req.Offset,
