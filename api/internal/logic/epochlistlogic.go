@@ -69,9 +69,10 @@ epoch_tx_agg AS (
     JOIN strat s ON s.vault = e.contract
     LEFT JOIN evm_transactions t
         ON t.chain_id = e.chain_id AND t.contract = e.contract
-        AND t.deleted_at IS NULL AND t.amount > 0
-        AND t.block_timestamp >= e.operate_start
-        AND t.block_timestamp < e.lockup_start
+        AND t.deleted_at IS NULL
+		-- AND t.amount > 0
+        -- AND t.block_timestamp >= e.operate_start
+        AND t.block_timestamp <= e.lockup_start
     WHERE e.chain_id = ? AND e.deleted_at IS NULL
     GROUP BY e.contract, e.epoch
 ),
@@ -96,7 +97,7 @@ JOIN strat s ON s.vault = e.contract
 LEFT JOIN epoch_tx_agg eta ON eta.contract = e.contract AND eta.epoch = e.epoch
 LEFT JOIN airdrop_agg aa ON aa.vault = e.contract AND aa.epoch = e.epoch
 WHERE e.chain_id = ? AND e.deleted_at IS NULL
-ORDER BY e.epoch DESC
+-- ORDER BY e.epoch DESC
 LIMIT ? OFFSET ?`
 	args := []interface{}{
 		chainID, req.Symbol, // strat CTE
