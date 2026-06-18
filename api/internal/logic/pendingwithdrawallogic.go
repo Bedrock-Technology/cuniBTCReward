@@ -46,6 +46,7 @@ WHERE drr.chain_id = ? AND drr.claimed = 0 AND drr.deleted_at IS NULL
 
 	resp = &types.PendingWithdrawalResp{
 		Requested: requested.Mul(decimal.New(1, -8)).String(),
+		Symbol:    req.Symbol,
 	}
 	return
 }

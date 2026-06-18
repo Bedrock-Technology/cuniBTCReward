@@ -184,6 +184,57 @@
         }
       }
     },
+    "/api/v1/console/queue": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "Queue",
+        "operationId": "queue",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QueuedReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/QueuedResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/currentEpoch": {
       "post": {
         "consumes": [
@@ -883,12 +934,18 @@
     "PendingWithdrawalResp": {
       "type": "object",
       "required": [
+        "symbol",
         "requested"
       ],
       "properties": {
         "requested": {
           "type": "string",
           "example": "12.34"
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
         }
       }
     },
@@ -949,6 +1006,41 @@
           "description": "amount withdrawing human readable",
           "type": "string",
           "example": "0.023243"
+        }
+      }
+    },
+    "QueuedReq": {
+      "type": "object",
+      "required": [
+        "symbol"
+      ],
+      "properties": {
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "QueuedResp": {
+      "type": "object",
+      "required": [
+        "amount",
+        "symbol",
+        "deposits"
+      ],
+      "properties": {
+        "amount": {
+          "type": "string",
+          "example": "12.34"
+        },
+        "deposits": {
+          "type": "integer"
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
         }
       }
     },
@@ -1125,7 +1217,7 @@
       }
     }
   },
-  "x-date": "2026-06-18 13:53:39",
+  "x-date": "2026-06-18 14:12:16",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

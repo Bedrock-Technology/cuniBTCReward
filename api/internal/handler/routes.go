@@ -89,6 +89,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/console/pendingWithdrawal",
 				Handler: PendingWithdrawalHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/console/queue",
+				Handler: QueueHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)

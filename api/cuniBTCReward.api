@@ -131,7 +131,19 @@ type (
 		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 	}
 	PendingWithdrawalResp {
+		Symbol    string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 		Requested string `json:"requested,example=12.34"`
+	}
+)
+
+type (
+	QueuedReq {
+		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	}
+	QueuedResp {
+		Amount   string `json:"amount,example=12.34"`
+		Symbol   string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+		Deposits int64  `json:"deposits"`
 	}
 )
 
@@ -188,5 +200,8 @@ service cuniBTCReward {
 
 	@handler PendingWithdrawal
 	post /console/pendingWithdrawal (PendingWithdrawalReq) returns (PendingWithdrawalResp)
+
+	@handler Queue
+	post /console/queue (QueuedReq) returns (QueuedResp)
 }
 

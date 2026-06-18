@@ -59,6 +59,7 @@ type PendingWithdrawalReq struct {
 }
 
 type PendingWithdrawalResp struct {
+	Symbol    string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 	Requested string `json:"requested,example=12.34"`
 }
 
@@ -74,6 +75,16 @@ type PositionOverviewResp struct {
 	Queued      string `json:"queued,example=0.023243"`      //amount queued human readable
 	Withdrawing string `json:"withdrawing,example=0.023243"` //amount withdrawing human readable
 	Rewards     string `json:"rewards,example=0.023243"`     //amount withdrawing human readable
+}
+
+type QueuedReq struct {
+	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+}
+
+type QueuedResp struct {
+	Amount   string `json:"amount,example=12.34"`
+	Symbol   string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	Deposits int64  `json:"deposits"`
 }
 
 type SignTermsItemReq struct {
