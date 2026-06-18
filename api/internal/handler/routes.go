@@ -84,6 +84,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/console/epochList",
 				Handler: EpochListHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/console/pendingWithdrawal",
+				Handler: PendingWithdrawalHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)

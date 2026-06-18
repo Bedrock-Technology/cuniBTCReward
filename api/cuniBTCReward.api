@@ -126,6 +126,15 @@ type (
 	}
 )
 
+type (
+	PendingWithdrawalReq {
+		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	}
+	PendingWithdrawalResp {
+		Requested string `json:"requested,example=12.34"`
+	}
+)
+
 @server (
 	prefix: /api/v1
 )
@@ -176,5 +185,8 @@ service cuniBTCReward {
 service cuniBTCReward {
 	@handler EpochList
 	post /console/epochList (EpochListReq) returns (EpochListResp)
+
+	@handler PendingWithdrawal
+	post /console/pendingWithdrawal (PendingWithdrawalReq) returns (PendingWithdrawalResp)
 }
 

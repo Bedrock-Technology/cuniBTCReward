@@ -54,6 +54,14 @@ type PageData struct {
 	Offset int   `json:"offset,example=0,default=0"` //Data offset, consistent with the request
 }
 
+type PendingWithdrawalReq struct {
+	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+}
+
+type PendingWithdrawalResp struct {
+	Requested string `json:"requested,example=12.34"`
+}
+
 type PositionOverviewReq struct {
 	Symbol  string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy, empty indicate all
 	Address string `json:"address,example=0x8cb37518330014E027396E3ED59A231FBe3B011A"`

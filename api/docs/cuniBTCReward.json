@@ -133,6 +133,57 @@
         }
       }
     },
+    "/api/v1/console/pendingWithdrawal": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "PendingWithdrawal",
+        "operationId": "pendingWithdrawal",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PendingWithdrawalReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/PendingWithdrawalResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/currentEpoch": {
       "post": {
         "consumes": [
@@ -816,6 +867,31 @@
         }
       }
     },
+    "PendingWithdrawalReq": {
+      "type": "object",
+      "required": [
+        "symbol"
+      ],
+      "properties": {
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "PendingWithdrawalResp": {
+      "type": "object",
+      "required": [
+        "requested"
+      ],
+      "properties": {
+        "requested": {
+          "type": "string",
+          "example": "12.34"
+        }
+      }
+    },
     "PositionOverviewReq": {
       "type": "object",
       "required": [
@@ -1049,7 +1125,7 @@
       }
     }
   },
-  "x-date": "2026-06-16 17:13:00",
+  "x-date": "2026-06-18 13:53:39",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
