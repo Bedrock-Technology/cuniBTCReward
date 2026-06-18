@@ -44,7 +44,7 @@ func (l *QueueLogic) Queue(req *types.QueuedReq) (resp *types.QueuedResp, err er
     LIMIT 1
 )
 SELECT COALESCE(SUM(t.amount), 0) AS amount,
-       COUNT(*) AS deposits
+       COUNT(t.address) AS deposits
 FROM latest_epoch le
 LEFT JOIN evm_transactions t
     ON t.chain_id = ? AND t.contract = le.contract
