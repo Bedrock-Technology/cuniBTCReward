@@ -81,7 +81,11 @@ func (l *ApyLogic) Apy(req *types.ApyReq) (resp []types.ApyResp, err error) {
 			Apy:    0,
 		}
 		if v.Shares.IsZero() {
-			apyResp.Apy = 0.05
+			if v.Symbol == "suniBTC" {
+				apyResp.Apy = 0.018
+			} else {
+				apyResp.Apy = 0.05
+			}
 			resp = append(resp, apyResp)
 			continue
 		}
