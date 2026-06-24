@@ -460,6 +460,26 @@ func (s *Scanner) processCuniBTCVaultLog(log types.Log, chainInfo config.ChainIn
 			logx.Errorf("parse period set event failed, err: %v", err)
 			return nil
 		}
+		epochs := []model.Epoch{}
+		err = tx.Model(&model.Epoch{}).Where("contract = ?", log.Address).Where("chain_id = ?", chainInfo.Client.ChainId).Order("epoch DESC").Limit(1).Find(&epochs).Error
+		if err != nil {
+			logx.Errorf("PeriodSet get latest epoch error: %v", err)
+			return err
+		}
+		if len(epochs) != 1 {
+			return fmt.Errorf("PeriodSet get latest epoch len=0")
+		}
+		epoch := epochs[0]
+		epoch.StartGenesis = periodSetEvent.Start.Uint64()
+		epoch.OperateStart = periodSetEvent.Start.Uint64()
+		epoch.OperatePeriod = periodSetEvent.OperatePeriod.Uint64()
+		epoch.LockupStart = epoch.OperateStart + epoch.OperatePeriod
+		epoch.LockupPeriod = periodSetEvent.LockupPeriod.Uint64()
+		err = tx.Save(&epoch).Error
+		if err != nil {
+			logx.Errorf("PeriodSet save error: %v", err)
+			return err
+		}
 		slack.SendTo(s.config.NotifySlack, fmt.Sprintf("[%s] Period updated for vault: %s, operate period: %d, lockup period: %d", s.config.Name,
 			log.Address.String(), periodSetEvent.OperatePeriod, periodSetEvent.LockupPeriod))
 	}
