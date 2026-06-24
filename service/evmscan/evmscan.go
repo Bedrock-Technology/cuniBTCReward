@@ -461,7 +461,7 @@ func (s *Scanner) processCuniBTCVaultLog(log types.Log, chainInfo config.ChainIn
 			return nil
 		}
 		epochs := []model.Epoch{}
-		err = tx.Model(&model.Epoch{}).Where("contract = ?", log.Address).Where("chain_id = ?", chainInfo.Client.ChainId).Order("epoch DESC").Limit(1).Find(&epochs).Error
+		err = tx.Model(&model.Epoch{}).Where("contract = ?", log.Address.String()).Where("chain_id = ?", chainInfo.Client.ChainId).Order("epoch DESC").Limit(1).Find(&epochs).Error
 		if err != nil {
 			logx.Errorf("PeriodSet get latest epoch error: %v", err)
 			return err

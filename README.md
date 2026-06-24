@@ -5,3 +5,5 @@
 ```bash
 ./cuniBTCReward airdrop create --config ./config-hoodi.yaml -c 560048 -r 0x449CDE7a1d3d9f6338d3FC065F88f7FddbB2a5F5 -f airdrop-560048-0x449CDE7a1d3d9f6338d3FC065F88f7FddbB2a5F5-0.csv -e 0 -d true
 ```
+## symbotic api
+https://app.symbiotic.fi/api/v3/account/0xb8b0aed0a1ce913183665b71bd9653fe378f2230
