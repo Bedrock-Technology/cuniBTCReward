@@ -81,6 +81,14 @@ epoch_tx_agg AS (
     FROM epoch_addr_sum
     GROUP BY contract, epoch
 ),
+epoch_unclaimed AS (
+    SELECT s.vault AS contract,
+           COALESCE(SUM(drr.amount), 0) AS unclaimed_redeem
+    FROM delay_redeem_records drr
+    JOIN strat s ON s.delay_redeem_router = drr.contract
+    WHERE drr.chain_id = ? AND drr.claimed = 0 AND drr.deleted_at IS NULL
+    GROUP BY s.vault
+),
 airdrop_agg AS (
     SELECT s.vault,
            a.epoch,
@@ -94,12 +102,13 @@ airdrop_agg AS (
 SELECT e.epoch, e.operate_start, e.operate_period,
        e.lockup_start, e.lockup_period, s.symbol,
        COALESCE(eta.participants, 0) AS participants,
-       COALESCE(eta.tvl, 0) AS tvl,
+       COALESCE(eta.tvl, 0) + COALESCE(u.unclaimed_redeem, 0) AS tvl,
        COALESCE(aa.rewards, 0) AS rewards,
        COALESCE(aa.claimed, 0) AS claimed
 FROM epoches e
 JOIN strat s ON s.vault = e.contract
 LEFT JOIN epoch_tx_agg eta ON eta.contract = e.contract AND eta.epoch = e.epoch
+LEFT JOIN epoch_unclaimed u ON u.contract = e.contract
 LEFT JOIN airdrop_agg aa ON aa.vault = e.contract AND aa.epoch = e.epoch
 WHERE e.chain_id = ? AND e.deleted_at IS NULL
 ORDER BY e.epoch DESC
@@ -107,6 +116,7 @@ LIMIT ? OFFSET ?`
 	args := []interface{}{
 		chainID, req.Symbol, // strat CTE
 		chainID, // epoch_addr_sum
+		chainID, // epoch_unclaimed
 		chainID, // airdrop_agg
 		chainID, // main query
 		req.Limit, req.Offset,
