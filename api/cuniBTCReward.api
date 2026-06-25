@@ -147,6 +147,17 @@ type (
 	}
 )
 
+type (
+	ActiveUsersReq {
+		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	}
+	ActiveUsersResp {
+		SignedUsers  int64  `json:"signedUsers,example=123"`
+		Symbol       string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+		Participants int64  `json:"participants,example=1234"`
+	}
+)
+
 @server (
 	prefix: /api/v1
 )
@@ -203,5 +214,8 @@ service cuniBTCReward {
 
 	@handler Queue
 	post /console/queue (QueuedReq) returns (QueuedResp)
+
+	@handler ActiveUsers
+	post /console/activeUsers (ActiveUsersReq) returns (ActiveUsersResp)
 }
 

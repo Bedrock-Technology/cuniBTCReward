@@ -3,6 +3,16 @@
 
 package types
 
+type ActiveUsersReq struct {
+	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+}
+
+type ActiveUsersResp struct {
+	SignedUsers  int64  `json:"signedUsers,example=123"`
+	Symbol       string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	Participants int64  `json:"participants,example=1234"`
+}
+
 type ApyReq struct {
 	Symbol string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy, empty indicate all
 }

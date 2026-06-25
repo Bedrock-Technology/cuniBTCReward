@@ -82,6 +82,57 @@
         }
       }
     },
+    "/api/v1/console/activeUsers": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "ActiveUsers",
+        "operationId": "activeUsers",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ActiveUsersReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ActiveUsersResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/console/epochList": {
       "post": {
         "consumes": [
@@ -663,6 +714,42 @@
     }
   },
   "definitions": {
+    "ActiveUsersReq": {
+      "type": "object",
+      "required": [
+        "symbol"
+      ],
+      "properties": {
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "ActiveUsersResp": {
+      "type": "object",
+      "required": [
+        "signedUsers",
+        "symbol",
+        "participants"
+      ],
+      "properties": {
+        "participants": {
+          "type": "integer",
+          "example": 1234
+        },
+        "signedUsers": {
+          "type": "integer",
+          "example": 123
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
     "ApyReq": {
       "type": "object",
       "properties": {
@@ -1217,7 +1304,7 @@
       }
     }
   },
-  "x-date": "2026-06-18 14:12:16",
+  "x-date": "2026-06-25 15:55:53",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
