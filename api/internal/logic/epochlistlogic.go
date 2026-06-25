@@ -83,7 +83,7 @@ epoch_tx_agg AS (
 ),
 epoch_unclaimed AS (
     SELECT s.vault AS contract,
-           COALESCE(SUM(drr.amount), 0) AS unclaimed_redeem
+           COALESCE(SUM(drr.amount + drr.fee), 0) AS unclaimed_redeem
     FROM delay_redeem_records drr
     JOIN strat s ON s.delay_redeem_router = drr.contract
     WHERE drr.chain_id = ? AND drr.claimed = 0 AND drr.deleted_at IS NULL
