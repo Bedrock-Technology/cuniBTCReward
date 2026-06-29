@@ -67,6 +67,10 @@ func (l *SignTermsStatusLogic) SignTermsStatus(req *types.SignTermsStatusReq) (r
 	if statementMd5Str != symbolStatementMd5 {
 		return nil, fmt.Errorf("statement not equal")
 	}
+	if item.Signature == "" {
+		resp.Signed = true
+		return
+	}
 
 	_, err = message.VerifyEIP191(item.Signature)
 	if err != nil {
