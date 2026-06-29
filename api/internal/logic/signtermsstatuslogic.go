@@ -56,6 +56,11 @@ func (l *SignTermsStatusLogic) SignTermsStatus(req *types.SignTermsStatusReq) (r
 		return resp, nil
 	}
 	item := signTerms[0]
+	// hack not support SAFE sign
+	if item.Signature == "" {
+		resp.Signed = true
+		return
+	}
 	//check
 	message, err := siwe.ParseMessage(item.Message)
 	if err != nil {
@@ -66,10 +71,6 @@ func (l *SignTermsStatusLogic) SignTermsStatus(req *types.SignTermsStatusReq) (r
 	statementMd5Str := hex.EncodeToString(statementMd5[:])
 	if statementMd5Str != symbolStatementMd5 {
 		return nil, fmt.Errorf("statement not equal")
-	}
-	if item.Signature == "" {
-		resp.Signed = true
-		return
 	}
 
 	_, err = message.VerifyEIP191(item.Signature)
