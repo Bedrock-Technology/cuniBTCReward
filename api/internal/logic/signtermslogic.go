@@ -8,6 +8,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"math/big"
 	"net/http"
 	"strings"
 
@@ -19,6 +20,8 @@ import (
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/math"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/spruceid/siwe-go"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -72,9 +75,10 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 	}
 
 	if contract {
-		messageHash := fmt.Sprintf("0x%x", accounts.TextHash([]byte(req.Message)))
+		messageHash := accounts.TextHash([]byte(req.Message))
+		safeHash := GetSafeMessageHash(common.HexToAddress(message.GetAddress().String()), big.NewInt(1), messageHash)
 		safeResp, err1 := httpc.Do(context.Background(),
-			http.MethodGet, fmt.Sprintf("https://api.safe.global/tx-service/eth/api/v1/messages/%s", messageHash), nil)
+			http.MethodGet, fmt.Sprintf("https://api.safe.global/tx-service/eth/api/v1/messages/%s", safeHash), nil)
 		if err1 != nil {
 			logx.Errorf("get safe error")
 			return
@@ -85,7 +89,7 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 			return nil, fmt.Errorf("not found in safe")
 		}
 		//safe wallet is 1/1
-		valid, _ := VerifySafeSignature(l.svcCtx.Config.EvmHost, message.GetAddress().String(), messageHash, req.Signature)
+		valid, _ := VerifySafeSignature(l.svcCtx.Config.EvmHost, message.GetAddress().String(), fmt.Sprintf("0x%x", messageHash), req.Signature)
 		//save into db
 		term := model.SignTerms{
 			Address:     message.GetAddress().String(),
@@ -93,7 +97,7 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 			TermHash:    statementMd5Str,
 			Message:     req.Message,
 			Signature:   req.Signature,
-			MessageHash: fmt.Sprintf("0x%x", messageHash),
+			MessageHash: fmt.Sprintf("0x%x", safeHash),
 		}
 		if valid {
 			term.Valid = true
@@ -221,4 +225,31 @@ func IsContract(rpcHost string, addressHex string) (bool, error) {
 	}
 
 	return len(bytecode) > 0, nil
+}
+func GetSafeMessageHash(safeAddress common.Address, chainID *big.Int, messageHash []byte) []byte {
+	domainTypeHash := crypto.Keccak256([]byte("EIP712Domain(uint256 chainId,address verifyingContract)"))
+
+	domainData := make([]byte, 0, 96) // 32*3 bytes
+	domainData = append(domainData, domainTypeHash...)
+	domainData = append(domainData, math.U256Bytes(chainID)...)
+	domainData = append(domainData, common.LeftPadBytes(safeAddress.Bytes(), 32)...)
+
+	domainSeparator := crypto.Keccak256(domainData)
+
+	safeMsgTypeHash := crypto.Keccak256([]byte("SafeMessage(bytes message)"))
+
+	msgValueHash := crypto.Keccak256(messageHash)
+
+	structData := make([]byte, 0, 64) // 32*2 bytes
+	structData = append(structData, safeMsgTypeHash...)
+	structData = append(structData, msgValueHash...)
+
+	structHash := crypto.Keccak256(structData)
+
+	finalData := make([]byte, 0, 66) // 2 + 32 + 32 bytes
+	finalData = append(finalData, []byte{0x19, 0x01}...)
+	finalData = append(finalData, domainSeparator...)
+	finalData = append(finalData, structHash...)
+
+	return crypto.Keccak256(finalData)
 }

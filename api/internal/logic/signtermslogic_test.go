@@ -7,7 +7,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/spruceid/siwe-go"
 )
@@ -108,32 +107,4 @@ func TestVerify6(t *testing.T) {
 
 func HashSafeMessageString(message string) []byte {
 	return accounts.TextHash([]byte(message))
-}
-
-func GetSafeMessageHash(safeAddress common.Address, chainID *big.Int, messageHash []byte) []byte {
-	domainTypeHash := crypto.Keccak256([]byte("EIP712Domain(uint256 chainId,address verifyingContract)"))
-
-	domainData := make([]byte, 0, 96) // 32*3 bytes
-	domainData = append(domainData, domainTypeHash...)
-	domainData = append(domainData, math.U256Bytes(chainID)...)
-	domainData = append(domainData, common.LeftPadBytes(safeAddress.Bytes(), 32)...)
-
-	domainSeparator := crypto.Keccak256(domainData)
-
-	safeMsgTypeHash := crypto.Keccak256([]byte("SafeMessage(bytes message)"))
-
-	msgValueHash := crypto.Keccak256(messageHash)
-
-	structData := make([]byte, 0, 64) // 32*2 bytes
-	structData = append(structData, safeMsgTypeHash...)
-	structData = append(structData, msgValueHash...)
-
-	structHash := crypto.Keccak256(structData)
-
-	finalData := make([]byte, 0, 66) // 2 + 32 + 32 bytes
-	finalData = append(finalData, []byte{0x19, 0x01}...)
-	finalData = append(finalData, domainSeparator...)
-	finalData = append(finalData, structHash...)
-
-	return crypto.Keccak256(finalData)
 }
