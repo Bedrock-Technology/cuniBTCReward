@@ -76,7 +76,7 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 
 	if contract {
 		messageHash := accounts.TextHash([]byte(req.Message))
-		safeHash := GetSafeMessageHash(common.HexToAddress(message.GetAddress().String()), big.NewInt(1), messageHash)
+		safeHash := fmt.Sprintf("0x%x", GetSafeMessageHash(common.HexToAddress(message.GetAddress().String()), big.NewInt(1), messageHash))
 		safeResp, err1 := httpc.Do(context.Background(),
 			http.MethodGet, fmt.Sprintf("https://api.safe.global/tx-service/eth/api/v1/messages/%s", safeHash), nil)
 		if err1 != nil {
@@ -97,11 +97,12 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 			TermHash:    statementMd5Str,
 			Message:     req.Message,
 			Signature:   req.Signature,
-			MessageHash: fmt.Sprintf("0x%x", safeHash),
+			MessageHash: safeHash,
 		}
 		if valid {
 			term.Valid = true
 		}
+		l.Infof("safe intot db")
 		if err := l.svcCtx.Database.WithContext(l.ctx).Clauses(clause.OnConflict{
 			Columns: []clause.Column{{Name: "address"}, {Name: "symbol"}, {Name: "term_hash"}},
 			DoUpdates: clause.Assignments(map[string]interface{}{
@@ -129,12 +130,11 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 		if err := l.svcCtx.Database.WithContext(l.ctx).Save(&term).Error; err != nil {
 			return nil, err
 		}
-
-		resp = &types.SignTermsResp{
-			Address:  message.GetAddress().String(),
-			TermsMd5: statementMd5Str,
-			Symbol:   req.Symbol,
-		}
+	}
+	resp = &types.SignTermsResp{
+		Address:  message.GetAddress().String(),
+		TermsMd5: statementMd5Str,
+		Symbol:   req.Symbol,
 	}
 	return
 }
