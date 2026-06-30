@@ -5,15 +5,11 @@ package logic
 
 import (
 	"context"
-	"crypto/md5"
-	"encoding/hex"
-	"fmt"
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
 	"cuniBTCReward/model"
 
-	"github.com/spruceid/siwe-go"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -56,27 +52,7 @@ func (l *SignTermsStatusLogic) SignTermsStatus(req *types.SignTermsStatusReq) (r
 		return resp, nil
 	}
 	item := signTerms[0]
-	// hack not support SAFE sign
-	if item.Signature == "" {
-		resp.Signed = true
-		return
-	}
-	//check
-	message, err := siwe.ParseMessage(item.Message)
-	if err != nil {
-		return
-	}
-
-	statementMd5 := md5.Sum([]byte(*message.GetStatement()))
-	statementMd5Str := hex.EncodeToString(statementMd5[:])
-	if statementMd5Str != symbolStatementMd5 {
-		return nil, fmt.Errorf("statement not equal")
-	}
-
-	_, err = message.VerifyEIP191(item.Signature)
-	if err != nil {
-		return
-	}
-	resp.Signed = true
+	resp.MessageHash = item.MessageHash
+	resp.Signed = item.Valid
 	return
 }

@@ -17,6 +17,7 @@ type Config struct {
 	PriceCronSpec  string          `json:",default=@every 30m"`
 	CoinGecoKey    string          `json:""`
 	Terms          []Term          `json:""`
+	EvmHost        string          `json:""`
 }
 
 type Term struct {

@@ -8,13 +8,23 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"net/http"
+	"strings"
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
 	"cuniBTCReward/model"
 
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/spruceid/siwe-go"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/rest/httpc"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type SignTermsLogic struct {
@@ -32,7 +42,6 @@ func NewSignTermsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignTer
 }
 
 func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTermsResp, err error) {
-	// todo: add your logic here and delete this line
 	message, err := siwe.ParseMessage(req.Message)
 	if err != nil {
 		return
@@ -57,27 +66,159 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 		return nil, fmt.Errorf("statement not equal")
 	}
 
-	_, err = message.VerifyEIP191(req.Signature)
+	contract, err := IsContract(l.svcCtx.Config.EvmHost, message.GetAddress().String())
 	if err != nil {
-		return
+		l.Errorf("isContract error:", err)
 	}
 
-	//save into db
-	term := model.SignTerms{
-		Address:   message.GetAddress().String(),
-		Symbol:    req.Symbol,
-		TermHash:  statementMd5Str,
-		Message:   req.Message,
-		Signature: req.Signature,
-	}
-	if err := l.svcCtx.Database.WithContext(l.ctx).Save(&term).Error; err != nil {
-		return nil, err
-	}
+	if contract {
+		safeResp, err1 := httpc.Do(context.Background(),
+			http.MethodGet, fmt.Sprintf("https://api.safe.global/tx-service/eth/api/v1/messages/%s", message.GetAddress().String()), nil)
+		if err1 != nil {
+			logx.Errorf("get safe error")
+			return
+		}
+		defer safeResp.Body.Close()
+		if safeResp.StatusCode != http.StatusOK {
+			logx.Errorf("not found in safe, status: %d", safeResp.StatusCode)
+			return nil, fmt.Errorf("not found in safe")
+		}
+		//safe wallet is 1/1
+		messageHash := accounts.TextHash([]byte(req.Message))
+		valid, _ := VerifySafeSignature(l.svcCtx.Config.EvmHost, message.GetAddress().String(), fmt.Sprintf("0x%x", messageHash), req.Signature)
+		//save into db
+		term := model.SignTerms{
+			Address:     message.GetAddress().String(),
+			Symbol:      req.Symbol,
+			TermHash:    statementMd5Str,
+			Message:     req.Message,
+			Signature:   req.Signature,
+			MessageHash: fmt.Sprintf("0x%x", messageHash),
+		}
+		if valid {
+			term.Valid = true
+		}
+		if err := l.svcCtx.Database.WithContext(l.ctx).Clauses(clause.OnConflict{
+			Columns: []clause.Column{{Name: "address"}, {Name: "symbol"}, {Name: "term_hash"}},
+			DoUpdates: clause.Assignments(map[string]interface{}{
+				"message_hash": term.MessageHash,
+				"updated_at":   gorm.Expr("NOW()"),
+			}),
+		}).Create(&term).Error; err != nil {
+			return nil, err
+		}
+	} else {
+		_, err = message.VerifyEIP191(req.Signature)
+		if err != nil {
+			return
+		}
 
-	resp = &types.SignTermsResp{
-		Address:  message.GetAddress().String(),
-		TermsMd5: statementMd5Str,
-		Symbol:   req.Symbol,
+		//save into db
+		term := model.SignTerms{
+			Address:   message.GetAddress().String(),
+			Symbol:    req.Symbol,
+			TermHash:  statementMd5Str,
+			Message:   req.Message,
+			Signature: req.Signature,
+			Valid:     true,
+		}
+		if err := l.svcCtx.Database.WithContext(l.ctx).Save(&term).Error; err != nil {
+			return nil, err
+		}
+
+		resp = &types.SignTermsResp{
+			Address:  message.GetAddress().String(),
+			TermsMd5: statementMd5Str,
+			Symbol:   req.Symbol,
+		}
 	}
 	return
+}
+
+var EIP1271MagicValue = [4]byte{0x16, 0x26, 0xba, 0x7e}
+
+const EIP1271ABI = `[
+	{
+		"constant": true,
+		"inputs": [
+			{"name": "_hash", "type": "bytes32"},
+			{"name": "_signature", "type": "bytes"}
+		],
+		"name": "isValidSignature",
+		"outputs": [
+			{"name": "magicValue", "type": "bytes4"}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]`
+
+func VerifySafeSignature(rpcURL, safeAddrHex, messageHashHex, signatureHex string) (bool, error) {
+	client, err := ethclient.Dial(rpcURL)
+	if err != nil {
+		return false, fmt.Errorf("failed to connect to RPC: %v", err)
+	}
+	defer client.Close()
+
+	parsedABI, err := abi.JSON(strings.NewReader(EIP1271ABI))
+	if err != nil {
+		return false, fmt.Errorf("failed to parse ABI: %v", err)
+	}
+
+	safeAddress := common.HexToAddress(safeAddrHex)
+
+	msgHashBytes, err := hex.DecodeString(strings.TrimPrefix(messageHashHex, "0x"))
+	if err != nil || len(msgHashBytes) != 32 {
+		return false, fmt.Errorf("invalid message hash format")
+	}
+	var messageHash [32]byte
+	copy(messageHash[:], msgHashBytes)
+
+	signature, err := hex.DecodeString(strings.TrimPrefix(signatureHex, "0x"))
+	if err != nil {
+		return false, fmt.Errorf("invalid signature format")
+	}
+
+	inputData, err := parsedABI.Pack("isValidSignature", messageHash, signature)
+	if err != nil {
+		return false, fmt.Errorf("failed to pack arguments: %v", err)
+	}
+
+	msg := ethereum.CallMsg{
+		To:   &safeAddress,
+		Data: inputData,
+	}
+
+	outputData, err := client.CallContract(context.Background(), msg, nil)
+	if err != nil {
+		return false, fmt.Errorf("contract call failed: %v", err)
+	}
+
+	var magicValue [4]byte
+	err = parsedABI.UnpackIntoInterface(&magicValue, "isValidSignature", outputData)
+	if err != nil {
+		return false, fmt.Errorf("failed to unpack output: %v", err)
+	}
+
+	if magicValue == EIP1271MagicValue {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func IsContract(rpcHost string, addressHex string) (bool, error) {
+	address := common.HexToAddress(addressHex)
+	client, err := ethclient.Dial(rpcHost)
+	if err != nil {
+		return false, err
+	}
+	defer client.Close()
+	bytecode, err := client.CodeAt(context.Background(), address, nil)
+	if err != nil {
+		return false, err
+	}
+
+	return len(bytecode) > 0, nil
 }

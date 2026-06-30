@@ -83,28 +83,16 @@ type (
 )
 
 type (
-	SignTermsItemReq {
-		Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
-		Symbol  string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
-	}
-	SignTermsItemResp {
-		Address   string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
-		Message   string `json:"message,example=SIWE exposes a Message struct which implements EIP-4361" validate:"max=81920"`
-		Symbol    string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
-		Signature string `json:"signature,example=0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c" validate:"max=256"`
-	}
-)
-
-type (
 	SignTermsStatusReq {
 		Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
 		Symbol  string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 	}
 	SignTermsStatusResp {
-		Signed   bool   `json:"signed,example=false|true"`
-		TermsMd5 string `json:"termsMd5,example=5eb63bbbe01eeed093cb22bb8f5acdc3"`
-		Symbol   string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
-		Address  string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+		Signed      bool   `json:"signed,example=false|true"`
+		TermsMd5    string `json:"termsMd5,example=5eb63bbbe01eeed093cb22bb8f5acdc3"`
+		Symbol      string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+		Address     string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+		MessageHash string `json:"messageHash,example=0x0343453"`
 	}
 )
 
@@ -176,9 +164,6 @@ service cuniBTCReward {
 
 	@handler Apy
 	post /apy (ApyReq) returns ([]ApyResp)
-
-	@handler SignTermsItem
-	post /signTerms/item (SignTermsItemReq) returns (SignTermsItemResp)
 
 	@handler SignTermsStatus
 	post /signTerms/status (SignTermsStatusReq) returns (SignTermsStatusResp)

@@ -476,54 +476,6 @@
         }
       }
     },
-    "/api/v1/signTerms/item": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "SignTermsItem",
-        "operationId": "signTermsItem",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/SignTermsItemReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/SignTermsItemResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/signTerms/status": {
       "post": {
         "consumes": [
@@ -1131,52 +1083,6 @@
         }
       }
     },
-    "SignTermsItemReq": {
-      "type": "object",
-      "required": [
-        "address",
-        "symbol"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "SignTermsItemResp": {
-      "type": "object",
-      "required": [
-        "address",
-        "message",
-        "symbol",
-        "signature"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "message": {
-          "type": "string",
-          "example": "SIWE exposes a Message struct which implements EIP-4361"
-        },
-        "signature": {
-          "type": "string",
-          "example": "0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c"
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
     "SignTermsReq": {
       "type": "object",
       "required": [
@@ -1245,12 +1151,17 @@
         "signed",
         "termsMd5",
         "symbol",
-        "address"
+        "address",
+        "messageHash"
       ],
       "properties": {
         "address": {
           "type": "string",
           "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "messageHash": {
+          "type": "string",
+          "example": "0x0343453"
         },
         "signed": {
           "type": "boolean",
@@ -1304,7 +1215,7 @@
       }
     }
   },
-  "x-date": "2026-06-25 15:55:53",
+  "x-date": "2026-06-30 21:45:02",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

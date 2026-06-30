@@ -97,18 +97,6 @@ type QueuedResp struct {
 	Deposits int64  `json:"deposits"`
 }
 
-type SignTermsItemReq struct {
-	Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
-	Symbol  string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
-}
-
-type SignTermsItemResp struct {
-	Address   string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
-	Message   string `json:"message,example=SIWE exposes a Message struct which implements EIP-4361" validate:"max=81920"`
-	Symbol    string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
-	Signature string `json:"signature,example=0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c" validate:"max=256"`
-}
-
 type SignTermsReq struct {
 	Message   string `json:"message,example=SIWE exposes a Message struct which implements EIP-4361" validate:"max=81920"`
 	Signature string `json:"signature,example=0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c" validate:"max=256"`
@@ -127,10 +115,11 @@ type SignTermsStatusReq struct {
 }
 
 type SignTermsStatusResp struct {
-	Signed   bool   `json:"signed,example=false|true"`
-	TermsMd5 string `json:"termsMd5,example=5eb63bbbe01eeed093cb22bb8f5acdc3"`
-	Symbol   string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
-	Address  string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	Signed      bool   `json:"signed,example=false|true"`
+	TermsMd5    string `json:"termsMd5,example=5eb63bbbe01eeed093cb22bb8f5acdc3"`
+	Symbol      string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	Address     string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	MessageHash string `json:"messageHash,example=0x0343453"`
 }
 
 type TotalEarnedReq struct {
