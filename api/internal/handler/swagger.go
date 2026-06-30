@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/swaggest/swgui/v5cdn"
+	"github.com/swaggest/swgui/v5emb"
 	"github.com/zeromicro/go-zero/rest"
 )
 
@@ -20,10 +20,10 @@ func RegisterSwaggerHandlers(server *rest.Server) {
 }
 
 func SwaggerHandler() http.HandlerFunc {
-	swagger := v5cdn.New(
+	swagger := v5emb.New(
 		"cuniBTC",
 		"/docs/cuniBTCReward.json",
-		"",
+		"/api/v1/docs/",
 	)
 	return func(w http.ResponseWriter, r *http.Request) {
 		swagger.ServeHTTP(w, r)
