@@ -23,7 +23,7 @@ func SwaggerHandler() http.HandlerFunc {
 	swagger := v5emb.New(
 		"cuniBTC",
 		"/docs/cuniBTCReward.json",
-		"/api/v1/docs/",
+		"/api/swagger/",
 	)
 	return func(w http.ResponseWriter, r *http.Request) {
 		swagger.ServeHTTP(w, r)
