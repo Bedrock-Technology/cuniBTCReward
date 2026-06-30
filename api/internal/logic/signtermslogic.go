@@ -102,11 +102,11 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 		if valid {
 			term.Valid = true
 		}
-		l.Infof("safe intot db")
 		if err := l.svcCtx.Database.WithContext(l.ctx).Clauses(clause.OnConflict{
 			Columns: []clause.Column{{Name: "address"}, {Name: "symbol"}, {Name: "term_hash"}},
 			DoUpdates: clause.Assignments(map[string]interface{}{
 				"message_hash": term.MessageHash,
+				"valid":        term.Valid,
 				"updated_at":   gorm.Expr("NOW()"),
 			}),
 		}).Create(&term).Error; err != nil {
