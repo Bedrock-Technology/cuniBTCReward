@@ -72,8 +72,9 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 	}
 
 	if contract {
+		messageHash := fmt.Sprintf("0x%x", accounts.TextHash([]byte(req.Message)))
 		safeResp, err1 := httpc.Do(context.Background(),
-			http.MethodGet, fmt.Sprintf("https://api.safe.global/tx-service/eth/api/v1/messages/%s", message.GetAddress().String()), nil)
+			http.MethodGet, fmt.Sprintf("https://api.safe.global/tx-service/eth/api/v1/messages/%s", messageHash), nil)
 		if err1 != nil {
 			logx.Errorf("get safe error")
 			return
@@ -84,8 +85,7 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 			return nil, fmt.Errorf("not found in safe")
 		}
 		//safe wallet is 1/1
-		messageHash := accounts.TextHash([]byte(req.Message))
-		valid, _ := VerifySafeSignature(l.svcCtx.Config.EvmHost, message.GetAddress().String(), fmt.Sprintf("0x%x", messageHash), req.Signature)
+		valid, _ := VerifySafeSignature(l.svcCtx.Config.EvmHost, message.GetAddress().String(), messageHash, req.Signature)
 		//save into db
 		term := model.SignTerms{
 			Address:     message.GetAddress().String(),
