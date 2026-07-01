@@ -77,11 +77,11 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 	if contract {
 		messageHash := accounts.TextHash([]byte(req.Message))
 		safeHash := fmt.Sprintf("0x%x", GetSafeMessageHash(common.HexToAddress(message.GetAddress().String()), big.NewInt(1), messageHash))
-		safeResp, err1 := httpc.Do(context.Background(),
-			http.MethodGet, fmt.Sprintf("https://api.safe.global/tx-service/eth/api/v1/messages/%s", safeHash), nil)
+		safeResp, err1 := httpc.Do(l.ctx, http.MethodGet,
+			fmt.Sprintf("https://api.safe.global/tx-service/eth/api/v1/messages/%s", safeHash), nil)
 		if err1 != nil {
 			logx.Errorf("get safe error")
-			return
+			return nil, err1
 		}
 		defer safeResp.Body.Close()
 		if safeResp.StatusCode != http.StatusOK {
