@@ -125,7 +125,7 @@ func (s *Scanner) ReportSpec() {
 	fmt.Fprint(&reportStr, " api ok")
 	//len of signedTerms
 	var signedTermsCount int64
-	err = s.database.Model(&model.SignTerms{}).Count(&signedTermsCount).Error
+	err = s.database.Model(&model.SignTerms{}).Where("valid = ?", true).Count(&signedTermsCount).Error
 	if err != nil {
 		logx.Errorf("Count signedTerms error: %v", err)
 	}

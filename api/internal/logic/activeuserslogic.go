@@ -73,7 +73,7 @@ epoch_participants AS (
 SELECT
     COALESCE((SELECT participants FROM epoch_participants), 0) AS participants,
     (SELECT COUNT(*) FROM sign_terms
-     WHERE symbol = ? AND term_hash = ? AND deleted_at IS NULL) AS signed_users`
+     WHERE symbol = ? AND valid = 1 AND term_hash = ? AND deleted_at IS NULL) AS signed_users`
 
 	args := []interface{}{
 		chainID, req.Symbol, // strat CTE
