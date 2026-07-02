@@ -4,20 +4,30 @@ import (
 	"context"
 	"cuniBTCReward/api/internal/config"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"sync"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpc"
 )
 
 type BitcoinResp struct {
-	Bitcoin struct {
-		Usd uint64 `json:"usd"`
-	} `json:"universal-btc"`
+	Data []struct {
+		ID    int     `json:"id"`
+		Price float64 `json:"price"`
+	} `json:"data"`
+	Status struct {
+		Timestamp    time.Time `json:"timestamp"`
+		ErrorCode    string    `json:"error_code"`
+		ErrorMessage string    `json:"error_message"`
+		Elapsed      int       `json:"elapsed"`
+		CreditCount  int       `json:"credit_count"`
+	} `json:"status"`
+}
+type Request struct {
+	Ids []int `form:"ids"`
 }
 
 type CoinGeckoUniBTC struct {
@@ -40,13 +50,12 @@ func (c *CoinGeckoUniBTC) GetUniBTCPrice() uint64 {
 }
 
 func (c *CoinGeckoUniBTC) CoinGeckoUniBTCCron() {
-	//bitcoin
-	params := url.Values{}
-	params.Add("vs_currencies", "usd")
-	params.Add("ids", "universal-btc")
-	params.Add("x_cg_demo_api_key", c.config.CoinGecoKey)
+	//uniBTC,ids=36175
+	request := Request{
+		Ids: []int{36175},
+	}
 	resp, err := httpc.Do(context.Background(),
-		http.MethodGet, fmt.Sprintf("https://api.coingecko.com/api/v3/simple/price?%s", params.Encode()), nil)
+		http.MethodGet, "https://pro-api.coinmarketcap.com/public-api/v1/simple/price", request)
 	if err != nil {
 		logx.Errorf("get coin gecko error")
 		return
@@ -70,8 +79,12 @@ func (c *CoinGeckoUniBTC) CoinGeckoUniBTCCron() {
 		logx.Errorf("umarshal err")
 		return
 	}
+	if len(bitcoin.Data) == 0 {
+		logx.Errorf("data len=0")
+		return
+	}
 	c.lock.Lock()
-	c.uniBTCPrice = bitcoin.Bitcoin.Usd
+	c.uniBTCPrice = uint64(bitcoin.Data[0].Price)
 	c.lock.Unlock()
-	logx.Infof("Set uniBTC price:%d", bitcoin.Bitcoin.Usd)
+	logx.Infof("Set uniBTC price:%d", uint64(bitcoin.Data[0].Price))
 }
