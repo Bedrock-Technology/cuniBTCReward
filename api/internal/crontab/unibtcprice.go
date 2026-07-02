@@ -27,7 +27,7 @@ type BitcoinResp struct {
 	} `json:"status"`
 }
 type Request struct {
-	Ids []int `form:"ids"`
+	Ids int `form:"ids"`
 }
 
 type CoinGeckoUniBTC struct {
@@ -52,7 +52,7 @@ func (c *CoinGeckoUniBTC) GetUniBTCPrice() uint64 {
 func (c *CoinGeckoUniBTC) CoinGeckoUniBTCCron() {
 	//uniBTC,ids=36175
 	request := Request{
-		Ids: []int{36175},
+		Ids: 36175,
 	}
 	resp, err := httpc.Do(context.Background(),
 		http.MethodGet, "https://pro-api.coinmarketcap.com/public-api/v1/simple/price", request)
