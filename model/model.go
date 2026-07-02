@@ -109,7 +109,7 @@ type SignTerms struct {
 	Symbol      string `gorm:"size:128;index:t_address_nonce"`
 	TermHash    string `gorm:"size:64;index:t_address_nonce"`
 	Message     string `gorm:"type:longblob"`
-	Signature   string `gorm:"size:255"`
+	Signature   string `gorm:"size:10240"`
 	MessageHash string `gorm:"size:255"`
 	Valid       bool   `gorm:"default:0"`
 }
