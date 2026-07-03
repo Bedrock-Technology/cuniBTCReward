@@ -67,7 +67,7 @@ WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = 
        ar.amount AS rewards,
        ar.queued AS queued,
        ar.claimed,
-       COALESCE(UNIX_TIMESTAMP(ar.claim_at), 0) AS claim_at
+       COALESCE(CAST(UNIX_TIMESTAMP(ar.claim_at) AS UNSIGNED), 0) AS claim_at
 FROM air_drop_records ar
 JOIN strategies s ON s.airdrop = ar.contract AND s.chain_id = ar.chain_id AND s.deleted_at IS NULL
 WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = ?
