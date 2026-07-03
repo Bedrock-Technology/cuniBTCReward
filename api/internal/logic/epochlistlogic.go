@@ -41,6 +41,7 @@ type epochRow struct {
 	Apy           float64         `gorm:"column:apy"`
 	Root          string          `gorm:"column:root"`
 	MerkleRoot    string          `gorm:"column:merkle_root"`
+	RewardToken   string          `gorm:"column:token"`
 }
 
 func (l *EpochListLogic) EpochList(req *types.EpochListReq) (resp *types.EpochListResp, err error) {
@@ -110,7 +111,8 @@ SELECT e.epoch, e.operate_start, e.operate_period,
        COALESCE(aa.claimed, 0) AS claimed,
        COALESCE(ae.apy, 0) AS apy,
        ae.root,
-       ae.merkle_root
+       ae.merkle_root,
+	   ae.token
 FROM epoches e
 JOIN strat s ON s.vault = e.contract
 LEFT JOIN epoch_tx_agg eta ON eta.contract = e.contract AND eta.epoch = e.epoch
@@ -152,6 +154,7 @@ LIMIT ? OFFSET ?`
 			Apy:          r.Apy,
 			Root:         r.Root,
 			MerkleRoot:   r.MerkleRoot,
+			RewardToken:  r.RewardToken,
 		})
 	}
 

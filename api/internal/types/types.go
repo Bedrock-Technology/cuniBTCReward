@@ -35,6 +35,17 @@ type CurrentEpochResp struct {
 	Symbol                string `json:"symbol,example=cuniBTC"`                   //symbol of the stratedy
 }
 
+type DistributeRewardsReq struct {
+	Symbol       string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	Epoch        uint64 `json:"epoch,example=10"`       //epoch number
+	TotalRewards string `json:"totalRewards,example=0.123"`
+}
+
+type DistributeRewardsResp struct {
+	DistributeRewardsReq
+	Participants int64 `json:"participants,example=1234"`
+}
+
 type EpochInfo struct {
 	CurrentEpochResp
 	Participants int64   `json:"participants,example=1234"`
@@ -44,6 +55,7 @@ type EpochInfo struct {
 	Apy          float64 `json:"apy,example=0.12345"`
 	Root         string  `json:"root,example=0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"`
 	MerkleRoot   string  `json:"merkleRoot,example=0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"`
+	RewardToken  string  `json:"rewardToken,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
 }
 
 type EpochListReq struct {

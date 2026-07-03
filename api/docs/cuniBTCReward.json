@@ -133,6 +133,57 @@
         }
       }
     },
+    "/api/v1/console/distributeRewards": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "DistributeRewards",
+        "operationId": "distributeRewards",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DistributeRewardsReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/DistributeRewardsResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/console/epochList": {
       "post": {
         "consumes": [
@@ -834,6 +885,59 @@
         }
       }
     },
+    "DistributeRewardsReq": {
+      "type": "object",
+      "required": [
+        "symbol",
+        "epoch",
+        "totalRewards"
+      ],
+      "properties": {
+        "epoch": {
+          "description": "epoch number",
+          "type": "integer",
+          "example": 10
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        },
+        "totalRewards": {
+          "type": "string",
+          "example": "0.123"
+        }
+      }
+    },
+    "DistributeRewardsResp": {
+      "type": "object",
+      "required": [
+        "symbol",
+        "epoch",
+        "totalRewards",
+        "participants"
+      ],
+      "properties": {
+        "epoch": {
+          "description": "epoch number",
+          "type": "integer",
+          "example": 10
+        },
+        "participants": {
+          "type": "integer",
+          "example": 1234
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        },
+        "totalRewards": {
+          "type": "string",
+          "example": "0.123"
+        }
+      }
+    },
     "EpochInfo": {
       "type": "object",
       "required": [
@@ -849,7 +953,8 @@
         "claimed",
         "apy",
         "root",
-        "merkleRoot"
+        "merkleRoot",
+        "rewardToken"
       ],
       "properties": {
         "apy": {
@@ -892,6 +997,10 @@
         "participants": {
           "type": "integer",
           "example": 1234
+        },
+        "rewardToken": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
         },
         "rewards": {
           "type": "string",
@@ -1422,7 +1531,7 @@
       }
     }
   },
-  "x-date": "2026-07-03 11:17:20",
+  "x-date": "2026-07-03 16:53:46",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

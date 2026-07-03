@@ -114,6 +114,7 @@ type (
 		Apy          float64 `json:"apy,example=0.12345"`
 		Root         string  `json:"root,example=0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"`
 		MerkleRoot   string  `json:"merkleRoot,example=0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"`
+		RewardToken  string  `json:"rewardToken,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
 	}
 )
 
@@ -167,6 +168,18 @@ type (
 		SignedUsers  int64  `json:"signedUsers,example=123"`
 		Symbol       string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 		Participants int64  `json:"participants,example=1234"`
+	}
+)
+
+type (
+	DistributeRewardsReq {
+		Symbol       string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+		Epoch        uint64 `json:"epoch,example=10"` //epoch number
+		TotalRewards string `json:"totalRewards,example=0.123"`
+	}
+	DistributeRewardsResp {
+		DistributeRewardsReq
+		Participants int64 `json:"participants,example=1234"`
 	}
 )
 
@@ -229,5 +242,15 @@ service cuniBTCReward {
 
 	@handler UserActions
 	post /console/userActrions (UserActionsListReq) returns (UserActionListResp)
+}
+
+@server (
+	prefix: /api/v1
+	tags:   "console"
+// jwt:    Auth
+)
+service cuniBTCReward {
+	@handler DistributeRewards
+	post /console/distributeRewards (DistributeRewardsReq) returns (DistributeRewardsResp)
 }
 

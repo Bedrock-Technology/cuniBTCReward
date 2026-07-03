@@ -581,16 +581,10 @@ func (s *Scanner) processAirDropLog(log types.Log, chainInfo config.ChainInfo, e
 			return err
 		}
 		slack.SendTo(s.config.NotifySlack, fmt.Sprintf("[%s] New merkle root submitted for vault: %s, epoch: %d", s.config.Name, log.Address.String(), rootEvent.Epoch.Int64()))
-		return tx.Create(&model.AirDropEpoch{
-			ChainId:   chainInfo.Client.ChainId,
-			Contract:  log.Address.String(),
-			Epoch:     uint64(rootEvent.Epoch.Int64()),
-			Root:      hexutil.Encode(rootEvent.Root[:]),
-			Token:     rootEvent.Token.String(),
-			ValidTime: rootEvent.RewardsValidTime.Uint64(),
-			ActiveAt:  time.Unix(int64(rootEvent.ActivatedAt.Uint64()), 0),
-			Disabled:  false,
-		}).Error
+		return tx.Model(&model.AirDropEpoch{}).Where("chain_id = ? AND contract = ? AND epoch = ?",
+			chainInfo.Client.ChainId, log.Address.String(), uint64(rootEvent.Epoch.Int64())).
+			Updates(map[string]interface{}{"root": hexutil.Encode(rootEvent.Root[:]), "token": rootEvent.Token.String(),
+				"valid_time": rootEvent.RewardsValidTime.Uint64(), "active_at": time.Unix(int64(rootEvent.ActivatedAt.Uint64()), 0)}).Error
 	case "MerkleRootUpdate":
 		rootUpdateEvent, err := airDrop.ParseMerkleRootUpdate(log)
 		if err != nil {

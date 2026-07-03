@@ -18,6 +18,11 @@ type Config struct {
 	CoinGecoKey    string          `json:""`
 	Terms          []Term          `json:""`
 	EvmHost        string          `json:""`
+	Auth           struct {
+		AccessSecret string
+		AccessExpire int64
+	}
+	UniBTC string `json:""`
 }
 
 type Term struct {

@@ -65,8 +65,8 @@ func TestVerify3(t *testing.T) {
 var RPC = ""
 
 func TestVerify4(t *testing.T) {
-	messageStr := "vaults.localhost wants you to sign in with your Ethereum account:\n0x916E4FE9C7b277828815f94f79d9E15dBFD37083\n\nI agree to Bedrock Vault ToS v1.0, https://legal.bedrock.technology/tos-selini-v1\n\nURI: https://vaults.localhost\nVersion: 1\nChain ID: 1\nNonce: 0xa8198f3c\nIssued At: 2026-06-29T10:12:21.185Z"
-	signature := "0x4f34dfef91a97acc7fbfbad0b32e289925ebf0ec9f506b3bbb3e53527154c2162cccda5ad350d8aa9778c2dd9ccb3423408c05aeaf1296442f9d07d8351beee81c"
+	messageStr := "localhost:3000 wants you to sign in with your Ethereum account:\n0x916E4FE9C7b277828815f94f79d9E15dBFD37083\n\nI agree to Bedrock Vault ToS v1.0, https://legal.bedrock.technology/tos-selini-v1\n\nURI: http://localhost:3000\nVersion: 1\nChain ID: 1\nNonce: 0x3fd02540\nIssued At: 2026-07-03T06:36:07.238Z"
+	signature := "0xb9c609a96fdce262684b87ac0d50384c42fdeef6ef3b267aad24bca0cb9e33982fe4c2eda8b68d44b45585fbce7b2eea1f8942bd11cbbb078617e23f18bbb0e21b8d1b86d379826671c4228f3ba9556426a65d4f0e6454e05e6733eb492d2c838d1aba22d1e37465854363021947cf1077b086bc1730560a5bb3f2d73c7e4cb5081b"
 	originalHash := accounts.TextHash([]byte(messageStr))
 	t.Logf("safeHash:0x%x", originalHash)
 	b, err := VerifySafeSignature(RPC, "0x916E4FE9C7b277828815f94f79d9E15dBFD37083", fmt.Sprintf("0x%x", originalHash), signature)
