@@ -68,7 +68,9 @@ WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = 
        ar.amount AS rewards,
        ar.queued AS queued,
        ar.claimed,
-       COALESCE(CAST(UNIX_TIMESTAMP(ar.claim_at) AS UNSIGNED), 0) AS claim_at
+       CASE WHEN ar.claim_at = '1970-01-01 08:00:00.000' THEN 0
+            ELSE COALESCE(CAST(UNIX_TIMESTAMP(ar.claim_at) AS UNSIGNED), 0)
+       END AS claim_at
 FROM air_drop_records ar
 JOIN strategies s ON s.airdrop = ar.contract AND s.chain_id = ar.chain_id AND s.deleted_at IS NULL
 JOIN epoches e ON e.contract = s.vault AND e.chain_id = ar.chain_id AND e.epoch = ar.epoch AND e.deleted_at IS NULL
