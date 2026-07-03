@@ -53,6 +53,7 @@ func (l *UserActionsLogic) UserActions(req *types.UserActionsListReq) (resp *typ
 	countSQL := `SELECT COUNT(*)
 FROM air_drop_records ar
 JOIN strategies s ON s.airdrop = ar.contract AND s.chain_id = ar.chain_id AND s.deleted_at IS NULL
+JOIN epoches e ON e.contract = s.vault AND e.chain_id = ar.chain_id AND e.epoch = ar.epoch AND e.deleted_at IS NULL
 WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = ?`
 	countArgs := []interface{}{chainID, req.Symbol, req.Epoch}
 	if err = l.svcCtx.Database.WithContext(l.ctx).Raw(countSQL, countArgs...).Scan(&total).Error; err != nil {
@@ -60,8 +61,8 @@ WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = 
 	}
 
 	var rows []userActionRow
-	sql := `SELECT ar.epoch, 0 AS operate_start, 0 AS operate_period,
-       0 AS lockup_start, 0 AS lockup_period,
+	sql := `SELECT ar.epoch, e.operate_start, e.operate_period,
+       e.lockup_start, e.lockup_period,
        s.symbol, ar.address,
        ar.shares AS deposited,
        ar.amount AS rewards,
@@ -70,6 +71,7 @@ WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = 
        COALESCE(CAST(UNIX_TIMESTAMP(ar.claim_at) AS UNSIGNED), 0) AS claim_at
 FROM air_drop_records ar
 JOIN strategies s ON s.airdrop = ar.contract AND s.chain_id = ar.chain_id AND s.deleted_at IS NULL
+JOIN epoches e ON e.contract = s.vault AND e.chain_id = ar.chain_id AND e.epoch = ar.epoch AND e.deleted_at IS NULL
 WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = ?
 ORDER BY ar.amount DESC
 LIMIT ? OFFSET ?`
