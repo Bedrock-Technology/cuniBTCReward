@@ -37,10 +37,13 @@ type CurrentEpochResp struct {
 
 type EpochInfo struct {
 	CurrentEpochResp
-	Participants int64  `json:"participants,example=1234"`
-	Tvl          string `json:"tvl,example=120.13"`
-	Rewards      string `json:"rewards,example=1112.34"`
-	Claimed      string `json:"claimed,example=123.45"`
+	Participants int64   `json:"participants,example=1234"`
+	Tvl          string  `json:"tvl,example=120.13"`
+	Rewards      string  `json:"rewards,example=1112.34"`
+	Claimed      string  `json:"claimed,example=123.45"`
+	Apy          float64 `json:"apy,example=0.12345"`
+	Root         string  `json:"root,example=0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"`
+	MerkleRoot   string  `json:"merkleRoot,example=0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"`
 }
 
 type EpochListReq struct {
@@ -130,4 +133,25 @@ type TotalEarnedReq struct {
 type TotalEarnedResp struct {
 	Symbol      string `json:"symbol,example=cuniBTC"`       //symbol of the stratedy
 	TotalEarned string `json:"totalEarned,example=0.023243"` //amount earned human readable
+}
+
+type UserAction struct {
+	CurrentEpochResp
+	Address   string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	Deposited string `json:"deposited,example=120.13"`
+	Rewards   string `json:"rewards,example=0.34"`
+	Queued    string `json:"queued,example=2.34"`
+	ClaimAt   uint64 `json:"claimAt,example=1777349793"`
+	Claimed   bool   `json:"claimed,example=true|false"`
+}
+
+type UserActionListResp struct {
+	PageData
+	Data []UserAction `json:"data"`
+}
+
+type UserActionsListReq struct {
+	ListReq
+	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	Epoch  uint64 `json:"epoch,example=10"`       //epoch number
 }

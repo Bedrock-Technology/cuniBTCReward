@@ -72,6 +72,7 @@ type AirDropRecord struct {
 	Epoch    uint64          `gorm:"default:0;index:t_chainid_address"`
 	Address  string          `gorm:"size:255;index:t_chainid_address"`
 	Shares   decimal.Decimal `gorm:"type:decimal(38);default:0"`
+	Queued   decimal.Decimal `gorm:"type:decimal(38);default:0"`
 	Amount   decimal.Decimal `gorm:"type:decimal(38);default:0"`
 	Claimed  bool            `gorm:"default:false"`
 	ClaimTx  string          `gorm:"size:255"`
@@ -81,14 +82,16 @@ type AirDropRecord struct {
 
 type AirDropEpoch struct {
 	gorm.Model
-	ChainId   uint   `gorm:"not null;default:0;index:t_chainid_epoch,unique"`
-	Contract  string `gorm:"size:255;index:t_chainid_epoch"`
-	Epoch     uint64 `gorm:"default:0;index:t_chainid_epoch"`
-	Token     string `gorm:"size:255;default:''"`
-	Root      string `gorm:"size:255"`
-	ValidTime uint64
-	ActiveAt  time.Time
-	Disabled  bool `gorm:"default:false"`
+	ChainId    uint    `gorm:"not null;default:0;index:t_chainid_epoch,unique"`
+	Contract   string  `gorm:"size:255;index:t_chainid_epoch"`
+	Epoch      uint64  `gorm:"default:0;index:t_chainid_epoch"`
+	Apy        float64 `gorm:"default:0"`
+	Token      string  `gorm:"size:255;default:''"`
+	Root       string  `gorm:"size:255"`
+	MerkleRoot string  `gorm:"size:255"`
+	ValidTime  uint64
+	ActiveAt   time.Time
+	Disabled   bool `gorm:"default:false"`
 }
 
 type Epoch struct {

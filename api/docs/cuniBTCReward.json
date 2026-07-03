@@ -286,6 +286,57 @@
         }
       }
     },
+    "/api/v1/console/userActrions": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "UserActions",
+        "operationId": "userActions",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserActionsListReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/UserActionListResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/currentEpoch": {
       "post": {
         "consumes": [
@@ -795,9 +846,16 @@
         "participants",
         "tvl",
         "rewards",
-        "claimed"
+        "claimed",
+        "apy",
+        "root",
+        "merkleRoot"
       ],
       "properties": {
+        "apy": {
+          "type": "number",
+          "example": 0.12345
+        },
         "claimed": {
           "type": "string",
           "example": "123.45"
@@ -817,6 +875,10 @@
           "type": "integer",
           "example": 1777649793
         },
+        "merkleRoot": {
+          "type": "string",
+          "example": "0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"
+        },
         "operatePeriod": {
           "description": "operate period in second",
           "type": "integer",
@@ -834,6 +896,10 @@
         "rewards": {
           "type": "string",
           "example": "1112.34"
+        },
+        "root": {
+          "type": "string",
+          "example": "0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"
         },
         "symbol": {
           "description": "symbol of the stratedy",
@@ -1213,9 +1279,150 @@
           "example": "0.023243"
         }
       }
+    },
+    "UserAction": {
+      "type": "object",
+      "required": [
+        "epoch",
+        "operateStartTimestamp",
+        "operatePeriod",
+        "lockupStartTimestamp",
+        "lockupPeriod",
+        "symbol",
+        "address",
+        "deposited",
+        "rewards",
+        "queued",
+        "claimAt",
+        "claimed"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "claimAt": {
+          "type": "integer",
+          "example": 1777349793
+        },
+        "claimed": {
+          "type": "boolean",
+          "example": false
+        },
+        "deposited": {
+          "type": "string",
+          "example": "120.13"
+        },
+        "epoch": {
+          "description": "epoch number",
+          "type": "integer",
+          "example": 10
+        },
+        "lockupPeriod": {
+          "description": "lockup period in second",
+          "type": "integer",
+          "example": 86400
+        },
+        "lockupStartTimestamp": {
+          "description": "lockup startTime",
+          "type": "integer",
+          "example": 1777649793
+        },
+        "operatePeriod": {
+          "description": "operate period in second",
+          "type": "integer",
+          "example": 86400
+        },
+        "operateStartTimestamp": {
+          "description": "operate startTime",
+          "type": "integer",
+          "example": 1777349793
+        },
+        "queued": {
+          "type": "string",
+          "example": "2.34"
+        },
+        "rewards": {
+          "type": "string",
+          "example": "0.34"
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "UserActionListResp": {
+      "type": "object",
+      "required": [
+        "total",
+        "limit",
+        "offset",
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserAction"
+          }
+        },
+        "limit": {
+          "description": "Number of items per page, consistent with the request",
+          "type": "integer",
+          "example": 10
+        },
+        "offset": {
+          "description": "Data offset, consistent with the request",
+          "type": "integer",
+          "default": 0,
+          "example": 0
+        },
+        "total": {
+          "description": "Total data count",
+          "type": "integer",
+          "example": 1234
+        }
+      }
+    },
+    "UserActionsListReq": {
+      "type": "object",
+      "required": [
+        "limit",
+        "offset",
+        "symbol",
+        "epoch"
+      ],
+      "properties": {
+        "epoch": {
+          "description": "epoch number",
+          "type": "integer",
+          "example": 10
+        },
+        "limit": {
+          "description": "Number of items per page",
+          "type": "integer",
+          "default": 10,
+          "maximum": 50,
+          "minimum": 1,
+          "example": 10
+        },
+        "offset": {
+          "description": "Data offset",
+          "type": "integer",
+          "default": 0,
+          "example": 0
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
     }
   },
-  "x-date": "2026-06-30 21:45:02",
+  "x-date": "2026-07-03 11:17:20",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

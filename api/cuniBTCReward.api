@@ -107,10 +107,34 @@ type (
 	}
 	EpochInfo {
 		CurrentEpochResp
-		Participants int64  `json:"participants,example=1234"`
-		Tvl          string `json:"tvl,example=120.13"`
-		Rewards      string `json:"rewards,example=1112.34"`
-		Claimed      string `json:"claimed,example=123.45"`
+		Participants int64   `json:"participants,example=1234"`
+		Tvl          string  `json:"tvl,example=120.13"`
+		Rewards      string  `json:"rewards,example=1112.34"`
+		Claimed      string  `json:"claimed,example=123.45"`
+		Apy          float64 `json:"apy,example=0.12345"`
+		Root         string  `json:"root,example=0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"`
+		MerkleRoot   string  `json:"merkleRoot,example=0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"`
+	}
+)
+
+type (
+	UserActionsListReq {
+		ListReq
+		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+		Epoch  uint64 `json:"epoch,example=10"` //epoch number
+	}
+	UserActionListResp {
+		PageData
+		Data []UserAction `json:"data"`
+	}
+	UserAction {
+		CurrentEpochResp
+		Address   string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+		Deposited string `json:"deposited,example=120.13"`
+		Rewards   string `json:"rewards,example=0.34"`
+		Queued    string `json:"queued,example=2.34"`
+		ClaimAt   uint64 `json:"claimAt,example=1777349793"`
+		Claimed   bool   `json:"claimed,example=true|false"`
 	}
 )
 
@@ -202,5 +226,8 @@ service cuniBTCReward {
 
 	@handler ActiveUsers
 	post /console/activeUsers (ActiveUsersReq) returns (ActiveUsersResp)
+
+	@handler UserActions
+	post /console/userActrions (UserActionsListReq) returns (UserActionListResp)
 }
 

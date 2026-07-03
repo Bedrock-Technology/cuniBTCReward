@@ -38,6 +38,9 @@ type epochRow struct {
 	Tvl           decimal.Decimal `gorm:"column:tvl"`
 	Rewards       decimal.Decimal `gorm:"column:rewards"`
 	Claimed       decimal.Decimal `gorm:"column:claimed"`
+	Apy           float64         `gorm:"column:apy"`
+	Root          string          `gorm:"column:root"`
+	MerkleRoot    string          `gorm:"column:merkle_root"`
 }
 
 func (l *EpochListLogic) EpochList(req *types.EpochListReq) (resp *types.EpochListResp, err error) {
@@ -104,12 +107,16 @@ SELECT e.epoch, e.operate_start, e.operate_period,
        COALESCE(eta.participants, 0) AS participants,
        COALESCE(eta.tvl, 0) + COALESCE(u.unclaimed_redeem, 0) AS tvl,
        COALESCE(aa.rewards, 0) AS rewards,
-       COALESCE(aa.claimed, 0) AS claimed
+       COALESCE(aa.claimed, 0) AS claimed,
+       COALESCE(ae.apy, 0) AS apy,
+       ae.root,
+       ae.merkle_root
 FROM epoches e
 JOIN strat s ON s.vault = e.contract
 LEFT JOIN epoch_tx_agg eta ON eta.contract = e.contract AND eta.epoch = e.epoch
 LEFT JOIN epoch_unclaimed u ON u.contract = e.contract
 LEFT JOIN airdrop_agg aa ON aa.vault = e.contract AND aa.epoch = e.epoch
+LEFT JOIN air_drop_epoches ae ON ae.contract = s.airdrop AND ae.epoch = e.epoch AND ae.chain_id = e.chain_id AND ae.deleted_at IS NULL
 WHERE e.chain_id = ? AND e.deleted_at IS NULL
 ORDER BY e.epoch DESC
 LIMIT ? OFFSET ?`
@@ -142,6 +149,9 @@ LIMIT ? OFFSET ?`
 			Tvl:          r.Tvl.Mul(decimal.New(1, -8)).String(),
 			Rewards:      r.Rewards.Mul(decimal.New(1, -8)).String(),
 			Claimed:      r.Claimed.Mul(decimal.New(1, -8)).String(),
+			Apy:          r.Apy,
+			Root:         r.Root,
+			MerkleRoot:   r.MerkleRoot,
 		})
 	}
 

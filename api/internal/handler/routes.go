@@ -94,6 +94,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/console/queue",
 				Handler: QueueHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/console/userActrions",
+				Handler: UserActionsHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)
