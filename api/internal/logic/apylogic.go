@@ -63,7 +63,7 @@ LEFT JOIN air_drop_epoches ae ON ae.contract = s.airdrop AND ae.epoch = le.epoch
 	for _, v := range rows {
 		apyResp := types.ApyResp{
 			Symbol: v.Symbol,
-			Apy:    0,
+			Apy:    v.Apy,
 		}
 		apy := decimal.NewFromFloat(v.Apy)
 		if apy.IsZero() {
