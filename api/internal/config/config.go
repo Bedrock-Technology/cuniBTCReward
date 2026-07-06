@@ -15,7 +15,6 @@ type Config struct {
 	SqlLog         bool            `json:",optional,default=false,inherit"`
 	DefaultChainId int64           `json:""`
 	PriceCronSpec  string          `json:",default=@every 30m"`
-	CoinGecoKey    string          `json:""`
 	Terms          []Term          `json:""`
 	EvmHost        string          `json:""`
 	Auth           struct {

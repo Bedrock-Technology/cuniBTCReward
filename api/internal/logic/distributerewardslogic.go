@@ -160,7 +160,7 @@ HAVING share > 0 OR queue > 0`
 			Root:       "",
 			MerkleRoot: hexutil.Encode(merkleRoot),
 			ValidTime:  0,
-			ActiveAt:   time.Time{},
+			ActiveAt:   time.Now().UTC(),
 			Disabled:   false,
 		}).Error; err != nil {
 			return err
