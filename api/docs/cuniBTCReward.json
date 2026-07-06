@@ -337,7 +337,7 @@
         }
       }
     },
-    "/api/v1/console/userActrions": {
+    "/api/v1/console/userActions": {
       "post": {
         "consumes": [
           "application/json"
@@ -1531,7 +1531,7 @@
       }
     }
   },
-  "x-date": "2026-07-03 16:53:46",
+  "x-date": "2026-07-06 15:40:05",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

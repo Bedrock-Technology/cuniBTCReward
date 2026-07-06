@@ -96,7 +96,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/console/userActrions",
+				Path:    "/console/userActions",
 				Handler: UserActionsHandler(serverCtx),
 			},
 		},

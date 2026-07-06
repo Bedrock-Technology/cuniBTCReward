@@ -241,7 +241,7 @@ service cuniBTCReward {
 	post /console/activeUsers (ActiveUsersReq) returns (ActiveUsersResp)
 
 	@handler UserActions
-	post /console/userActrions (UserActionsListReq) returns (UserActionListResp)
+	post /console/userActions (UserActionsListReq) returns (UserActionListResp)
 }
 
 @server (
