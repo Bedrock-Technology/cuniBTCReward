@@ -83,7 +83,7 @@ epoch_addr_sum AS (
         ON t.chain_id = e.chain_id
         AND t.deleted_at IS NULL
         AND t.contract IN (s.vault, s.delay_redeem_router)
-        AND t.block_timestamp <= e.lockup_start
+        AND t.block_timestamp < e.lockup_start + e.lockup_period
     WHERE e.chain_id = ? AND e.deleted_at IS NULL
     GROUP BY e.contract, e.epoch, t.address
 ),
@@ -103,10 +103,7 @@ epoch_unclaimed AS (
 	JOIN top_epoches te ON te.contract = s.vault
     WHERE drr.chain_id = ? 
       AND drr.deleted_at IS NULL 
-	  AND (
-          drr.claimed = 0 
-          OR drr.claim_at > FROM_UNIXTIME(te.lockup_start + te.lockup_period)
-      )
+	  AND drr.claim_at < FROM_UNIXTIME(te.lockup_start + te.lockup_period)
     GROUP BY te.contract, te.epoch
 ),
 airdrop_agg AS (
