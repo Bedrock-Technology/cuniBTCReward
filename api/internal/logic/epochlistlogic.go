@@ -109,6 +109,7 @@ airdrop_agg AS (
            COALESCE(SUM(CASE WHEN a.claimed = 1 THEN a.amount ELSE 0 END), 0) AS claimed
     FROM air_drop_records a
     JOIN strat s ON s.airdrop = a.contract
+	JOIN top_epoches te ON te.contract = s.vault AND te.epoch = a.epoch
     WHERE a.chain_id = ? AND a.deleted_at IS NULL
     GROUP BY s.vault, a.epoch
 )
