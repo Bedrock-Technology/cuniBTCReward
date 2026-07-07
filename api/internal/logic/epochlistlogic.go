@@ -90,7 +90,7 @@ epoch_addr_sum AS (
 epoch_tx_agg AS (
     SELECT contract, epoch,
            COUNT(DISTINCT CASE WHEN total_amount != 0 THEN address END) AS participants,
-           COALESCE(SUM(total_amount), 0) AS tvl
+           COALESCE(SUM(total_amount), 0) AS tvl_trans
     FROM epoch_addr_sum
     GROUP BY contract, epoch
 ),
@@ -121,7 +121,7 @@ airdrop_agg AS (
 SELECT e.epoch, e.operate_start, e.operate_period,
        e.lockup_start, e.lockup_period, s.symbol,
        COALESCE(eta.participants, 0) AS participants,
-       COALESCE(eta.tvl, 0) + COALESCE(u.unclaimed_redeem, 0) AS tvl,
+       COALESCE(eta.tvl_trans, 0) + COALESCE(u.unclaimed_redeem, 0) AS tvl,
        COALESCE(aa.rewards, 0) AS rewards,
        COALESCE(aa.claimed, 0) AS claimed,
        COALESCE(ae.apy, 0) AS apy,
