@@ -65,6 +65,125 @@ WHERE e.chain_id = ? AND e.deleted_at IS NULL AND s.symbol = ?`
     SELECT vault, airdrop, delay_redeem_router, symbol FROM strategies
     WHERE chain_id = ? AND deleted_at IS NULL AND symbol = ?
 ),
+top_epoches AS (
+    SELECT e.*
+    FROM epoches e
+    JOIN strat s ON s.vault = e.contract
+    WHERE e.chain_id = ?
+      AND e.deleted_at IS NULL
+    ORDER BY e.epoch DESC
+    LIMIT ? OFFSET ?
+),
+epoch_addr_sum AS (
+    SELECT e.contract, e.epoch, t.address,
+           COALESCE(SUM(t.amount), 0) AS total_amount
+    FROM top_epoches e
+    JOIN strat s ON s.vault = e.contract
+    LEFT JOIN evm_transactions t
+        ON t.chain_id = e.chain_id
+        AND t.deleted_at IS NULL
+        AND t.contract IN (s.vault, s.delay_redeem_router)
+        AND t.block_timestamp <= e.lockup_start
+    WHERE e.chain_id = ? AND e.deleted_at IS NULL
+    GROUP BY e.contract, e.epoch, t.address
+),
+epoch_tx_agg AS (
+    SELECT contract, epoch,
+           COUNT(DISTINCT CASE WHEN total_amount != 0 THEN address END) AS participants,
+           COALESCE(SUM(total_amount), 0) AS tvl
+    FROM epoch_addr_sum
+    GROUP BY contract, epoch
+),
+epoch_unclaimed AS (
+    SELECT s.vault AS contract,
+           COALESCE(SUM(drr.amount + drr.fee), 0) AS unclaimed_redeem
+    FROM delay_redeem_records drr
+    JOIN strat s ON s.delay_redeem_router = drr.contract
+    WHERE drr.chain_id = ? AND drr.claimed = 0 AND drr.deleted_at IS NULL
+    GROUP BY s.vault
+),
+airdrop_agg AS (
+    SELECT s.vault,
+           a.epoch,
+           COALESCE(SUM(a.amount), 0) AS rewards,
+           COALESCE(SUM(CASE WHEN a.claimed = 1 THEN a.amount ELSE 0 END), 0) AS claimed
+    FROM air_drop_records a
+    JOIN strat s ON s.airdrop = a.contract
+    WHERE a.chain_id = ? AND a.deleted_at IS NULL
+    GROUP BY s.vault, a.epoch
+)
+SELECT e.epoch, e.operate_start, e.operate_period,
+       e.lockup_start, e.lockup_period, s.symbol,
+       COALESCE(eta.participants, 0) AS participants,
+       COALESCE(eta.tvl, 0) + COALESCE(u.unclaimed_redeem, 0) AS tvl,
+       COALESCE(aa.rewards, 0) AS rewards,
+       COALESCE(aa.claimed, 0) AS claimed,
+       COALESCE(ae.apy, 0) AS apy,
+       ae.root,
+       ae.merkle_root,
+	   ae.token
+FROM top_epoches e
+JOIN strat s ON s.vault = e.contract
+LEFT JOIN epoch_tx_agg eta ON eta.contract = e.contract AND eta.epoch = e.epoch
+LEFT JOIN epoch_unclaimed u ON u.contract = e.contract
+LEFT JOIN airdrop_agg aa ON aa.vault = e.contract AND aa.epoch = e.epoch
+LEFT JOIN air_drop_epoches ae ON ae.contract = s.airdrop AND ae.epoch = e.epoch AND ae.chain_id = e.chain_id AND ae.deleted_at IS NULL
+WHERE e.chain_id = ? AND e.deleted_at IS NULL
+ORDER BY e.epoch DESC
+`
+	args := []interface{}{
+		chainID, req.Symbol, // strat CTE
+		chainID,
+		req.Limit, req.Offset,
+		chainID, // epoch_addr_sum
+		chainID, // epoch_unclaimed
+		chainID, // airdrop_agg
+		chainID, // main query
+		//req.Limit, req.Offset,
+	}
+
+	err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&rows).Error
+	if err != nil {
+		return
+	}
+
+	data := make([]types.EpochInfo, 0, len(rows))
+	for _, r := range rows {
+		data = append(data, types.EpochInfo{
+			CurrentEpochResp: types.CurrentEpochResp{
+				Epoch:                 r.Epoch,
+				OperateStartTimestamp: r.OperateStart,
+				OperatePeriod:         r.OperatePeriod,
+				LockupStartTimestamp:  r.LockupStart,
+				LockupPeriod:          r.LockupPeriod,
+				Symbol:                r.Symbol,
+			},
+			Participants: r.Participants,
+			Tvl:          r.Tvl.Mul(decimal.New(1, -8)).String(),
+			Rewards:      r.Rewards.Mul(decimal.New(1, -8)).String(),
+			Claimed:      r.Claimed.Mul(decimal.New(1, -8)).String(),
+			Apy:          r.Apy,
+			Root:         r.Root,
+			MerkleRoot:   r.MerkleRoot,
+			RewardToken:  r.RewardToken,
+		})
+	}
+
+	resp = &types.EpochListResp{
+		PageData: types.PageData{
+			Total:  total,
+			Limit:  req.Limit,
+			Offset: req.Offset,
+		},
+		Data: data,
+	}
+	return
+}
+
+var heavySql = `WITH strat AS (
+    SELECT vault, airdrop, delay_redeem_router, symbol FROM strategies
+    WHERE chain_id = ? AND deleted_at IS NULL AND symbol = ?
+),
 epoch_addr_sum AS (
     SELECT e.contract, e.epoch, t.address,
            COALESCE(SUM(t.amount), 0) AS total_amount
@@ -122,49 +241,3 @@ LEFT JOIN air_drop_epoches ae ON ae.contract = s.airdrop AND ae.epoch = e.epoch 
 WHERE e.chain_id = ? AND e.deleted_at IS NULL
 ORDER BY e.epoch DESC
 LIMIT ? OFFSET ?`
-	args := []interface{}{
-		chainID, req.Symbol, // strat CTE
-		chainID, // epoch_addr_sum
-		chainID, // epoch_unclaimed
-		chainID, // airdrop_agg
-		chainID, // main query
-		req.Limit, req.Offset,
-	}
-
-	err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&rows).Error
-	if err != nil {
-		return
-	}
-
-	data := make([]types.EpochInfo, 0, len(rows))
-	for _, r := range rows {
-		data = append(data, types.EpochInfo{
-			CurrentEpochResp: types.CurrentEpochResp{
-				Epoch:                 r.Epoch,
-				OperateStartTimestamp: r.OperateStart,
-				OperatePeriod:         r.OperatePeriod,
-				LockupStartTimestamp:  r.LockupStart,
-				LockupPeriod:          r.LockupPeriod,
-				Symbol:                r.Symbol,
-			},
-			Participants: r.Participants,
-			Tvl:          r.Tvl.Mul(decimal.New(1, -8)).String(),
-			Rewards:      r.Rewards.Mul(decimal.New(1, -8)).String(),
-			Claimed:      r.Claimed.Mul(decimal.New(1, -8)).String(),
-			Apy:          r.Apy,
-			Root:         r.Root,
-			MerkleRoot:   r.MerkleRoot,
-			RewardToken:  r.RewardToken,
-		})
-	}
-
-	resp = &types.EpochListResp{
-		PageData: types.PageData{
-			Total:  total,
-			Limit:  req.Limit,
-			Offset: req.Offset,
-		},
-		Data: data,
-	}
-	return
-}
