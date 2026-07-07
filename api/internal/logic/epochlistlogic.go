@@ -103,7 +103,6 @@ epoch_unclaimed AS (
 	JOIN top_epoches te ON te.contract = s.vault
     WHERE drr.chain_id = ? 
       AND drr.deleted_at IS NULL 
-      AND drr.claim_at < (te.lockup_start + te.lockup_period)
 	  AND (
           drr.claimed = 0 
           OR drr.claim_at > FROM_UNIXTIME(te.lockup_start + te.lockup_period)
