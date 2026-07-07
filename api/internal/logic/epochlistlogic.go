@@ -99,8 +99,15 @@ epoch_unclaimed AS (
            COALESCE(SUM(drr.amount + drr.fee), 0) AS unclaimed_redeem
     FROM delay_redeem_records drr
     JOIN strat s ON s.delay_redeem_router = drr.contract
-    WHERE drr.chain_id = ? AND drr.claimed = 0 AND drr.deleted_at IS NULL
-    GROUP BY s.vault
+	JOIN top_epoches te ON te.contract = s.vault
+    WHERE drr.chain_id = ? 
+      AND drr.deleted_at IS NULL 
+      AND drr.claim_at < (te.lockup_start + te.lockup_period)
+	  AND (
+          drr.claimed = 0 
+          OR drr.claim_at > FROM_UNIXTIME(te.lockup_start + te.lockup_period)
+      )
+    GROUP BY te.contract, te.epoch
 ),
 airdrop_agg AS (
     SELECT s.vault,
@@ -126,7 +133,7 @@ SELECT e.epoch, e.operate_start, e.operate_period,
 FROM top_epoches e
 JOIN strat s ON s.vault = e.contract
 LEFT JOIN epoch_tx_agg eta ON eta.contract = e.contract AND eta.epoch = e.epoch
-LEFT JOIN epoch_unclaimed u ON u.contract = e.contract
+LEFT JOIN epoch_unclaimed u ON u.contract = e.contract AND u.epoch = e.epoch
 LEFT JOIN airdrop_agg aa ON aa.vault = e.contract AND aa.epoch = e.epoch
 LEFT JOIN air_drop_epoches ae ON ae.contract = s.airdrop AND ae.epoch = e.epoch AND ae.chain_id = e.chain_id AND ae.deleted_at IS NULL
 WHERE e.chain_id = ? AND e.deleted_at IS NULL
