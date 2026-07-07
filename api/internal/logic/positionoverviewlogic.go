@@ -74,9 +74,10 @@ func (l *PositionOverviewLogic) PositionOverview(req *types.PositionOverviewReq)
 		GROUP BY t.contract
 	),
 	ad_agg AS (
-		SELECT contract, COALESCE(SUM(amount),0) AS rewards
-		FROM air_drop_records
-		WHERE address = ? AND chain_id = ? AND deleted_at IS NULL
+		SELECT ar.contract, COALESCE(SUM(amount),0) AS rewards
+		FROM air_drop_records ar
+		LEFT JOIN air_drop_epoches ae ON ar.contract = ae.contract AND ae.epoch = ar.epoch
+		WHERE address = ? AND ar.chain_id = ? AND ar.deleted_at IS NULL AND claimed = 0 AND NOW() > ae.active_at
 		GROUP BY contract
 	),
 	dr_agg AS (
