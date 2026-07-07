@@ -5,6 +5,7 @@ package logic
 
 import (
 	"context"
+	"time"
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
@@ -38,7 +39,7 @@ type userActionRow struct {
 	Deposited     decimal.Decimal `gorm:"column:deposited"`
 	Rewards       decimal.Decimal `gorm:"column:rewards"`
 	Queued        decimal.Decimal `gorm:"column:queued"`
-	ClaimAt       int64           `gorm:"column:claim_at"`
+	ClaimAt       time.Time       `gorm:"column:claim_at"`
 	Claimed       bool            `gorm:"column:claimed"`
 }
 
@@ -68,7 +69,7 @@ WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = 
        ar.amount AS rewards,
        ar.queued AS queued,
        ar.claimed,
-	   COALESCE(CAST(UNIX_TIMESTAMP(ar.claim_at) AS UNSIGNED), 0) AS claim_at
+	   ar.claim_at
 FROM air_drop_records ar
 JOIN strategies s ON s.airdrop = ar.contract AND s.chain_id = ar.chain_id AND s.deleted_at IS NULL
 JOIN epoches e ON e.contract = s.vault AND e.chain_id = ar.chain_id AND e.epoch = ar.epoch AND e.deleted_at IS NULL
@@ -101,7 +102,7 @@ LIMIT ? OFFSET ?`
 			Deposited: r.Deposited.Mul(decimal.New(1, -8)).String(),
 			Rewards:   r.Rewards.Mul(decimal.New(1, -8)).String(),
 			Queued:    r.Queued.Mul(decimal.New(1, -8)).String(),
-			ClaimAt:   uint64(r.ClaimAt),
+			ClaimAt:   uint64(r.ClaimAt.UTC().Unix()),
 			Claimed:   r.Claimed,
 		})
 	}
