@@ -167,7 +167,7 @@ func GetAirdrop(chainId uint, contract string, epoch uint64, leaves []TreeLeaf, 
 			Shares:   decimalShares,
 			Claimed:  false,
 			ClaimTx:  "",
-			ClaimAt:  time.Unix(0, 0),
+			ClaimAt:  time.Unix(0, 0).UTC(),
 			Proof:    string(proofString),
 		}, nil
 	})
