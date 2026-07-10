@@ -141,6 +141,7 @@ SELECT COUNT(*) from action
 	   SELECT t.address,
 	   e.operate_start, e.operate_period,
        e.lockup_start, e.lockup_period,
+	   s.symbol,
        COALESCE(SUM(CASE WHEN t.block_timestamp < e.lockup_start THEN t.amount ELSE 0 END), 0) AS deposited,
        COALESCE(SUM(CASE WHEN t.block_timestamp >= e.lockup_start AND t.block_timestamp < e.lockup_start + e.lockup_period THEN t.amount ELSE 0 END), 0) AS queued
 FROM evm_transactions t
