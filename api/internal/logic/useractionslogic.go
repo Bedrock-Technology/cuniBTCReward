@@ -62,7 +62,7 @@ WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = 
 		return
 	}
 
-	if total == 0 {
+	if total != 0 {
 		var rows []userActionRow
 		sql := `SELECT ar.epoch, e.operate_start, e.operate_period,
        e.lockup_start, e.lockup_period,
