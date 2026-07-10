@@ -247,7 +247,7 @@ service cuniBTCReward {
 @server (
 	prefix: /api/v1
 	tags:   "console"
-// jwt:    Auth
+	jwt:    Auth
 )
 service cuniBTCReward {
 	@handler DistributeRewards
