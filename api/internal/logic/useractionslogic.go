@@ -148,7 +148,7 @@ LEFT JOIN epoches e ON e.contract = s.vault AND e.chain_id = ? AND e.deleted_at 
 WHERE t.deleted_at IS NULL AND t.amount > 0
 GROUP BY t.address
 HAVING deposited > 0 OR queued > 0
-ORDER BY ar.amount DESC
+ORDER BY deposited DESC
 LIMIT ? OFFSET ?
 `
 		args = append(args, req.Limit, req.Offset)
