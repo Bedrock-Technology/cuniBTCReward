@@ -5,6 +5,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"cuniBTCReward/api/internal/svc"
@@ -61,8 +62,9 @@ WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = 
 		return
 	}
 
-	var rows []userActionRow
-	sql := `SELECT ar.epoch, e.operate_start, e.operate_period,
+	if total == 0 {
+		var rows []userActionRow
+		sql := `SELECT ar.epoch, e.operate_start, e.operate_period,
        e.lockup_start, e.lockup_period,
        s.symbol, ar.address,
        ar.shares AS deposited,
@@ -77,43 +79,94 @@ WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = 
 ORDER BY ar.amount DESC
 LIMIT ? OFFSET ?`
 
-	args := []interface{}{
-		chainID, req.Symbol, req.Epoch,
-		req.Limit, req.Offset,
-	}
+		args := []interface{}{
+			chainID, req.Symbol, req.Epoch,
+			req.Limit, req.Offset,
+		}
 
-	err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&rows).Error
-	if err != nil {
-		return
-	}
+		err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&rows).Error
+		if err != nil {
+			return
+		}
 
-	data := make([]types.UserAction, 0, len(rows))
-	for _, r := range rows {
-		data = append(data, types.UserAction{
-			CurrentEpochResp: types.CurrentEpochResp{
-				Epoch:                 r.Epoch,
-				OperateStartTimestamp: r.OperateStart,
-				OperatePeriod:         r.OperatePeriod,
-				LockupStartTimestamp:  r.LockupStart,
-				LockupPeriod:          r.LockupPeriod,
-				Symbol:                r.Symbol,
+		data := make([]types.UserAction, 0, len(rows))
+		for _, r := range rows {
+			data = append(data, types.UserAction{
+				CurrentEpochResp: types.CurrentEpochResp{
+					Epoch:                 r.Epoch,
+					OperateStartTimestamp: r.OperateStart,
+					OperatePeriod:         r.OperatePeriod,
+					LockupStartTimestamp:  r.LockupStart,
+					LockupPeriod:          r.LockupPeriod,
+					Symbol:                r.Symbol,
+				},
+				Address:   r.Address,
+				Deposited: r.Deposited.Mul(decimal.New(1, -8)).String(),
+				Rewards:   r.Rewards.Mul(decimal.New(1, -8)).String(),
+				Queued:    r.Queued.Mul(decimal.New(1, -8)).String(),
+				ClaimAt:   uint64(r.ClaimAt.UTC().Unix()),
+				Claimed:   r.Claimed,
+			})
+		}
+
+		resp = &types.UserActionListResp{
+			PageData: types.PageData{
+				Total:  total,
+				Limit:  req.Limit,
+				Offset: req.Offset,
 			},
-			Address:   r.Address,
-			Deposited: r.Deposited.Mul(decimal.New(1, -8)).String(),
-			Rewards:   r.Rewards.Mul(decimal.New(1, -8)).String(),
-			Queued:    r.Queued.Mul(decimal.New(1, -8)).String(),
-			ClaimAt:   uint64(r.ClaimAt.UTC().Unix()),
-			Claimed:   r.Claimed,
-		})
-	}
+			Data: data,
+		}
+	} else { //not airdrop
+		var total int64
+		var rows []userActionRow
+		sql := `
+	   SELECT t.address,
+       COALESCE(SUM(CASE WHEN t.block_timestamp < e.lockup_start THEN t.amount ELSE 0 END), 0) AS AS deposited,
+       COALESCE(SUM(CASE WHEN t.block_timestamp >= e.lockup_start AND t.block_timestamp < e.lockup_start + e.lockup_period THEN t.amount ELSE 0 END), 0) AS queued
+FROM evm_transactions t
+LEFT JOIN strategies s ON t.contract = s.vault AND s.chain_id = ? AND s.deleted_at IS NULL AND s.symbol = ?
+LEFT JOIN epoches e ON e.contract = s.vault AND e.chain_id = ? AND e.deleted_at IS NULL AND epoch = ?
+WHERE t.deleted_at IS NULL AND t.amount > 0
+GROUP BY t.address
+HAVING share > 0 OR queue > 0
+`
+		args := []interface{}{
+			chainID, req.Symbol, chainID, req.Epoch,
+		}
+		err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Count(&total).Scan(&rows).Limit(req.Limit).Offset(req.Offset).Error
+		if err != nil {
+			return nil, fmt.Errorf("query evm_transactions failed: %w", err)
+		}
 
-	resp = &types.UserActionListResp{
-		PageData: types.PageData{
-			Total:  total,
-			Limit:  req.Limit,
-			Offset: req.Offset,
-		},
-		Data: data,
+		data := make([]types.UserAction, 0, len(rows))
+		for _, r := range rows {
+			data = append(data, types.UserAction{
+				CurrentEpochResp: types.CurrentEpochResp{
+					Epoch:                 r.Epoch,
+					OperateStartTimestamp: r.OperateStart,
+					OperatePeriod:         r.OperatePeriod,
+					LockupStartTimestamp:  r.LockupStart,
+					LockupPeriod:          r.LockupPeriod,
+					Symbol:                r.Symbol,
+				},
+				Address:   r.Address,
+				Deposited: r.Deposited.Mul(decimal.New(1, -8)).String(),
+				Rewards:   r.Rewards.Mul(decimal.New(1, -8)).String(),
+				Queued:    r.Queued.Mul(decimal.New(1, -8)).String(),
+				ClaimAt:   uint64(r.ClaimAt.UTC().Unix()),
+				Claimed:   r.Claimed,
+			})
+		}
+
+		resp = &types.UserActionListResp{
+			PageData: types.PageData{
+				Total:  total,
+				Limit:  req.Limit,
+				Offset: req.Offset,
+			},
+			Data: data,
+		}
 	}
 	return
 }
