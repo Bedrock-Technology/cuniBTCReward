@@ -129,7 +129,7 @@ LEFT JOIN strategies s ON t.contract = s.vault AND s.chain_id = ? AND s.deleted_
 LEFT JOIN epoches e ON e.contract = s.vault AND e.chain_id = ? AND e.deleted_at IS NULL AND epoch = ?
 WHERE t.deleted_at IS NULL AND t.amount > 0
 GROUP BY t.address
-HAVING share > 0 OR queue > 0
+HAVING deposited > 0 OR queued > 0
 `
 		args := []interface{}{
 			chainID, req.Symbol, chainID, req.Epoch,
