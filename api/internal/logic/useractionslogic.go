@@ -5,7 +5,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"cuniBTCReward/api/internal/svc"
@@ -119,6 +118,25 @@ LIMIT ? OFFSET ?`
 		}
 	} else { //not airdrop
 		var total int64
+		Countsql := `
+With action AS (SELECT t.address,
+         COALESCE(SUM(CASE WHEN t.block_timestamp < e.lockup_start THEN t.amount ELSE 0 END), 0) AS deposited,
+         COALESCE(SUM(CASE WHEN t.block_timestamp >= e.lockup_start AND t.block_timestamp < e.lockup_start + e.lockup_period THEN t.amount ELSE 0 END), 0) AS queued
+FROM evm_transactions t
+LEFT JOIN strategies s ON t.contract = s.vault AND s.chain_id = ? AND s.deleted_at IS NULL AND s.symbol = ?
+LEFT JOIN epoches e ON e.contract = s.vault AND e.chain_id = ? AND e.deleted_at IS NULL AND epoch = ?
+WHERE t.deleted_at IS NULL AND t.amount > 0
+GROUP BY t.address
+HAVING share > 0 OR queue > 0
+)
+SELECT COUNT(*) from action
+`
+		args := []interface{}{
+			chainID, req.Symbol, chainID, req.Epoch,
+		}
+		if err = l.svcCtx.Database.WithContext(l.ctx).Raw(Countsql, args...).Scan(&total).Error; err != nil {
+			return
+		}
 		var rows []userActionRow
 		sql := `
 	   SELECT t.address,
@@ -130,13 +148,13 @@ LEFT JOIN epoches e ON e.contract = s.vault AND e.chain_id = ? AND e.deleted_at 
 WHERE t.deleted_at IS NULL AND t.amount > 0
 GROUP BY t.address
 HAVING deposited > 0 OR queued > 0
+ORDER BY ar.amount DESC
+LIMIT ? OFFSET ?
 `
-		args := []interface{}{
-			chainID, req.Symbol, chainID, req.Epoch,
-		}
-		err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Count(&total).Scan(&rows).Limit(req.Limit).Offset(req.Offset).Error
+		args = append(args, req.Limit, req.Offset)
+		err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&rows).Error
 		if err != nil {
-			return nil, fmt.Errorf("query evm_transactions failed: %w", err)
+			return
 		}
 
 		data := make([]types.UserAction, 0, len(rows))
