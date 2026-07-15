@@ -141,8 +141,14 @@ ORDER BY e.epoch DESC
 			Root:         r.Root,
 			MerkleRoot:   r.MerkleRoot,
 			RewardToken:  r.RewardToken,
-			SubmitAt:     r.SubmitAt.Unix(),
-			SubmitBy:     r.SubmitBy,
+			SubmitAt: func() int64 {
+				if r.SubmitAt.Valid {
+					return r.SubmitAt.Time.Unix()
+				} else {
+					return 0
+				}
+			}(),
+			SubmitBy: r.SubmitBy,
 		}
 	}
 
