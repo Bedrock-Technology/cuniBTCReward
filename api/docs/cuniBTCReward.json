@@ -490,6 +490,57 @@
         }
       }
     },
+    "/api/v1/console/withdrawalList": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "WithdrawalList",
+        "operationId": "withdrawalList",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WithdrawalListReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/WithdrawalListResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/currentEpoch": {
       "post": {
         "consumes": [
@@ -1706,9 +1757,127 @@
           "example": "cuniBTC"
         }
       }
+    },
+    "WithdrawalInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "amount",
+        "epoch",
+        "createAt",
+        "claimAt",
+        "claimed"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "amount": {
+          "type": "string",
+          "example": "0.23"
+        },
+        "claimAt": {
+          "type": "integer",
+          "example": 1777349793
+        },
+        "claimed": {
+          "type": "boolean",
+          "example": false
+        },
+        "createAt": {
+          "type": "integer",
+          "example": 1784105760
+        },
+        "epoch": {
+          "type": "integer",
+          "example": 3
+        }
+      }
+    },
+    "WithdrawalListReq": {
+      "type": "object",
+      "required": [
+        "limit",
+        "offset",
+        "symbol"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "end": {
+          "type": "integer",
+          "example": 1784105760
+        },
+        "epoch": {
+          "type": "string",
+          "example": "10"
+        },
+        "limit": {
+          "description": "Number of items per page",
+          "type": "integer",
+          "default": 10,
+          "maximum": 50,
+          "minimum": 1,
+          "example": 10
+        },
+        "offset": {
+          "description": "Data offset",
+          "type": "integer",
+          "default": 0,
+          "example": 0
+        },
+        "start": {
+          "type": "integer",
+          "example": 1784105760
+        },
+        "status": {
+          "type": "string",
+          "example": "claimed|unClaimed|coolingDown"
+        },
+        "symbol": {
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "WithdrawalListResp": {
+      "type": "object",
+      "required": [
+        "total",
+        "limit",
+        "offset",
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/WithdrawalInfo"
+          }
+        },
+        "limit": {
+          "description": "Number of items per page, consistent with the request",
+          "type": "integer",
+          "example": 10
+        },
+        "offset": {
+          "description": "Data offset, consistent with the request",
+          "type": "integer",
+          "default": 0,
+          "example": 0
+        },
+        "total": {
+          "description": "Total data count",
+          "type": "integer",
+          "example": 1234
+        }
+      }
     }
   },
-  "x-date": "2026-07-15 15:11:39",
+  "x-date": "2026-07-15 18:02:39",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

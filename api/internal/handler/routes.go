@@ -109,6 +109,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/console/withdrawalHistory",
 				Handler: WithdrawalHistoryHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/console/withdrawalList",
+				Handler: WithdrawalListHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)

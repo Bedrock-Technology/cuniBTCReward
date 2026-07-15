@@ -186,3 +186,27 @@ type WithdrawalHistoryResp struct {
 	Requests  int64  `json:"requests,example=4"`
 	Claimed   string `json:"claimed,example=21.2"`
 }
+
+type WithdrawalInfo struct {
+	Address  string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	Amount   string `json:"amount,example=0.23"`
+	Epoch    uint64 `json:"epoch,example=3"`
+	CreateAt int64  `json:"createAt,example=1784105760"`
+	ClaimAt  int64  `json:"claimAt,example=1777349793"`
+	Claimed  bool   `json:"claimed,example=true|false"`
+}
+
+type WithdrawalListReq struct {
+	ListReq
+	Symbol  string `json:"symbol,example=cuniBTC"`
+	Epoch   string `json:"epoch,optional,example=10"`
+	Status  string `json:"status,optional,example=claimed|unClaimed|coolingDown"`
+	Address string `json:"address,optional,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	Start   int64  `json:"start,optional,example=1784105760"`
+	End     int64  `json:"end,optional,example=1784105760"`
+}
+
+type WithdrawalListResp struct {
+	PageData
+	Data []WithdrawalInfo `json:"data"`
+}
