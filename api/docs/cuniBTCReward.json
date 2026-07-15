@@ -82,57 +82,6 @@
         }
       }
     },
-    "/api/v1/console/WithdrawalHistory": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "console"
-        ],
-        "summary": "WithdrawalHistory",
-        "operationId": "withdrawalHistory",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/WithdrawalHistoryReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/WithdrawalHistoryResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/console/activeUsers": {
       "post": {
         "consumes": [
@@ -478,6 +427,57 @@
                 },
                 "data": {
                   "$ref": "#/definitions/UserActionListResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/console/withdrawalHistory": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "WithdrawalHistory",
+        "operationId": "withdrawalHistory",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WithdrawalHistoryReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/WithdrawalHistoryResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -1708,7 +1708,7 @@
       }
     }
   },
-  "x-date": "2026-07-15 15:05:29",
+  "x-date": "2026-07-15 15:11:39",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

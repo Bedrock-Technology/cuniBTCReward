@@ -40,7 +40,7 @@ func (l *WithdrawalHistoryLogic) WithdrawalHistory(req *types.WithdrawalHistoryR
 	sql := `SELECT 
     COALESCE(SUM(drr.amount + drr.fee), 0) AS requested,
     COUNT(*) AS requests,
-    COALESCE(SUM(CASE WHEN drr.claimed = 1 THEN drr.amount + drr.fee ELSE 0 END), 0) AS claimed,
+    COALESCE(SUM(CASE WHEN drr.claimed = 1 THEN drr.amount + drr.fee ELSE 0 END), 0) AS claimed
 FROM delay_redeem_records drr
 JOIN strategies s ON s.delay_redeem_router = drr.contract
     AND s.chain_id = drr.chain_id AND s.deleted_at IS NULL

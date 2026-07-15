@@ -76,11 +76,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/console/WithdrawalHistory",
-				Handler: WithdrawalHistoryHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
 				Path:    "/console/activeUsers",
 				Handler: ActiveUsersHandler(serverCtx),
 			},
@@ -108,6 +103,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/console/userActions",
 				Handler: UserActionsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/console/withdrawalHistory",
+				Handler: WithdrawalHistoryHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),

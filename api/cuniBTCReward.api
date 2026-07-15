@@ -266,7 +266,7 @@ service cuniBTCReward {
 	post /console/userActions (UserActionsListReq) returns (UserActionListResp)
 
 	@handler WithdrawalHistory
-	post /console/WithdrawalHistory (WithdrawalHistoryReq) returns (WithdrawalHistoryResp)
+	post /console/withdrawalHistory (WithdrawalHistoryReq) returns (WithdrawalHistoryResp)
 }
 
 @server (
