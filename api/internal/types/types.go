@@ -56,6 +56,13 @@ type EpochInfo struct {
 	Root         string  `json:"root,example=0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"`
 	MerkleRoot   string  `json:"merkleRoot,example=0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"`
 	RewardToken  string  `json:"rewardToken,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	SubmitAt     int64   `json:"submitAt,example=3234535"`
+	SubmitBy     string  `json:"submitBy,example=abc@abc.com"`
+}
+
+type EpochInfoReq struct {
+	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	Epoch  uint64 `json:"epoch,example=10"`       //epoch number
 }
 
 type EpochListReq struct {

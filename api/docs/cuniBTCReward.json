@@ -184,6 +184,57 @@
         }
       }
     },
+    "/api/v1/console/epochInfo": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "EpochInfo",
+        "operationId": "epochInfo",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EpochInfoReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/EpochInfo"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/console/epochList": {
       "post": {
         "consumes": [
@@ -954,7 +1005,9 @@
         "apy",
         "root",
         "merkleRoot",
-        "rewardToken"
+        "rewardToken",
+        "submitAt",
+        "submitBy"
       ],
       "properties": {
         "apy": {
@@ -1010,6 +1063,14 @@
           "type": "string",
           "example": "0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"
         },
+        "submitAt": {
+          "type": "integer",
+          "example": 3234535
+        },
+        "submitBy": {
+          "type": "string",
+          "example": "abc@abc.com"
+        },
         "symbol": {
           "description": "symbol of the stratedy",
           "type": "string",
@@ -1018,6 +1079,25 @@
         "tvl": {
           "type": "string",
           "example": "120.13"
+        }
+      }
+    },
+    "EpochInfoReq": {
+      "type": "object",
+      "required": [
+        "symbol",
+        "epoch"
+      ],
+      "properties": {
+        "epoch": {
+          "description": "epoch number",
+          "type": "integer",
+          "example": 10
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
         }
       }
     },
@@ -1531,7 +1611,7 @@
       }
     }
   },
-  "x-date": "2026-07-10 11:24:07",
+  "x-date": "2026-07-15 10:29:10",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

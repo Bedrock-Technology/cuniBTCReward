@@ -5,6 +5,9 @@ package logic
 
 import (
 	"context"
+	"database/sql/driver"
+	"fmt"
+	"time"
 
 	"cuniBTCReward/api/internal/svc"
 	"cuniBTCReward/api/internal/types"
@@ -42,6 +45,34 @@ type epochRow struct {
 	Root          string          `gorm:"column:root"`
 	MerkleRoot    string          `gorm:"column:merkle_root"`
 	RewardToken   string          `gorm:"column:token"`
+	SubmitAt      NullTime3       `gorm:"column:created_at"`
+	SubmitBy      string          `gorm:"column:submit_by"`
+}
+
+type NullTime3 struct {
+	time.Time
+}
+
+func (nt *NullTime3) Scan(value interface{}) error {
+	if value == nil {
+		nt.Time = time.Unix(0, 0).UTC()
+		return nil
+	}
+
+	switch v := value.(type) {
+	case time.Time:
+		nt.Time = v
+	default:
+		return fmt.Errorf("cannot scan %T into NullTime3", value)
+	}
+	return nil
+}
+
+func (nt NullTime3) Value() (driver.Value, error) {
+	if nt.IsZero() || nt.Unix() == 0 {
+		return nil, nil
+	}
+	return nt.Time, nil
 }
 
 func (l *EpochListLogic) EpochList(req *types.EpochListReq) (resp *types.EpochListResp, err error) {
@@ -130,7 +161,9 @@ SELECT e.epoch, e.operate_start, e.operate_period,
        COALESCE(ae.apy, 0) AS apy,
        ae.root,
        ae.merkle_root,
-	   ae.token
+	   ae.token,
+	   ae.created_at,
+	   ae.submit_by
 FROM top_epoches e
 JOIN strat s ON s.vault = e.contract
 LEFT JOIN epoch_tx_agg eta ON eta.contract = e.contract AND eta.epoch = e.epoch
@@ -175,6 +208,8 @@ ORDER BY e.epoch DESC
 			Root:         r.Root,
 			MerkleRoot:   r.MerkleRoot,
 			RewardToken:  r.RewardToken,
+			SubmitAt:     r.SubmitAt.Unix(),
+			SubmitBy:     r.SubmitBy,
 		})
 	}
 

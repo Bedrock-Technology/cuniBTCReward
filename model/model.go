@@ -91,7 +91,8 @@ type AirDropEpoch struct {
 	MerkleRoot string  `gorm:"size:255"`
 	ValidTime  uint64
 	ActiveAt   time.Time
-	Disabled   bool `gorm:"default:false"`
+	Disabled   bool   `gorm:"default:false"`
+	SubmitBy   string `gorm:"size:255"`
 }
 
 type Epoch struct {
