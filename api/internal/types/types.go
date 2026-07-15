@@ -93,6 +93,7 @@ type PendingWithdrawalReq struct {
 type PendingWithdrawalResp struct {
 	Symbol    string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 	Requested string `json:"requested,example=12.34"`
+	Requests  int64  `json:"requests,example=4"`
 }
 
 type PositionOverviewReq struct {

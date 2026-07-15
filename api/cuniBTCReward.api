@@ -152,6 +152,7 @@ type (
 	PendingWithdrawalResp {
 		Symbol    string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 		Requested string `json:"requested,example=12.34"`
+		Requests  int64  `json:"requests,example=4"`
 	}
 )
 

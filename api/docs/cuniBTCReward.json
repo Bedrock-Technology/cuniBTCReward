@@ -1229,12 +1229,17 @@
       "type": "object",
       "required": [
         "symbol",
-        "requested"
+        "requested",
+        "requests"
       ],
       "properties": {
         "requested": {
           "type": "string",
           "example": "12.34"
+        },
+        "requests": {
+          "type": "integer",
+          "example": 4
         },
         "symbol": {
           "description": "symbol of the stratedy",
@@ -1611,7 +1616,7 @@
       }
     }
   },
-  "x-date": "2026-07-15 10:29:10",
+  "x-date": "2026-07-15 14:18:26",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

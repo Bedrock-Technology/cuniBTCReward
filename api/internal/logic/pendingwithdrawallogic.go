@@ -27,11 +27,17 @@ func NewPendingWithdrawalLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
+type PendingWithdrawal struct {
+	Requested decimal.Decimal `gorm:"column:requested"`
+	Requests  int64           `gorm:"column:requests"`
+}
+
 func (l *PendingWithdrawalLogic) PendingWithdrawal(req *types.PendingWithdrawalReq) (resp *types.PendingWithdrawalResp, err error) {
 	chainID := l.svcCtx.Config.DefaultChainId
 
-	var requested decimal.Decimal
+	var pw PendingWithdrawal
 	sql := `SELECT COALESCE(SUM(drr.amount + drr.fee), 0) AS requested
+	COUNT(*) AS requests
 FROM delay_redeem_records drr
 JOIN strategies s ON s.delay_redeem_router = drr.contract
     AND s.chain_id = drr.chain_id AND s.deleted_at IS NULL
@@ -39,14 +45,15 @@ WHERE drr.chain_id = ? AND drr.claimed = 0 AND drr.deleted_at IS NULL
     AND s.symbol = ?`
 	args := []interface{}{chainID, req.Symbol}
 
-	err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&requested).Error
+	err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&pw).Error
 	if err != nil {
 		return
 	}
 
 	resp = &types.PendingWithdrawalResp{
-		Requested: requested.Mul(decimal.New(1, -8)).String(),
+		Requested: pw.Requested.Mul(decimal.New(1, -8)).String(),
 		Symbol:    req.Symbol,
+		Requests:  pw.Requests,
 	}
 	return
 }
