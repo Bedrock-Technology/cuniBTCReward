@@ -175,3 +175,14 @@ type UserActionsListReq struct {
 	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 	Epoch  uint64 `json:"epoch,example=10"`       //epoch number
 }
+
+type WithdrawalHistoryReq struct {
+	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+}
+
+type WithdrawalHistoryResp struct {
+	Symbol    string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	Requested string `json:"requested,example=12.34"`
+	Requests  int64  `json:"requests,example=4"`
+	Claimed   string `json:"claimed,example=21.2"`
+}

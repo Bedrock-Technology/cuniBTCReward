@@ -82,6 +82,57 @@
         }
       }
     },
+    "/api/v1/console/WithdrawalHistory": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "WithdrawalHistory",
+        "operationId": "withdrawalHistory",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WithdrawalHistoryReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/WithdrawalHistoryResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/console/activeUsers": {
       "post": {
         "consumes": [
@@ -1614,9 +1665,50 @@
           "example": "cuniBTC"
         }
       }
+    },
+    "WithdrawalHistoryReq": {
+      "type": "object",
+      "required": [
+        "symbol"
+      ],
+      "properties": {
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "WithdrawalHistoryResp": {
+      "type": "object",
+      "required": [
+        "symbol",
+        "requested",
+        "requests",
+        "claimed"
+      ],
+      "properties": {
+        "claimed": {
+          "type": "string",
+          "example": "21.2"
+        },
+        "requested": {
+          "type": "string",
+          "example": "12.34"
+        },
+        "requests": {
+          "type": "integer",
+          "example": 4
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
     }
   },
-  "x-date": "2026-07-15 14:18:26",
+  "x-date": "2026-07-15 15:05:29",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

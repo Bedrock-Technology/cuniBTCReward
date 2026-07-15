@@ -157,6 +157,18 @@ type (
 )
 
 type (
+	WithdrawalHistoryReq {
+		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	}
+	WithdrawalHistoryResp {
+		Symbol    string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+		Requested string `json:"requested,example=12.34"`
+		Requests  int64  `json:"requests,example=4"`
+		Claimed   string `json:"claimed,example=21.2"`
+	}
+)
+
+type (
 	QueuedReq {
 		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 	}
@@ -252,6 +264,9 @@ service cuniBTCReward {
 
 	@handler UserActions
 	post /console/userActions (UserActionsListReq) returns (UserActionListResp)
+
+	@handler WithdrawalHistory
+	post /console/WithdrawalHistory (WithdrawalHistoryReq) returns (WithdrawalHistoryResp)
 }
 
 @server (
