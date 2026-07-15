@@ -36,7 +36,7 @@ func (l *PendingWithdrawalLogic) PendingWithdrawal(req *types.PendingWithdrawalR
 	chainID := l.svcCtx.Config.DefaultChainId
 
 	var pw PendingWithdrawal
-	sql := `SELECT COALESCE(SUM(drr.amount + drr.fee), 0) AS requested
+	sql := `SELECT COALESCE(SUM(drr.amount + drr.fee), 0) AS requested,
 	COUNT(*) AS requests
 FROM delay_redeem_records drr
 JOIN strategies s ON s.delay_redeem_router = drr.contract
