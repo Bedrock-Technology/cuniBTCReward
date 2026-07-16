@@ -58,7 +58,7 @@ epoches AS (
     WHERE e.chain_id = ?
       AND e.deleted_at IS NULL
 )
-SELECT drr.address, COALESCE(drr.amount+drr.fee,0) AS amount, e.epoch, drr.create_block_time AS create_at, drr.claim_at, drr.claimed FROM delay_redeem_records drr INNER JOIN epoches e
+SELECT drr.address AS address, COALESCE(drr.amount+drr.fee,0) AS amount, e.epoch AS epoch, drr.create_block_time AS create_at, drr.claim_at AS claim_at, drr.claimed AS claimed FROM delay_redeem_records drr INNER JOIN epoches e
     ON UNIX_TIMESTAMP(drr.create_block_time) >= e.operate_start AND UNIX_TIMESTAMP(drr.create_block_time) < e.lockup_start + e.lockup_period
 	WHERE drr.deleted_at IS NULL
 	`
@@ -93,7 +93,7 @@ SELECT drr.address, COALESCE(drr.amount+drr.fee,0) AS amount, e.epoch, drr.creat
 		tx.Where("drr.claimed = ?", false).Where("UNIX_TIMESTAMP(drr.create_block_time) < ?", time.Now().UTC().AddDate(0, 0, -7).Unix())
 	default:
 	}
-	tx.Limit(req.Limit).Offset(req.Offset)
+	tx.Order("epoch DES").Limit(req.Limit).Offset(req.Offset)
 
 	rows := []withdrawalRow{}
 
