@@ -100,7 +100,7 @@ func (l *WithdrawalListLogic) WithdrawalList(req *types.WithdrawalListReq) (resp
 		dynamicWhere += " AND drr.claimed = ?"
 		dynamicArgs = append(dynamicArgs, false)
 	case "coolingDown":
-		dynamicWhere += " AND drr.claimed = ? AND UNIX_TIMESTAMP(drr.create_block_time) < ?"
+		dynamicWhere += " AND drr.claimed = ? AND UNIX_TIMESTAMP(drr.create_block_time) >= ?"
 		dynamicArgs = append(dynamicArgs, false, time.Now().UTC().AddDate(0, 0, -7).Unix())
 	}
 
