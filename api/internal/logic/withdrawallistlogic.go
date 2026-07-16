@@ -57,7 +57,7 @@ func (l *WithdrawalListLogic) WithdrawalList(req *types.WithdrawalListReq) (resp
         WHERE e.chain_id = ?
           AND e.deleted_at IS NULL
     )
-    SELECT drr.address AS address, COALESCE(drr.amount+drr.fee,0) AS amount, e.epoch AS epoch, CAST(UNIX_TIMESTAMP(drr.create_block_time) AS UNSIGNED) AS create_at,AST(UNIX_TIMESTAMP(drr.claim_at) AS UNSIGNED) AS claim_at, drr.claimed AS claimed 
+    SELECT drr.address AS address, COALESCE(drr.amount+drr.fee,0) AS amount, e.epoch AS epoch, CAST(UNIX_TIMESTAMP(drr.create_block_time) AS UNSIGNED) AS create_at, CAST(UNIX_TIMESTAMP(drr.claim_at) AS UNSIGNED) AS claim_at, drr.claimed AS claimed 
     FROM delay_redeem_records drr 
     INNER JOIN epoches e ON UNIX_TIMESTAMP(drr.create_block_time) >= e.operate_start 
                         AND UNIX_TIMESTAMP(drr.create_block_time) < e.lockup_start + e.lockup_period
