@@ -44,63 +44,96 @@ func (l *WithdrawalListLogic) WithdrawalList(req *types.WithdrawalListReq) (resp
 	if req.Offset < 0 {
 		req.Offset = 0
 	}
-	// Count total
-	var total int64
-	sql := `
-	WITH strat AS (
-    SELECT vault, airdrop, delay_redeem_router, symbol FROM strategies
-    WHERE chain_id = ? AND deleted_at IS NULL AND symbol = ?
-),
-epoches AS (
-    SELECT e.*
-    FROM epoches e
-    JOIN strat s ON s.vault = e.contract
-    WHERE e.chain_id = ?
-      AND e.deleted_at IS NULL
-)
-SELECT drr.address AS address, COALESCE(drr.amount+drr.fee,0) AS amount, e.epoch AS epoch, drr.create_block_time AS create_at, drr.claim_at AS claim_at, drr.claimed AS claimed FROM delay_redeem_records drr INNER JOIN epoches e
-    ON UNIX_TIMESTAMP(drr.create_block_time) >= e.operate_start AND UNIX_TIMESTAMP(drr.create_block_time) < e.lockup_start + e.lockup_period
-	WHERE drr.deleted_at IS NULL
-	`
+
+	baseSQL := `
+    WITH strat AS (
+        SELECT vault, airdrop, delay_redeem_router, symbol FROM strategies
+        WHERE chain_id = ? AND deleted_at IS NULL AND symbol = ?
+    ),
+    epoches AS (
+        SELECT e.*
+        FROM epoches e
+        JOIN strat s ON s.vault = e.contract
+        WHERE e.chain_id = ?
+          AND e.deleted_at IS NULL
+    )
+    SELECT drr.address AS address, COALESCE(drr.amount+drr.fee,0) AS amount, e.epoch AS epoch, drr.create_block_time AS create_at, drr.claim_at AS claim_at, drr.claimed AS claimed 
+    FROM delay_redeem_records drr 
+    INNER JOIN epoches e ON UNIX_TIMESTAMP(drr.create_block_time) >= e.operate_start 
+                        AND UNIX_TIMESTAMP(drr.create_block_time) < e.lockup_start + e.lockup_period
+    WHERE drr.deleted_at IS NULL`
+
 	args := []interface{}{
 		chainID, req.Symbol, // strat CTE
-		chainID,
+		chainID, // epoches CTE
 	}
-	tx := l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...)
+
+	dynamicWhere := ""
+	var dynamicArgs []interface{}
+
 	if req.Address != "" {
-		tx.Where("drr.address = ?", req.Address)
+		dynamicWhere += " AND drr.address = ?"
+		dynamicArgs = append(dynamicArgs, req.Address)
 	}
 	if req.Start != 0 {
-		tx.Where("UNIX_TIMESTAMP(drr.create_block_time) >= ?", req.Start)
+		dynamicWhere += " AND UNIX_TIMESTAMP(drr.create_block_time) >= ?"
+		dynamicArgs = append(dynamicArgs, req.Start)
 	}
 	if req.End != 0 {
-		tx.Where("UNIX_TIMESTAMP(drr.create_block_time) < ?", req.End)
+		dynamicWhere += " AND UNIX_TIMESTAMP(drr.create_block_time) < ?"
+		dynamicArgs = append(dynamicArgs, req.End)
 	}
 	if req.Epoch != "" {
 		epoch, err := strconv.Atoi(req.Epoch)
 		if err != nil {
 			return nil, fmt.Errorf("epoch not number")
 		}
-		tx.Where("e.epoch = ?", epoch)
+		dynamicWhere += " AND e.epoch = ?"
+		dynamicArgs = append(dynamicArgs, epoch)
 	}
 
 	switch req.Status {
 	case "claimed":
-		tx.Where("drr.claimed = ?", true)
+		dynamicWhere += " AND drr.claimed = ?"
+		dynamicArgs = append(dynamicArgs, true)
 	case "unClaimed":
-		tx.Where("drr.claimed = ?", false)
+		dynamicWhere += " AND drr.claimed = ?"
+		dynamicArgs = append(dynamicArgs, false)
 	case "coolingDown":
-		tx.Where("drr.claimed = ?", false).Where("UNIX_TIMESTAMP(drr.create_block_time) < ?", time.Now().UTC().AddDate(0, 0, -7).Unix())
-	default:
+		dynamicWhere += " AND drr.claimed = ? AND UNIX_TIMESTAMP(drr.create_block_time) < ?"
+		dynamicArgs = append(dynamicArgs, false, time.Now().UTC().AddDate(0, 0, -7).Unix())
 	}
-	tx.Order("epoch DES").Limit(req.Limit).Offset(req.Offset)
+
+	fullArgs := append(args, dynamicArgs...)
+
+	var total int64
+	countSQL := fmt.Sprintf("SELECT COUNT(*) FROM (%s %s) AS temp_count_table", baseSQL, dynamicWhere)
+	err = l.svcCtx.Database.WithContext(l.ctx).Raw(countSQL, fullArgs...).Scan(&total).Error
+	if err != nil {
+		return nil, fmt.Errorf("count failed: %v", err)
+	}
+
+	if total == 0 {
+		return &types.WithdrawalListResp{
+			PageData: types.PageData{
+				Total:  0,
+				Limit:  req.Limit,
+				Offset: req.Offset,
+			},
+			Data: []types.WithdrawalInfo{},
+		}, nil
+	}
 
 	rows := []withdrawalRow{}
+	dataSQL := fmt.Sprintf("%s %s ORDER BY epoch DESC LIMIT ? OFFSET ?", baseSQL, dynamicWhere)
 
-	err = tx.Count(&total).Scan(&rows).Error
+	dataArgs := append(fullArgs, req.Limit, req.Offset)
+
+	err = l.svcCtx.Database.WithContext(l.ctx).Raw(dataSQL, dataArgs...).Scan(&rows).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("scan rows failed: %v", err)
 	}
+
 	data := make([]types.WithdrawalInfo, 0, len(rows))
 	for _, r := range rows {
 		data = append(data, types.WithdrawalInfo{
@@ -112,6 +145,7 @@ SELECT drr.address AS address, COALESCE(drr.amount+drr.fee,0) AS amount, e.epoch
 			Claimed:  r.Claimed,
 		})
 	}
+
 	resp = &types.WithdrawalListResp{
 		PageData: types.PageData{
 			Total:  total,
@@ -120,5 +154,5 @@ SELECT drr.address AS address, COALESCE(drr.amount+drr.fee,0) AS amount, e.epoch
 		},
 		Data: data,
 	}
-	return
+	return resp, nil
 }
