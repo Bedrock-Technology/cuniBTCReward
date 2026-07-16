@@ -147,6 +147,10 @@ HAVING share > 0 OR queue > 0`
 	for i, r := range records {
 		(*airDropRecord)[i].Queued = r.Queue
 	}
+	email, _ := l.ctx.Value("email").(string)
+	if email == "" {
+		return nil, fmt.Errorf("email empty")
+	}
 	err = l.svcCtx.Database.WithContext(l.ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.CreateInBatches(airDropRecord, 500).Error; err != nil {
 			return err
@@ -162,6 +166,7 @@ HAVING share > 0 OR queue > 0`
 			ValidTime:  0,
 			ActiveAt:   time.Now().UTC().AddDate(50, 0, 0), //50 years later
 			Disabled:   false,
+			SubmitBy:   email,
 		}).Error; err != nil {
 			return err
 		}
