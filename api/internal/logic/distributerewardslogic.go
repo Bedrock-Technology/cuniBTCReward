@@ -53,8 +53,8 @@ func (l *DistributeRewardsLogic) DistributeRewards(req *types.DistributeRewardsR
 	if totalRewards.IsZero() {
 		return nil, fmt.Errorf("total rewards is zero for epoch %d, symbol: %s", req.Epoch, req.Symbol)
 	}
-	//0.1
-	if totalRewards.Cmp(decimal.New(1, 7)) >= 0 {
+	//1
+	if totalRewards.Cmp(decimal.New(1, 8)) > 0 {
 		return nil, fmt.Errorf("totalReward too large")
 	}
 	// Step 1: find Strategy by symbol, get vault and airdrop contract addresses
