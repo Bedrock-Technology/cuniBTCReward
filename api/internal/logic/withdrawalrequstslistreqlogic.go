@@ -41,14 +41,14 @@ func (l *WithdrawalRequstsListReqLogic) WithdrawalRequstsListReq(req *types.With
 )
 SELECT COALESCE(drr.amount+drr.fee,0) AS amount, CAST(UNIX_TIMESTAMP(drr.create_block_time) AS UNSIGNED) AS create_at, 
 drr.claimed AS claimed FROM delay_redeem_records drr JOIN strat ON strat.delay_redeem_router = drr.contract 
-WHERE address = ? AND drr.deleted_at IS NULL ORDER BY create_at DESC
+WHERE drr.address = ? AND drr.deleted_at IS NULL ORDER BY create_at DESC
 `
 	args := []interface{}{
 		chainID, req.Symbol, // strat CTE
 		req.Address,
 	}
 	var total int64
-	countSQL := fmt.Sprintf("SELECT COUNT(*) FROM (%s)", baseSQL)
+	countSQL := fmt.Sprintf("SELECT COUNT(*) FROM (%s) AS temp_wrl", baseSQL)
 	err = l.svcCtx.Database.WithContext(l.ctx).Raw(countSQL, args...).Scan(&total).Error
 	if err != nil {
 		return nil, fmt.Errorf("count failed: %v", err)
