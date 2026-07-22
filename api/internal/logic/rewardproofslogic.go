@@ -62,7 +62,7 @@ SELECT active_at, contract, epoch FROM air_drop_epoches WHERE chain_id = ? AND d
 		return
 	}
 	var rows []rewardProofRow
-	proofSql := sql + " SELECT claimed, epoch, proof, amount FROM adr JOIN strat ON strat.airdrop  = adr.contract JOIN ade ON ade.contract = strat.airdrop AND adr.epoch = ade.epoch WHERE active_at < NOW() AND amount > 0 ORDER BY adr.epoch DESC"
+	proofSql := sql + " SELECT claimed, adr.epoch AS epoch, proof, amount FROM adr JOIN strat ON strat.airdrop  = adr.contract JOIN ade ON ade.contract = strat.airdrop AND adr.epoch = ade.epoch WHERE active_at < NOW() AND amount > 0 ORDER BY adr.epoch DESC"
 	err = l.svcCtx.Database.WithContext(l.ctx).Raw(proofSql, args...).Scan(&rows).Error
 	if err != nil {
 		return
