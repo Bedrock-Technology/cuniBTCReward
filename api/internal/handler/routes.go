@@ -49,6 +49,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/uniBTCPrice",
 				Handler: UniBTCPriceHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/withdrawalRequstsList",
+				Handler: WithdrawalRequstsListReqHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)

@@ -929,6 +929,54 @@
         }
       }
     },
+    "/api/v1/withdrawalRequstsList": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "WithdrawalRequstsListReq",
+        "operationId": "withdrawalRequstsListReq",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WithdrawalRequstsListReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/WithdrawalRequstsListResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/ping": {
       "get": {
         "produces": [
@@ -1989,9 +2037,97 @@
           "example": 1234
         }
       }
+    },
+    "WithdrawalRequestsInfo": {
+      "type": "object",
+      "required": [
+        "amount",
+        "createAt",
+        "claimed"
+      ],
+      "properties": {
+        "amount": {
+          "type": "string",
+          "example": "0.23"
+        },
+        "claimed": {
+          "type": "boolean",
+          "example": false
+        },
+        "createAt": {
+          "type": "integer",
+          "example": 1784105760
+        }
+      }
+    },
+    "WithdrawalRequstsListReq": {
+      "type": "object",
+      "required": [
+        "limit",
+        "offset",
+        "symbol",
+        "address"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "limit": {
+          "description": "Number of items per page",
+          "type": "integer",
+          "default": 10,
+          "maximum": 50,
+          "minimum": 1,
+          "example": 10
+        },
+        "offset": {
+          "description": "Data offset",
+          "type": "integer",
+          "default": 0,
+          "example": 0
+        },
+        "symbol": {
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "WithdrawalRequstsListResp": {
+      "type": "object",
+      "required": [
+        "total",
+        "limit",
+        "offset",
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/WithdrawalRequestsInfo"
+          }
+        },
+        "limit": {
+          "description": "Number of items per page, consistent with the request",
+          "type": "integer",
+          "example": 10
+        },
+        "offset": {
+          "description": "Data offset, consistent with the request",
+          "type": "integer",
+          "default": 0,
+          "example": 0
+        },
+        "total": {
+          "description": "Total data count",
+          "type": "integer",
+          "example": 1234
+        }
+      }
     }
   },
-  "x-date": "2026-07-22 11:36:57",
+  "x-date": "2026-07-22 14:34:29",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

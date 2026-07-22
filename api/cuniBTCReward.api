@@ -170,6 +170,23 @@ type (
 )
 
 type (
+	WithdrawalRequstsListReq {
+		ListReq
+		Symbol  string `json:"symbol,example=cuniBTC"`
+		Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	}
+	WithdrawalRequstsListResp {
+		PageData
+		Data []WithdrawalRequestsInfo `json:"data"`
+	}
+	WithdrawalRequestsInfo {
+		Amount   string `json:"amount,example=0.23"`
+		CreateAt int64  `json:"createAt,example=1784105760"`
+		Claimed  bool   `json:"claimed,example=true|false"`
+	}
+)
+
+type (
 	PendingWithdrawalReq {
 		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 	}
@@ -267,6 +284,9 @@ service cuniBTCReward {
 
 	@handler RewardProofs
 	post /rewardProofs (RewardProofsReq) returns (RewardProofsResp)
+
+	@handler WithdrawalRequstsListReq
+	post /withdrawalRequstsList (WithdrawalRequstsListReq) returns (WithdrawalRequstsListResp)
 }
 
 @server (

@@ -227,3 +227,20 @@ type WithdrawalListResp struct {
 	PageData
 	Data []WithdrawalInfo `json:"data"`
 }
+
+type WithdrawalRequestsInfo struct {
+	Amount   string `json:"amount,example=0.23"`
+	CreateAt int64  `json:"createAt,example=1784105760"`
+	Claimed  bool   `json:"claimed,example=true|false"`
+}
+
+type WithdrawalRequstsListReq struct {
+	ListReq
+	Symbol  string `json:"symbol,example=cuniBTC"`
+	Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+}
+
+type WithdrawalRequstsListResp struct {
+	PageData
+	Data []WithdrawalRequestsInfo `json:"data"`
+}
