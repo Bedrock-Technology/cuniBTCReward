@@ -234,13 +234,13 @@ type WithdrawalRequestsInfo struct {
 	Claimed  bool   `json:"claimed,example=true|false"`
 }
 
-type WithdrawalRequstsListReq struct {
+type WithdrawalRequestsListReq struct {
 	ListReq
 	Symbol  string `json:"symbol,example=cuniBTC"`
 	Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
 }
 
-type WithdrawalRequstsListResp struct {
+type WithdrawalRequestsListResp struct {
 	PageData
 	Data []WithdrawalRequestsInfo `json:"data"`
 }

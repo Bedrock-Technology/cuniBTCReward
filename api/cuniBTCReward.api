@@ -170,12 +170,12 @@ type (
 )
 
 type (
-	WithdrawalRequstsListReq {
+	WithdrawalRequestsListReq {
 		ListReq
 		Symbol  string `json:"symbol,example=cuniBTC"`
 		Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
 	}
-	WithdrawalRequstsListResp {
+	WithdrawalRequestsListResp {
 		PageData
 		Data []WithdrawalRequestsInfo `json:"data"`
 	}
@@ -285,8 +285,8 @@ service cuniBTCReward {
 	@handler RewardProofs
 	post /rewardProofs (RewardProofsReq) returns (RewardProofsResp)
 
-	@handler WithdrawalRequstsListReq
-	post /withdrawalRequstsList (WithdrawalRequstsListReq) returns (WithdrawalRequstsListResp)
+	@handler WithdrawalRequestsListReq
+	post /withdrawalRequestsList (WithdrawalRequestsListReq) returns (WithdrawalRequestsListResp)
 }
 
 @server (

@@ -15,21 +15,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type WithdrawalRequstsListReqLogic struct {
+type WithdrawalRequestsListReqLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewWithdrawalRequstsListReqLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WithdrawalRequstsListReqLogic {
-	return &WithdrawalRequstsListReqLogic{
+func NewWithdrawalRequestsListReqLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WithdrawalRequestsListReqLogic {
+	return &WithdrawalRequestsListReqLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *WithdrawalRequstsListReqLogic) WithdrawalRequstsListReq(req *types.WithdrawalRequstsListReq) (resp *types.WithdrawalRequstsListResp, err error) {
+func (l *WithdrawalRequestsListReqLogic) WithdrawalRequestsListReq(req *types.WithdrawalRequestsListReq) (resp *types.WithdrawalRequestsListResp, err error) {
 	chainID := l.svcCtx.Config.DefaultChainId
 	if req.Offset < 0 {
 		req.Offset = 0
@@ -71,7 +71,7 @@ WHERE drr.address = ? AND drr.deleted_at IS NULL ORDER BY create_at DESC
 		}
 	})
 
-	resp = &types.WithdrawalRequstsListResp{
+	resp = &types.WithdrawalRequestsListResp{
 		PageData: types.PageData{
 			Total:  total,
 			Limit:  req.Limit,

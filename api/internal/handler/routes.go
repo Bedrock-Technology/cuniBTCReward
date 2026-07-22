@@ -51,8 +51,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/withdrawalRequstsList",
-				Handler: WithdrawalRequstsListReqHandler(serverCtx),
+				Path:    "/withdrawalRequestsList",
+				Handler: WithdrawalRequestsListReqHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),

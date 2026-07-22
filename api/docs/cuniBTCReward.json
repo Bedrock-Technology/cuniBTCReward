@@ -929,7 +929,7 @@
         }
       }
     },
-    "/api/v1/withdrawalRequstsList": {
+    "/api/v1/withdrawalRequestsList": {
       "post": {
         "consumes": [
           "application/json"
@@ -940,15 +940,15 @@
         "schemes": [
           "https"
         ],
-        "summary": "WithdrawalRequstsListReq",
-        "operationId": "withdrawalRequstsListReq",
+        "summary": "WithdrawalRequestsListReq",
+        "operationId": "withdrawalRequestsListReq",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/WithdrawalRequstsListReq"
+              "$ref": "#/definitions/WithdrawalRequestsListReq"
             }
           }
         ],
@@ -964,7 +964,7 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/WithdrawalRequstsListResp"
+                  "$ref": "#/definitions/WithdrawalRequestsListResp"
                 },
                 "msg": {
                   "description": "business message",
@@ -2060,7 +2060,7 @@
         }
       }
     },
-    "WithdrawalRequstsListReq": {
+    "WithdrawalRequestsListReq": {
       "type": "object",
       "required": [
         "limit",
@@ -2093,7 +2093,7 @@
         }
       }
     },
-    "WithdrawalRequstsListResp": {
+    "WithdrawalRequestsListResp": {
       "type": "object",
       "required": [
         "total",
@@ -2127,7 +2127,7 @@
       }
     }
   },
-  "x-date": "2026-07-22 14:34:29",
+  "x-date": "2026-07-22 17:29:46",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

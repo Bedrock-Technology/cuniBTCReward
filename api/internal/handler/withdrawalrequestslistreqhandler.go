@@ -10,16 +10,16 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func WithdrawalRequstsListReqHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func WithdrawalRequestsListReqHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.WithdrawalRequstsListReq
+		var req types.WithdrawalRequestsListReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.Error(w, err)
 			return
 		}
 
-		l := logic.NewWithdrawalRequstsListReqLogic(r.Context(), svcCtx)
-		resp, err := l.WithdrawalRequstsListReq(&req)
+		l := logic.NewWithdrawalRequestsListReqLogic(r.Context(), svcCtx)
+		resp, err := l.WithdrawalRequestsListReq(&req)
 		response.Response(w, resp, err)
 
 	}
