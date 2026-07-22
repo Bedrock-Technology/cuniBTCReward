@@ -683,6 +683,54 @@
         }
       }
     },
+    "/api/v1/rewardProofs": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "RewardProofs",
+        "operationId": "rewardProofs",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RewardProofsReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/RewardProofsResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/signTerms": {
       "post": {
         "consumes": [
@@ -1445,6 +1493,72 @@
         }
       }
     },
+    "RewardProofs": {
+      "type": "object",
+      "required": [
+        "epoch",
+        "amount",
+        "claimed",
+        "proofs"
+      ],
+      "properties": {
+        "amount": {
+          "type": "string",
+          "example": "12.34"
+        },
+        "claimed": {
+          "type": "boolean",
+          "example": false
+        },
+        "epoch": {
+          "type": "integer",
+          "example": 3
+        },
+        "proofs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "RewardProofsReq": {
+      "type": "object",
+      "required": [
+        "symbol",
+        "address"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "RewardProofsResp": {
+      "type": "object",
+      "required": [
+        "totalAmount",
+        "rewardProofs"
+      ],
+      "properties": {
+        "rewardProofs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RewardProofs"
+          }
+        },
+        "totalAmount": {
+          "type": "string",
+          "example": "1.23"
+        }
+      }
+    },
     "SignTermsReq": {
       "type": "object",
       "required": [
@@ -1877,7 +1991,7 @@
       }
     }
   },
-  "x-date": "2026-07-16 14:53:10",
+  "x-date": "2026-07-22 11:36:57",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

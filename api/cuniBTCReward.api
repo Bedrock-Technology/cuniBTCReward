@@ -215,6 +215,23 @@ type (
 )
 
 type (
+	RewardProofsReq {
+		Symbol  string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+		Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	}
+	RewardProofs {
+		Epoch   uint64   `json:"epoch,example=3"`
+		Amount  string   `json:"amount,example=12.34"`
+		Claimed bool     `json:"claimed,example=true|false"`
+		Proofs  []string `json:"proofs"`
+	}
+	RewardProofsResp {
+		TotalAmount  string         `json:"totalAmount,example=1.23"`
+		RewardProofs []RewardProofs `json:"rewardProofs"`
+	}
+)
+
+type (
 	DistributeRewardsReq {
 		Symbol       string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 		Epoch        uint64 `json:"epoch,example=10"` //epoch number
@@ -247,6 +264,9 @@ service cuniBTCReward {
 
 	@handler SignTermsStatus
 	post /signTerms/status (SignTermsStatusReq) returns (SignTermsStatusResp)
+
+	@handler RewardProofs
+	post /rewardProofs (RewardProofsReq) returns (RewardProofsResp)
 }
 
 @server (

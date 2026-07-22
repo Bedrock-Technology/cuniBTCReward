@@ -31,6 +31,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/rewardProofs",
+				Handler: RewardProofsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/signTerms/status",
 				Handler: SignTermsStatusHandler(serverCtx),
 			},
