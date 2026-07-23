@@ -36,10 +36,11 @@ func NewDistributeRewardsLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 type EpochRecord struct {
-	Address string          `gorm:"column:address"`
-	Share   decimal.Decimal `gorm:"column:share"`
-	Queue   decimal.Decimal `gorm:"column:queue"`
-	Amount  decimal.Decimal `gorm:"column:amount"`
+	Address         string          `gorm:"column:address"`
+	Share           decimal.Decimal `gorm:"column:share"`
+	Queue           decimal.Decimal `gorm:"column:queue"`
+	Amount          decimal.Decimal `gorm:"column:amount"`
+	LastDepositTime int64           `gorm:"column:last_deposit_time"`
 }
 
 func (l *DistributeRewardsLogic) DistributeRewards(req *types.DistributeRewardsReq) (resp *types.DistributeRewardsResp, err error) {
@@ -97,7 +98,8 @@ func (l *DistributeRewardsLogic) DistributeRewards(req *types.DistributeRewardsR
 	var records []EpochRecord
 	sql := `SELECT t.address,
        COALESCE(SUM(CASE WHEN t.block_timestamp < ? THEN t.amount ELSE 0 END), 0) AS share,
-       COALESCE(SUM(CASE WHEN t.block_timestamp >= ? AND t.block_timestamp < ? THEN t.amount ELSE 0 END), 0) AS queue
+       COALESCE(SUM(CASE WHEN t.block_timestamp >= ? AND t.block_timestamp < ? THEN t.amount ELSE 0 END), 0) AS queue,
+	   MAX(CASE WHEN t.contract = s.vault THEN t.block_timestamp END) AS last_deposit_time
 FROM evm_transactions t
 WHERE t.chain_id = ? AND t.contract = ? AND t.deleted_at IS NULL AND t.amount > 0
 GROUP BY t.address
@@ -146,6 +148,7 @@ HAVING share > 0 OR queue > 0`
 	// Step 5: upsert into air_drop_records
 	for i, r := range records {
 		(*airDropRecord)[i].Queued = r.Queue
+		(*airDropRecord)[i].LastDepositTime = r.LastDepositTime
 	}
 	email, _ := l.ctx.Value("email").(string)
 	if email == "" {

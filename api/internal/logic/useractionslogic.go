@@ -74,7 +74,7 @@ FROM air_drop_records ar
 JOIN strategies s ON s.airdrop = ar.contract AND s.chain_id = ar.chain_id AND s.deleted_at IS NULL
 JOIN epoches e ON e.contract = s.vault AND e.chain_id = ar.chain_id AND e.epoch = ar.epoch AND e.deleted_at IS NULL
 WHERE ar.chain_id = ? AND ar.deleted_at IS NULL AND s.symbol = ? AND ar.epoch = ?
-ORDER BY ar.amount DESC
+ORDER BY ar.last_deposit_time DESC
 LIMIT ? OFFSET ?`
 
 		args := []interface{}{
@@ -143,14 +143,15 @@ SELECT COUNT(*) from action
        e.lockup_start, e.lockup_period,
 	   s.symbol,
        COALESCE(SUM(CASE WHEN t.block_timestamp < e.lockup_start THEN t.amount ELSE 0 END), 0) AS deposited,
-       COALESCE(SUM(CASE WHEN t.block_timestamp >= e.lockup_start AND t.block_timestamp < e.lockup_start + e.lockup_period THEN t.amount ELSE 0 END), 0) AS queued
+       COALESCE(SUM(CASE WHEN t.block_timestamp >= e.lockup_start AND t.block_timestamp < e.lockup_start + e.lockup_period THEN t.amount ELSE 0 END), 0) AS queued,
+	   MAX(CASE WHEN t.contract = s.vault THEN t.block_timestamp END) AS last_deposit_time
 FROM evm_transactions t
 LEFT JOIN strategies s ON t.contract = s.vault AND s.chain_id = ? AND s.deleted_at IS NULL AND s.symbol = ?
 LEFT JOIN epoches e ON e.contract = s.vault AND e.chain_id = ? AND e.deleted_at IS NULL AND epoch = ?
 WHERE t.deleted_at IS NULL AND t.amount > 0
 GROUP BY t.address
 HAVING deposited > 0 OR queued > 0
-ORDER BY deposited DESC
+ORDER BY last_deposit_time DESC
 LIMIT ? OFFSET ?
 `
 		args = append(args, req.Limit, req.Offset)

@@ -67,17 +67,18 @@ type Strategy struct {
 
 type AirDropRecord struct {
 	gorm.Model
-	ChainId  uint            `gorm:"not null;default:0;index:t_chainid_address,unique"`
-	Contract string          `gorm:"size:255;index:t_chainid_address"`
-	Epoch    uint64          `gorm:"default:0;index:t_chainid_address"`
-	Address  string          `gorm:"size:255;index:t_chainid_address"`
-	Shares   decimal.Decimal `gorm:"type:decimal(38);default:0"`
-	Queued   decimal.Decimal `gorm:"type:decimal(38);default:0"`
-	Amount   decimal.Decimal `gorm:"type:decimal(38);default:0"`
-	Claimed  bool            `gorm:"default:false"`
-	ClaimTx  string          `gorm:"size:255"`
-	ClaimAt  time.Time       `gorm:"default:0"`
-	Proof    string          `gorm:"type:longblob"`
+	ChainId         uint            `gorm:"not null;default:0;index:t_chainid_address,unique"`
+	Contract        string          `gorm:"size:255;index:t_chainid_address"`
+	Epoch           uint64          `gorm:"default:0;index:t_chainid_address"`
+	Address         string          `gorm:"size:255;index:t_chainid_address"`
+	Shares          decimal.Decimal `gorm:"type:decimal(38);default:0"`
+	Queued          decimal.Decimal `gorm:"type:decimal(38);default:0"`
+	Amount          decimal.Decimal `gorm:"type:decimal(38);default:0"`
+	Claimed         bool            `gorm:"default:false"`
+	ClaimTx         string          `gorm:"size:255"`
+	ClaimAt         time.Time       `gorm:"default:0"`
+	Proof           string          `gorm:"type:longblob"`
+	LastDepositTime int64           `gorm:"default:0"`
 }
 
 type AirDropEpoch struct {
