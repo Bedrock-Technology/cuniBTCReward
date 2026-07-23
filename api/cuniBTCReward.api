@@ -221,6 +221,21 @@ type (
 )
 
 type (
+	QueuedListReq {
+		ListReq
+		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	}
+	QueuedListResp {
+		PageData
+		Data []QueuedInfo `json:"data"`
+	}
+	QueuedInfo {
+		Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+		Queued  string `json:"queued,example=2.34"`
+	}
+)
+
+type (
 	ActiveUsersReq {
 		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 	}
@@ -322,6 +337,9 @@ service cuniBTCReward {
 
 	@handler Queue
 	post /console/queue (QueuedReq) returns (QueuedResp)
+
+	@handler QueuedList
+	post /console/queuedList (QueuedListReq) returns (QueuedListResp)
 
 	@handler ActiveUsers
 	post /console/activeUsers (ActiveUsersReq) returns (ActiveUsersResp)

@@ -110,6 +110,21 @@ type PositionOverviewResp struct {
 	Rewards     string `json:"rewards,example=0.023243"`     //amount withdrawing human readable
 }
 
+type QueuedInfo struct {
+	Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	Queued  string `json:"queued,example=2.34"`
+}
+
+type QueuedListReq struct {
+	ListReq
+	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+}
+
+type QueuedListResp struct {
+	PageData
+	Data []QueuedInfo `json:"data"`
+}
+
 type QueuedReq struct {
 	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 }
