@@ -1,10 +1,11 @@
 syntax = "v1"
 
 info (
-	wrapCodeMsg:    true
-	title:          "cuniBTCReward API"
-	schemes:        "https,http"
-	useDefinitions: true
+	wrapCodeMsg:                 true
+	title:                       "cuniBTCReward API"
+	schemes:                     "https,http"
+	useDefinitions:              true
+	securityDefinitionsFromJson: `{"type": "basic"}`
 )
 
 type (
@@ -322,8 +323,10 @@ service cuniBTCReward {
 }
 
 @server (
-	prefix: /api/v1
-	tags:   "console"
+	prefix:   /api/v1
+	tags:     "console"
+	jwt:      Auth
+	authType: basic
 )
 service cuniBTCReward {
 	@handler EpochList
@@ -352,14 +355,7 @@ service cuniBTCReward {
 
 	@handler WithdrawalList
 	post /console/withdrawalList (WithdrawalListReq) returns (WithdrawalListResp)
-}
 
-@server (
-	prefix: /api/v1
-	tags:   "console"
-	jwt:    Auth
-)
-service cuniBTCReward {
 	@handler DistributeRewards
 	post /console/distributeRewards (DistributeRewardsReq) returns (DistributeRewardsResp)
 }

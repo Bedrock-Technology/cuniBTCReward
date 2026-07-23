@@ -91,6 +91,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/console/distributeRewards",
+				Handler: DistributeRewardsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/console/epochInfo",
 				Handler: EpochInfoHandler(serverCtx),
 			},
@@ -128,17 +133,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/console/withdrawalList",
 				Handler: WithdrawalListHandler(serverCtx),
-			},
-		},
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodPost,
-				Path:    "/console/distributeRewards",
-				Handler: DistributeRewardsHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

@@ -84,6 +84,11 @@
     },
     "/api/v1/console/activeUsers": {
       "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
         "consumes": [
           "application/json"
         ],
@@ -135,6 +140,11 @@
     },
     "/api/v1/console/distributeRewards": {
       "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
         "consumes": [
           "application/json"
         ],
@@ -186,6 +196,11 @@
     },
     "/api/v1/console/epochInfo": {
       "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
         "consumes": [
           "application/json"
         ],
@@ -237,6 +252,11 @@
     },
     "/api/v1/console/epochList": {
       "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
         "consumes": [
           "application/json"
         ],
@@ -288,6 +308,11 @@
     },
     "/api/v1/console/pendingWithdrawal": {
       "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
         "consumes": [
           "application/json"
         ],
@@ -339,6 +364,11 @@
     },
     "/api/v1/console/queue": {
       "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
         "consumes": [
           "application/json"
         ],
@@ -390,6 +420,11 @@
     },
     "/api/v1/console/queuedList": {
       "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
         "consumes": [
           "application/json"
         ],
@@ -441,6 +476,11 @@
     },
     "/api/v1/console/userActions": {
       "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
         "consumes": [
           "application/json"
         ],
@@ -492,6 +532,11 @@
     },
     "/api/v1/console/withdrawalHistory": {
       "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
         "consumes": [
           "application/json"
         ],
@@ -543,6 +588,11 @@
     },
     "/api/v1/console/withdrawalList": {
       "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
         "consumes": [
           "application/json"
         ],
@@ -2257,7 +2307,7 @@
       }
     }
   },
-  "x-date": "2026-07-23 14:32:13",
+  "x-date": "2026-07-23 15:06:29",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
