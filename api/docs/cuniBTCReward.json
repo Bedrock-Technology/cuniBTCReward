@@ -2309,10 +2309,10 @@
   },
   "securityDefinitions": {
     "bearerAuth": {
-      "type": "basic"
+      "type": "oauth2"
     }
   },
-  "x-date": "2026-07-23 15:57:37",
+  "x-date": "2026-07-23 16:00:19",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

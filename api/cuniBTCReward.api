@@ -5,7 +5,7 @@ info (
 	title:                       "cuniBTCReward API"
 	schemes:                     "https,http"
 	useDefinitions:              true
-	securityDefinitionsFromJson: `{"bearerAuth":{"type":"basic","scheme":"bearer","bearerFormat":"JWT"}}`
+	securityDefinitionsFromJson: `{"bearerAuth":{"type":"oauth2","scheme":"bearer","bearerFormat":"JWT"}}`
 )
 
 type (
