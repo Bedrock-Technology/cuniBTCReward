@@ -5,7 +5,7 @@ info (
 	title:                       "cuniBTCReward API"
 	schemes:                     "https,http"
 	useDefinitions:              true
-	securityDefinitionsFromJson: `{"type": "basic"}`
+	securityDefinitionsFromJson: `{"bearerAuth":{"type":"http","scheme":"bearer","bearerFormat":"JWT"}}`
 )
 
 type (
@@ -326,7 +326,7 @@ service cuniBTCReward {
 	prefix:   /api/v1
 	tags:     "console"
 	jwt:      Auth
-	authType: basic
+	authType: bearerAuth
 )
 service cuniBTCReward {
 	@handler EpochList

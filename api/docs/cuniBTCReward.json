@@ -86,7 +86,7 @@
       "post": {
         "security": [
           {
-            "basic": []
+            "bearerAuth": []
           }
         ],
         "consumes": [
@@ -142,7 +142,7 @@
       "post": {
         "security": [
           {
-            "basic": []
+            "bearerAuth": []
           }
         ],
         "consumes": [
@@ -198,7 +198,7 @@
       "post": {
         "security": [
           {
-            "basic": []
+            "bearerAuth": []
           }
         ],
         "consumes": [
@@ -254,7 +254,7 @@
       "post": {
         "security": [
           {
-            "basic": []
+            "bearerAuth": []
           }
         ],
         "consumes": [
@@ -310,7 +310,7 @@
       "post": {
         "security": [
           {
-            "basic": []
+            "bearerAuth": []
           }
         ],
         "consumes": [
@@ -366,7 +366,7 @@
       "post": {
         "security": [
           {
-            "basic": []
+            "bearerAuth": []
           }
         ],
         "consumes": [
@@ -422,7 +422,7 @@
       "post": {
         "security": [
           {
-            "basic": []
+            "bearerAuth": []
           }
         ],
         "consumes": [
@@ -478,7 +478,7 @@
       "post": {
         "security": [
           {
-            "basic": []
+            "bearerAuth": []
           }
         ],
         "consumes": [
@@ -534,7 +534,7 @@
       "post": {
         "security": [
           {
-            "basic": []
+            "bearerAuth": []
           }
         ],
         "consumes": [
@@ -590,7 +590,7 @@
       "post": {
         "security": [
           {
-            "basic": []
+            "bearerAuth": []
           }
         ],
         "consumes": [
@@ -2307,7 +2307,12 @@
       }
     }
   },
-  "x-date": "2026-07-23 15:06:29",
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "http"
+    }
+  },
+  "x-date": "2026-07-23 15:53:58",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
