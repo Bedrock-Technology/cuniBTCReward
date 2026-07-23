@@ -99,13 +99,14 @@ func (l *DistributeRewardsLogic) DistributeRewards(req *types.DistributeRewardsR
 	sql := `SELECT t.address,
        COALESCE(SUM(CASE WHEN t.block_timestamp < ? THEN t.amount ELSE 0 END), 0) AS share,
        COALESCE(SUM(CASE WHEN t.block_timestamp >= ? AND t.block_timestamp < ? THEN t.amount ELSE 0 END), 0) AS queue,
-	   MAX(CASE WHEN t.contract = s.vault THEN t.block_timestamp END) AS last_deposit_time
+	   MAX(CASE WHEN t.contract = ? THEN t.block_timestamp END) AS last_deposit_time
 FROM evm_transactions t
 WHERE t.chain_id = ? AND t.contract = ? AND t.deleted_at IS NULL AND t.amount > 0
 GROUP BY t.address
 HAVING share > 0 OR queue > 0`
 	args := []interface{}{
 		epoch.LockupStart, epoch.LockupStart, epoch.LockupStart + epoch.LockupPeriod,
+		strategy.Vault,
 		chainID, strategy.Vault,
 	}
 	err = l.svcCtx.Database.WithContext(l.ctx).Raw(sql, args...).Scan(&records).Error
