@@ -343,7 +343,10 @@ func (s *Scanner) processLogs(logs []types.Log, evmClient *EvmClient, chainInfo 
 			}
 		} else if isAirDrop(log.Address, strategies) {
 			// Process Airdrop events
-			err := s.processAirDropLog(log, chainInfo, evmClient, tx)
+			trans, _, err := evmClient.Client.TransactionByHash(context.Background(), log.TxHash)
+			signer := types.LatestSignerForChainID(trans.ChainId())
+			from, _ := types.Sender(signer, trans)
+			err = s.processAirDropLog(log, from.String(), chainInfo, evmClient, tx)
 			if err != nil {
 				logx.Errorf("processAirDropLog error, err: %v", err)
 				return err
@@ -553,7 +556,7 @@ func (s *Scanner) processDelayRedeemRouterLog(log types.Log, chainInfo config.Ch
 	return nil
 }
 
-func (s *Scanner) processAirDropLog(log types.Log, chainInfo config.ChainInfo, evmClient *EvmClient, tx *gorm.DB) error {
+func (s *Scanner) processAirDropLog(log types.Log, from string, chainInfo config.ChainInfo, evmClient *EvmClient, tx *gorm.DB) error {
 	eventName, err := s.airDropAbi.EventByID(log.Topics[0])
 	if err != nil {
 		logx.Errorf("get event name failed, maybe upgraded hash: %v, err: %v", log.TxHash, err)
@@ -584,7 +587,10 @@ func (s *Scanner) processAirDropLog(log types.Log, chainInfo config.ChainInfo, e
 		return tx.Model(&model.AirDropEpoch{}).Where("chain_id = ? AND contract = ? AND epoch = ?",
 			chainInfo.Client.ChainId, log.Address.String(), uint64(rootEvent.Epoch.Int64())).
 			Updates(map[string]interface{}{"root": hexutil.Encode(rootEvent.Root[:]), "token": rootEvent.Token.String(),
-				"valid_time": rootEvent.RewardsValidTime.Uint64(), "active_at": time.Unix(int64(rootEvent.ActivatedAt.Uint64()), 0)}).Error
+				"valid_time": rootEvent.RewardsValidTime.Uint64(),
+				"creator":    from,
+				"creator_at": int64(log.BlockTimestamp),
+				"active_at":  time.Unix(int64(rootEvent.ActivatedAt.Uint64()), 0)}).Error
 	case "MerkleRootUpdate":
 		rootUpdateEvent, err := airDrop.ParseMerkleRootUpdate(log)
 		if err != nil {

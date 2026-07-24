@@ -94,6 +94,8 @@ type AirDropEpoch struct {
 	ActiveAt   time.Time
 	Disabled   bool   `gorm:"default:false"`
 	SubmitBy   string `gorm:"size:255"`
+	CreatorAt  int64  `gorm:"default:0"`
+	Creator    string `gorm:"size:255"`
 }
 
 type Epoch struct {

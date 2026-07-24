@@ -58,6 +58,8 @@ type EpochInfo struct {
 	RewardToken  string  `json:"rewardToken,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
 	SubmitAt     int64   `json:"submitAt,example=3234535"`
 	SubmitBy     string  `json:"submitBy,example=abc@abc.com"`
+	Creator      string  `json:"creator,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	CreatorAt    int64   `json:"creatorAt,example=3234535"`
 }
 
 type EpochInfoReq struct {

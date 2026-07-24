@@ -1306,7 +1306,9 @@
         "merkleRoot",
         "rewardToken",
         "submitAt",
-        "submitBy"
+        "submitBy",
+        "creator",
+        "creatorAt"
       ],
       "properties": {
         "apy": {
@@ -1316,6 +1318,14 @@
         "claimed": {
           "type": "string",
           "example": "123.45"
+        },
+        "creator": {
+          "type": "string",
+          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "creatorAt": {
+          "type": "integer",
+          "example": 3234535
         },
         "epoch": {
           "description": "epoch number",
@@ -2319,7 +2329,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-07-24 11:55:33",
+  "x-date": "2026-07-24 16:31:13",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

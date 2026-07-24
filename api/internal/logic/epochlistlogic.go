@@ -45,6 +45,8 @@ type epochRow struct {
 	RewardToken   string          `gorm:"column:token"`
 	SubmitAt      sql.NullTime    `gorm:"column:created_at"`
 	SubmitBy      string          `gorm:"column:submit_by"`
+	Creator       string          `gorm:"column:creator"`
+	CreatorAt     int64           `gorm:"column:creator_at"`
 }
 
 func (l *EpochListLogic) EpochList(req *types.EpochListReq) (resp *types.EpochListResp, err error) {
@@ -135,7 +137,9 @@ SELECT e.epoch, e.operate_start, e.operate_period,
        ae.merkle_root,
 	   ae.token,
 	   ae.created_at,
-	   ae.submit_by
+	   ae.submit_by,
+	   ae.creator_at,
+	   ae.creator
 FROM top_epoches e
 JOIN strat s ON s.vault = e.contract
 LEFT JOIN epoch_tx_agg eta ON eta.contract = e.contract AND eta.epoch = e.epoch
