@@ -74,7 +74,7 @@ WITH latest_epoch AS (
     ORDER BY e.epoch DESC
     LIMIT 1
 )
-SELECT t.address, t.block_timestamp, t.amount
+SELECT t.address, t.block_timestamp, t.amount AS queued
 FROM evm_transactions t
 LEFT JOIN latest_epoch e ON e.contract = t.contract
 WHERE t.deleted_at IS NULL AND t.block_timestamp >= e.lockup_start AND t.block_timestamp < e.lockup_start + e.lockup_period
