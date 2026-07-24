@@ -191,7 +191,9 @@ ORDER BY e.epoch DESC
 					return 0
 				}
 			}(),
-			SubmitBy: r.SubmitBy,
+			SubmitBy:  r.SubmitBy,
+			Creator:   r.Creator,
+			CreatorAt: r.CreatorAt,
 		})
 	}
 
