@@ -1611,12 +1611,17 @@
       "type": "object",
       "required": [
         "address",
-        "queued"
+        "queued",
+        "createAt"
       ],
       "properties": {
         "address": {
           "type": "string",
           "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
+        },
+        "createAt": {
+          "type": "integer",
+          "example": 34354465
         },
         "queued": {
           "type": "string",
@@ -2314,7 +2319,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-07-23 16:06:42",
+  "x-date": "2026-07-24 11:55:33",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

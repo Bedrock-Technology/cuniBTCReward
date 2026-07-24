@@ -111,8 +111,9 @@ type PositionOverviewResp struct {
 }
 
 type QueuedInfo struct {
-	Address string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
-	Queued  string `json:"queued,example=2.34"`
+	Address  string `json:"address,example=0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"`
+	Queued   string `json:"queued,example=2.34"`
+	CreateAt int64  `json:"createAt,example=34354465"`
 }
 
 type QueuedListReq struct {

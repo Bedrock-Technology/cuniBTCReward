@@ -29,8 +29,9 @@ func NewQueuedListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Queued
 }
 
 type QueuedInfoRow struct {
-	Address string          `gorm:"column:address"`
-	Queued  decimal.Decimal `gorm:"column:queued"`
+	Address  string          `gorm:"column:address"`
+	Queued   decimal.Decimal `gorm:"column:queued"`
+	CreateAt int64           `gorm:"column:block_timestamp"`
 }
 
 func (l *QueuedListLogic) QueuedList(req *types.QueuedListReq) (resp *types.QueuedListResp, err error) {
@@ -54,9 +55,7 @@ FROM (
     SELECT t.address
     FROM evm_transactions t
     LEFT JOIN latest_epoch e ON e.contract = t.contract
-    WHERE t.deleted_at IS NULL AND t.amount > 0
-    GROUP BY t.address
-    HAVING COALESCE(SUM(CASE WHEN t.block_timestamp >= e.lockup_start AND t.block_timestamp < e.lockup_start + e.lockup_period THEN t.amount ELSE 0 END), 0) > 0
+    WHERE t.deleted_at IS NULL AND t.block_timestamp >= e.lockup_start AND t.block_timestamp < e.lockup_start + e.lockup_period
 ) AS aggregated_results;
 `
 	args := []interface{}{
@@ -67,7 +66,7 @@ FROM (
 	}
 	var rows []QueuedInfoRow
 	sql := `
-	WITH latest_epoch AS (
+WITH latest_epoch AS (
     SELECT e.lockup_start, e.contract, e.lockup_period
     FROM epoches e
     JOIN strategies s ON s.vault = e.contract AND s.chain_id = e.chain_id AND s.deleted_at IS NULL
@@ -75,15 +74,11 @@ FROM (
     ORDER BY e.epoch DESC
     LIMIT 1
 )
-SELECT t.address,
-       COALESCE(SUM(CASE WHEN t.block_timestamp >= e.lockup_start AND t.block_timestamp < e.lockup_start + e.lockup_period THEN t.amount ELSE 0 END), 0) AS queued,
-	   MAX(CASE WHEN t.contract = e.contract THEN t.block_timestamp END) AS last_deposit_time
+SELECT t.address, t.block_timestamp, t.amount
 FROM evm_transactions t
 LEFT JOIN latest_epoch e ON e.contract = t.contract
-WHERE t.deleted_at IS NULL AND t.amount > 0
-GROUP BY t.address
-HAVING queued > 0
-ORDER BY last_deposit_time DESC
+WHERE t.deleted_at IS NULL AND t.block_timestamp >= e.lockup_start AND t.block_timestamp < e.lockup_start + e.lockup_period
+ORDER BY t.block_timestamp DESC
 LIMIT ? OFFSET ?
 `
 	args = append(args, req.Limit, req.Offset)
@@ -93,8 +88,9 @@ LIMIT ? OFFSET ?
 	}
 	data := lo.Map(rows, func(x QueuedInfoRow, index int) types.QueuedInfo {
 		return types.QueuedInfo{
-			Address: x.Address,
-			Queued:  x.Queued.Mul(decimal.New(1, -8)).String(),
+			Address:  x.Address,
+			Queued:   x.Queued.Mul(decimal.New(1, -8)).String(),
+			CreateAt: x.CreateAt,
 		}
 	})
 
