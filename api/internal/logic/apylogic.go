@@ -37,7 +37,7 @@ func (l *ApyLogic) Apy(req *types.ApyReq) (resp []types.ApyResp, err error) {
 	sql := `
 WITH latest_epoch AS (
     SELECT s.symbol, MAX(COALESCE(ae.epoch, 0)) AS epoch FROM  strategies s LEFT JOIN air_drop_epoches ae
-    ON s.airdrop = ae.contract AND s.chain_id = ae.chain_id AND s.deleted_at IS NULL
+    ON s.airdrop = ae.contract AND s.chain_id = ae.chain_id AND s.deleted_at IS NULL AND ae.root = ae.merkle_root
     WHERE s.chain_id = ? group by s.symbol
 )
 SELECT le.symbol, le.epoch, COALESCE(ae.apy, 0) AS apy FROM latest_epoch le LEFT JOIN strategies s ON s.symbol = le.symbol

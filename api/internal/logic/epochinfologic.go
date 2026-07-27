@@ -61,6 +61,20 @@ epoch_tx_agg AS (
     FROM epoch_addr_sum
     GROUP BY contract, epoch
 ),
+epoch_queued AS (
+    SELECT e.contract, e.epoch,
+           COALESCE(SUM(t.amount), 0) AS queued
+    FROM top_epoches e
+    JOIN strat s ON s.vault = e.contract
+    LEFT JOIN evm_transactions t
+        ON t.chain_id = e.chain_id
+        AND t.deleted_at IS NULL
+        AND t.contract = e.contract
+        AND t.block_timestamp >= e.lockup_start
+		AND t.block_timestamp < e.lockup_start + e.lockup_period
+    WHERE e.chain_id = ? AND e.deleted_at IS NULL
+    GROUP BY e.contract, e.epoch
+),
 epoch_unclaimed AS (
     SELECT te.contract,
 		   te.epoch,
@@ -95,6 +109,7 @@ SELECT e.epoch, e.operate_start, e.operate_period,
        COALESCE(aa.rewards, 0) AS rewards,
        COALESCE(aa.claimed, 0) AS claimed,
        COALESCE(ae.apy, 0) AS apy,
+	   COALESCE(eq.queued, 0) AS queued,
        ae.root,
        ae.merkle_root,
 	   ae.token,
@@ -107,6 +122,7 @@ JOIN strat s ON s.vault = e.contract
 LEFT JOIN epoch_tx_agg eta ON eta.contract = e.contract AND eta.epoch = e.epoch
 LEFT JOIN epoch_unclaimed u ON u.contract = e.contract AND u.epoch = e.epoch
 LEFT JOIN airdrop_agg aa ON aa.vault = e.contract AND aa.epoch = e.epoch
+LEFT JOIN epoch_queued eq ON eq.contract = e.contract AND eq.epoch = e.epoch
 LEFT JOIN air_drop_epoches ae ON ae.contract = s.airdrop AND ae.epoch = e.epoch AND ae.chain_id = e.chain_id AND ae.deleted_at IS NULL
 WHERE e.chain_id = ? AND e.deleted_at IS NULL
 ORDER BY e.epoch DESC
@@ -115,6 +131,7 @@ ORDER BY e.epoch DESC
 		chainID, req.Symbol, // strat CTE
 		chainID,
 		req.Epoch,
+		chainID,
 		chainID, // epoch_addr_sum
 		chainID, // epoch_unclaimed
 		chainID, // airdrop_agg
@@ -139,6 +156,7 @@ ORDER BY e.epoch DESC
 			Tvl:          r.Tvl.Mul(decimal.New(1, -8)).String(),
 			Rewards:      r.Rewards.Mul(decimal.New(1, -8)).String(),
 			Claimed:      r.Claimed.Mul(decimal.New(1, -8)).String(),
+			Queued:       r.Queued.Mul(decimal.New(1, -8)).String(),
 			Apy:          r.Apy,
 			Root:         r.Root,
 			MerkleRoot:   r.MerkleRoot,

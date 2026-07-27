@@ -1301,6 +1301,7 @@
         "tvl",
         "rewards",
         "claimed",
+        "claimed",
         "apy",
         "root",
         "merkleRoot",
@@ -1317,7 +1318,7 @@
         },
         "claimed": {
           "type": "string",
-          "example": "123.45"
+          "example": "13.45"
         },
         "creator": {
           "type": "string",
@@ -2329,7 +2330,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-07-24 16:31:13",
+  "x-date": "2026-07-27 17:43:14",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

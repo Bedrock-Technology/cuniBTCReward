@@ -4,6 +4,7 @@
 package logic
 
 import (
+	"bytes"
 	"context"
 	"crypto/md5"
 	"encoding/hex"
@@ -223,8 +224,16 @@ func IsContract(rpcHost string, addressHex string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	if len(bytecode) == 0 {
+		return false, nil
+	} else {
+		eip7702Prefix := []byte{0xef, 0x01, 0x00}
+		if bytes.HasPrefix(bytecode, eip7702Prefix) && len(bytecode) >= 23 {
+			return false, nil
+		}
+	}
 
-	return len(bytecode) > 0, nil
+	return true, nil
 }
 func GetSafeMessageHash(safeAddress common.Address, chainID *big.Int, messageHash []byte) []byte {
 	domainTypeHash := crypto.Keccak256([]byte("EIP712Domain(uint256 chainId,address verifyingContract)"))
