@@ -35,14 +35,15 @@ type rewardSummaryRow struct {
 
 func (l *RewardSummaryLogic) RewardSummary(req *types.RewardSummaryReq) (resp *types.RewardSummaryResp, err error) {
 	chainID := l.svcCtx.Config.DefaultChainId
-	sql := `
-	SELECT
+	sql := `SELECT
     COALESCE(SUM(amount), 0) AS total_amount,
     COALESCE(SUM(CASE WHEN claimed = 1 THEN amount ELSE 0 END), 0) AS claimed_amount,
     COALESCE(SUM(CASE WHEN claimed = 0 THEN amount ELSE 0 END), 0) AS unclaimed_amount
 FROM
     air_drop_records a
-JOIN strategies s ON s.airdrop = a.contract WHERE s.deleted_at IS NULL AND a.deleted_at IS NULL AND s.symbol = ? AND s.chain_id = ?`
+JOIN strategies s ON s.airdrop = a.contract
+JOIN air_drop_epoches ae ON ae.contract = s.airdrop AND ae.epoch = a.epoch
+WHERE s.deleted_at IS NULL AND a.deleted_at IS NULL AND ae.deleted_at IS NULL AND s.symbol = ? AND s.chain_id = ? AND ae.root = ae.merkle_root`
 	args := []interface{}{
 		req.Symbol,
 		chainID,
