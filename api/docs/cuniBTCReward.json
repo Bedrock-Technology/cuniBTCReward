@@ -474,6 +474,62 @@
         }
       }
     },
+    "/api/v1/console/rewardSummary": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "console"
+        ],
+        "summary": "RewardSummary",
+        "operationId": "rewardSummary",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RewardSummaryReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/RewardSummaryResp"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/console/userActions": {
       "post": {
         "security": [
@@ -1807,6 +1863,41 @@
         }
       }
     },
+    "RewardSummaryReq": {
+      "type": "object",
+      "required": [
+        "symbol"
+      ],
+      "properties": {
+        "symbol": {
+          "description": "symbol of the stratedy",
+          "type": "string",
+          "example": "cuniBTC"
+        }
+      }
+    },
+    "RewardSummaryResp": {
+      "type": "object",
+      "required": [
+        "total",
+        "claimed",
+        "unClaimed"
+      ],
+      "properties": {
+        "claimed": {
+          "type": "string",
+          "example": "23.8"
+        },
+        "total": {
+          "type": "string",
+          "example": "12.34"
+        },
+        "unClaimed": {
+          "type": "string",
+          "example": "23.8"
+        }
+      }
+    },
     "SignTermsReq": {
       "type": "object",
       "required": [
@@ -2334,7 +2425,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-07-27 17:49:31",
+  "x-date": "2026-07-28 14:08:02",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
