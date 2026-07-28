@@ -156,6 +156,16 @@ type RewardProofsResp struct {
 	RewardProofs []RewardProofs `json:"rewardProofs"`
 }
 
+type RewardSummaryReq struct {
+	Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+}
+
+type RewardSummaryResp struct {
+	Total     string `json:"total,example=12.34"`
+	Claimed   string `json:"claimed,example=23.8"`
+	UnClaimed string `json:"unClaimed,example=23.8"`
+}
+
 type SignTermsReq struct {
 	Message   string `json:"message,example=SIWE exposes a Message struct which implements EIP-4361" validate:"max=81920"`
 	Signature string `json:"signature,example=0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c" validate:"max=256"`

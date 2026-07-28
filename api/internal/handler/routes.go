@@ -121,6 +121,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/console/rewardSummary",
+				Handler: RewardSummaryHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/console/userActions",
 				Handler: UserActionsHandler(serverCtx),
 			},

@@ -269,6 +269,17 @@ type (
 )
 
 type (
+	RewardSummaryReq {
+		Symbol string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
+	}
+	RewardSummaryResp {
+		Total     string `json:"total,example=12.34"`
+		Claimed   string `json:"claimed,example=23.8"`
+		UnClaimed string `json:"unClaimed,example=23.8"`
+	}
+)
+
+type (
 	DistributeRewardsReq {
 		Symbol       string `json:"symbol,example=cuniBTC"` //symbol of the stratedy
 		Epoch        uint64 `json:"epoch,example=10"` //epoch number
@@ -362,5 +373,8 @@ service cuniBTCReward {
 
 	@handler DistributeRewards
 	post /console/distributeRewards (DistributeRewardsReq) returns (DistributeRewardsResp)
+
+	@handler RewardSummary
+	post /console/rewardSummary (RewardSummaryReq) returns (RewardSummaryResp)
 }
 
