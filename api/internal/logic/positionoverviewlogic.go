@@ -100,7 +100,7 @@ func (l *PositionOverviewLogic) PositionOverview(req *types.PositionOverviewReq)
 		   COALESCE(v.earning,0) + COALESCE(d.earning,0) AS earning,
 		   COALESCE(dr.withdrawing,0) AS withdrawing,
 		   COALESCE(ad.rewards,0) AS rewards,
-		   COALESCE(ad_all.rewards,0) AS total_rewards,
+		   COALESCE(ad_all.rewards,0) AS total_rewards
 	FROM strategies s
 	LEFT JOIN tx_agg_vault v ON v.contract = s.vault
 	LEFT JOIN tx_agg_delay d ON d.contract = s.delay_redeem_router
