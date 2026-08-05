@@ -343,7 +343,7 @@ func (s *Scanner) processLogs(logs []types.Log, evmClient *EvmClient, chainInfo 
 			}
 		} else if isAirDrop(log.Address, strategies) {
 			// Process Airdrop events
-			trans, _, err := evmClient.Client.TransactionByHash(context.Background(), log.TxHash)
+			trans, _, _ := evmClient.Client.TransactionByHash(context.Background(), log.TxHash)
 			signer := types.LatestSignerForChainID(trans.ChainId())
 			from, _ := types.Sender(signer, trans)
 			err = s.processAirDropLog(log, from.String(), chainInfo, evmClient, tx)

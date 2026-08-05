@@ -30,12 +30,13 @@ func NewPositionOverviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *PositionOverviewLogic) PositionOverview(req *types.PositionOverviewReq) (resp []types.PositionOverviewResp, err error) {
 	type aggRow struct {
-		Symbol      string          `gorm:"column:symbol"`
-		Amount      decimal.Decimal `gorm:"column:amount"`
-		Queued      decimal.Decimal `gorm:"column:queued"`
-		Earning     decimal.Decimal `gorm:"column:earning"`
-		Withdrawing decimal.Decimal `gorm:"column:withdrawing"`
-		Rewards     decimal.Decimal `gorm:"column:rewards"`
+		Symbol       string          `gorm:"column:symbol"`
+		Amount       decimal.Decimal `gorm:"column:amount"`
+		Queued       decimal.Decimal `gorm:"column:queued"`
+		Earning      decimal.Decimal `gorm:"column:earning"`
+		Withdrawing  decimal.Decimal `gorm:"column:withdrawing"`
+		Rewards      decimal.Decimal `gorm:"column:rewards"`
+		TotalRewards decimal.Decimal `gorm:"column:total_rewards"`
 	}
 
 	chainID := l.svcCtx.Config.DefaultChainId
@@ -80,6 +81,13 @@ func (l *PositionOverviewLogic) PositionOverview(req *types.PositionOverviewReq)
 		WHERE address = ? AND ar.chain_id = ? AND ar.deleted_at IS NULL AND claimed = 0 AND NOW() > ae.active_at
 		GROUP BY contract
 	),
+	ad_agg_all AS (
+		SELECT ar.contract, COALESCE(SUM(amount),0) AS rewards
+		FROM air_drop_records ar
+		LEFT JOIN air_drop_epoches ae ON ar.contract = ae.contract AND ae.epoch = ar.epoch
+		WHERE address = ? AND ar.chain_id = ? AND ar.deleted_at IS NULL AND NOW() > ae.active_at
+		GROUP BY contract
+	),
 	dr_agg AS (
 		SELECT contract, COALESCE(SUM(amount),0) AS withdrawing
 		FROM delay_redeem_records
@@ -91,11 +99,13 @@ func (l *PositionOverviewLogic) PositionOverview(req *types.PositionOverviewReq)
 		   COALESCE(v.queued,0) + COALESCE(d.queued,0) AS queued,
 		   COALESCE(v.earning,0) + COALESCE(d.earning,0) AS earning,
 		   COALESCE(dr.withdrawing,0) AS withdrawing,
-		   COALESCE(ad.rewards,0) AS rewards
+		   COALESCE(ad.rewards,0) AS rewards,
+		   COALESCE(ad_all.rewards,0) AS total_rewards,
 	FROM strategies s
 	LEFT JOIN tx_agg_vault v ON v.contract = s.vault
 	LEFT JOIN tx_agg_delay d ON d.contract = s.delay_redeem_router
 	LEFT JOIN ad_agg ad ON ad.contract = s.airdrop
+	LEFT JOIN ad_agg_all ad_all ON ad_all.contract = s.airdrop
 	LEFT JOIN dr_agg dr ON dr.contract = s.delay_redeem_router
 	WHERE s.chain_id = ? AND s.deleted_at IS NULL
 	`
@@ -125,12 +135,13 @@ func (l *PositionOverviewLogic) PositionOverview(req *types.PositionOverviewReq)
 
 	for _, r := range rows {
 		resp = append(resp, types.PositionOverviewResp{
-			Symbol:      r.Symbol,
-			Amount:      r.Amount.Mul(decimal.New(1, -8)).String(),
-			Earning:     r.Earning.Mul(decimal.New(1, -8)).String(),
-			Queued:      r.Queued.Mul(decimal.New(1, -8)).String(),
-			Withdrawing: r.Withdrawing.Mul(decimal.New(1, -8)).String(),
-			Rewards:     r.Rewards.Mul(decimal.New(1, -8)).String(),
+			Symbol:       r.Symbol,
+			Amount:       r.Amount.Mul(decimal.New(1, -8)).String(),
+			Earning:      r.Earning.Mul(decimal.New(1, -8)).String(),
+			Queued:       r.Queued.Mul(decimal.New(1, -8)).String(),
+			Withdrawing:  r.Withdrawing.Mul(decimal.New(1, -8)).String(),
+			Rewards:      r.Rewards.Mul(decimal.New(1, -8)).String(),
+			TotalRewards: r.TotalRewards.Mul(decimal.New(1, -8)).String(),
 		})
 	}
 	return

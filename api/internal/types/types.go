@@ -105,12 +105,13 @@ type PositionOverviewReq struct {
 }
 
 type PositionOverviewResp struct {
-	Symbol      string `json:"symbol,example=cuniBTC"`       //symbol of the stratedy
-	Amount      string `json:"amount,example=0.023"`         //amount of this symbol
-	Earning     string `json:"earning,example=0.023243"`     //amount earning human readable
-	Queued      string `json:"queued,example=0.023243"`      //amount queued human readable
-	Withdrawing string `json:"withdrawing,example=0.023243"` //amount withdrawing human readable
-	Rewards     string `json:"rewards,example=0.023243"`     //amount withdrawing human readable
+	Symbol       string `json:"symbol,example=cuniBTC"`        //symbol of the stratedy
+	Amount       string `json:"amount,example=0.023"`          //amount of this symbol
+	Earning      string `json:"earning,example=0.023243"`      //amount earning human readable
+	Queued       string `json:"queued,example=0.023243"`       //amount queued human readable
+	Withdrawing  string `json:"withdrawing,example=0.023243"`  //amount withdrawing human readable
+	Rewards      string `json:"rewards,example=0.023243"`      //amount withdrawing human readable
+	TotalRewards string `json:"totalRewards,example=0.023243"` //amount withdrawing human readable
 }
 
 type QueuedInfo struct {

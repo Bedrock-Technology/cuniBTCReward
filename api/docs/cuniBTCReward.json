@@ -792,7 +792,8 @@
                       "earning",
                       "queued",
                       "withdrawing",
-                      "rewards"
+                      "rewards",
+                      "totalRewards"
                     ],
                     "properties": {
                       "amount": {
@@ -819,6 +820,11 @@
                         "description": "symbol of the stratedy",
                         "type": "string",
                         "example": "cuniBTC"
+                      },
+                      "totalRewards": {
+                        "description": "amount withdrawing human readable",
+                        "type": "string",
+                        "example": "0.023243"
                       },
                       "withdrawing": {
                         "description": "amount withdrawing human readable",
@@ -1643,7 +1649,8 @@
         "earning",
         "queued",
         "withdrawing",
-        "rewards"
+        "rewards",
+        "totalRewards"
       ],
       "properties": {
         "amount": {
@@ -1670,6 +1677,11 @@
           "description": "symbol of the stratedy",
           "type": "string",
           "example": "cuniBTC"
+        },
+        "totalRewards": {
+          "description": "amount withdrawing human readable",
+          "type": "string",
+          "example": "0.023243"
         },
         "withdrawing": {
           "description": "amount withdrawing human readable",
@@ -2425,7 +2437,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-07-28 14:08:02",
+  "x-date": "2026-08-05 13:16:07",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
