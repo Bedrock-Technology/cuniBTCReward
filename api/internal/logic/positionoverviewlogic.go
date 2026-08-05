@@ -115,6 +115,7 @@ func (l *PositionOverviewLogic) PositionOverview(req *types.PositionOverviewReq)
 		req.Address, chainID, chainID, // tx_agg_vault (address, chain_id, subquery chain_id)
 		chainID, req.Address, chainID, // tx_agg_delay (s2.chain_id, address, chain_id)
 		req.Address, chainID, // ad_agg
+		req.Address, chainID, // ad_agg
 		req.Address, chainID, // dr_agg
 		chainID, // strategies
 	}
