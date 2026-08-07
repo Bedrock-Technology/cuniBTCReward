@@ -1,2444 +1,2308 @@
 {
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
-  "schemes": [
-    "https",
-    "http"
-  ],
-  "swagger": "2.0",
+  "components": {
+    "schemas": {
+      "ActiveUsersReq": {
+        "properties": {
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "ActiveUsersResp": {
+        "properties": {
+          "participants": {
+            "example": 1234,
+            "format": "int64",
+            "type": "integer"
+          },
+          "signedUsers": {
+            "example": 123,
+            "format": "int64",
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "signedUsers",
+          "symbol",
+          "participants"
+        ],
+        "type": "object"
+      },
+      "ApyReq": {
+        "properties": {
+          "symbol": {
+            "description": "symbol of the strategy, empty indicate all",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApyResp": {
+        "properties": {
+          "apy": {
+            "example": 0.05,
+            "format": "double",
+            "type": "number"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "apy"
+        ],
+        "type": "object"
+      },
+      "CurrentEpochReq": {
+        "properties": {
+          "symbol": {
+            "description": "symbol of the strategy, empty indicate all",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CurrentEpochResp": {
+        "properties": {
+          "epoch": {
+            "description": "epoch number",
+            "example": 10,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "lockupPeriod": {
+            "description": "lockup period in second",
+            "example": 86400,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "lockupStartTimestamp": {
+            "description": "lockup startTime",
+            "example": 1777649793,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "operatePeriod": {
+            "description": "operate period in second",
+            "example": 86400,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "operateStartTimestamp": {
+            "description": "operate startTime",
+            "example": 1777349793,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "epoch",
+          "operateStartTimestamp",
+          "operatePeriod",
+          "lockupStartTimestamp",
+          "lockupPeriod",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "DistributeRewardsReq": {
+        "properties": {
+          "epoch": {
+            "description": "epoch number",
+            "example": 10,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          },
+          "totalRewards": {
+            "example": "0.123",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "epoch",
+          "totalRewards"
+        ],
+        "type": "object"
+      },
+      "DistributeRewardsResp": {
+        "properties": {
+          "epoch": {
+            "description": "epoch number",
+            "example": 10,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "participants": {
+            "example": 1234,
+            "format": "int64",
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          },
+          "totalRewards": {
+            "example": "0.123",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "epoch",
+          "totalRewards",
+          "participants"
+        ],
+        "type": "object"
+      },
+      "EpochInfo": {
+        "properties": {
+          "apy": {
+            "example": 0.12345,
+            "format": "double",
+            "type": "number"
+          },
+          "claimed": {
+            "example": "123.45",
+            "type": "string"
+          },
+          "creator": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "creatorAt": {
+            "example": 3234535,
+            "format": "int64",
+            "type": "integer"
+          },
+          "epoch": {
+            "description": "epoch number",
+            "example": 10,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "lockupPeriod": {
+            "description": "lockup period in second",
+            "example": 86400,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "lockupStartTimestamp": {
+            "description": "lockup startTime",
+            "example": 1777649793,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "merkleRoot": {
+            "example": "0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741",
+            "type": "string"
+          },
+          "operatePeriod": {
+            "description": "operate period in second",
+            "example": 86400,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "operateStartTimestamp": {
+            "description": "operate startTime",
+            "example": 1777349793,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "participants": {
+            "example": 1234,
+            "format": "int64",
+            "type": "integer"
+          },
+          "queued": {
+            "example": "13.45",
+            "type": "string"
+          },
+          "rewardToken": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "rewards": {
+            "example": "1112.34",
+            "type": "string"
+          },
+          "root": {
+            "example": "0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741",
+            "type": "string"
+          },
+          "submitAt": {
+            "example": 3234535,
+            "format": "int64",
+            "type": "integer"
+          },
+          "submitBy": {
+            "example": "abc@abc.com",
+            "type": "string"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          },
+          "tvl": {
+            "example": "120.13",
+            "type": "string"
+          }
+        },
+        "required": [
+          "epoch",
+          "operateStartTimestamp",
+          "operatePeriod",
+          "lockupStartTimestamp",
+          "lockupPeriod",
+          "symbol",
+          "participants",
+          "tvl",
+          "rewards",
+          "claimed",
+          "queued",
+          "apy",
+          "root",
+          "merkleRoot",
+          "rewardToken",
+          "submitAt",
+          "submitBy",
+          "creator",
+          "creatorAt"
+        ],
+        "type": "object"
+      },
+      "EpochInfoReq": {
+        "properties": {
+          "epoch": {
+            "description": "epoch number",
+            "example": 10,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "epoch"
+        ],
+        "type": "object"
+      },
+      "EpochListReq": {
+        "properties": {
+          "limit": {
+            "default": 10,
+            "description": "Number of items per page",
+            "example": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset",
+            "example": 0,
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "limit",
+          "offset",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "EpochListResp": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/EpochInfo"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Number of items per page, consistent with the request",
+            "example": 10,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset, consistent with the request",
+            "example": 0,
+            "type": "integer"
+          },
+          "total": {
+            "description": "Total data count",
+            "example": 1234,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "limit",
+          "offset",
+          "data"
+        ],
+        "type": "object"
+      },
+      "ListReq": {
+        "properties": {
+          "limit": {
+            "default": 10,
+            "description": "Number of items per page",
+            "example": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset",
+            "example": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "limit",
+          "offset"
+        ],
+        "type": "object"
+      },
+      "PageData": {
+        "properties": {
+          "limit": {
+            "description": "Number of items per page, consistent with the request",
+            "example": 10,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset, consistent with the request",
+            "example": 0,
+            "type": "integer"
+          },
+          "total": {
+            "description": "Total data count",
+            "example": 1234,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "limit",
+          "offset"
+        ],
+        "type": "object"
+      },
+      "PendingWithdrawalReq": {
+        "properties": {
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "PendingWithdrawalResp": {
+        "properties": {
+          "requested": {
+            "example": "12.34",
+            "type": "string"
+          },
+          "requests": {
+            "example": 4,
+            "format": "int64",
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "requested",
+          "requests"
+        ],
+        "type": "object"
+      },
+      "PositionOverviewReq": {
+        "properties": {
+          "address": {
+            "example": "0x8cb37518330014E027396E3ED59A231FBe3B011A",
+            "type": "string"
+          },
+          "symbol": {
+            "description": "symbol of the strategy, empty indicate all",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address"
+        ],
+        "type": "object"
+      },
+      "PositionOverviewResp": {
+        "properties": {
+          "amount": {
+            "description": "amount of this symbol",
+            "example": "0.023",
+            "type": "string"
+          },
+          "earning": {
+            "description": "amount earning human readable",
+            "example": "0.023243",
+            "type": "string"
+          },
+          "queued": {
+            "description": "amount queued human readable",
+            "example": "0.023243",
+            "type": "string"
+          },
+          "rewards": {
+            "description": "amount withdrawing human readable",
+            "example": "0.023243",
+            "type": "string"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          },
+          "totalRewards": {
+            "description": "amount withdrawing human readable",
+            "example": "0.023243",
+            "type": "string"
+          },
+          "withdrawing": {
+            "description": "amount withdrawing human readable",
+            "example": "0.023243",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "amount",
+          "earning",
+          "queued",
+          "withdrawing",
+          "rewards",
+          "totalRewards"
+        ],
+        "type": "object"
+      },
+      "QueuedInfo": {
+        "properties": {
+          "address": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "createAt": {
+            "example": 34354465,
+            "format": "int64",
+            "type": "integer"
+          },
+          "queued": {
+            "example": "2.34",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "queued",
+          "createAt"
+        ],
+        "type": "object"
+      },
+      "QueuedListReq": {
+        "properties": {
+          "limit": {
+            "default": 10,
+            "description": "Number of items per page",
+            "example": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset",
+            "example": 0,
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "limit",
+          "offset",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "QueuedListResp": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/QueuedInfo"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Number of items per page, consistent with the request",
+            "example": 10,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset, consistent with the request",
+            "example": 0,
+            "type": "integer"
+          },
+          "total": {
+            "description": "Total data count",
+            "example": 1234,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "limit",
+          "offset",
+          "data"
+        ],
+        "type": "object"
+      },
+      "QueuedReq": {
+        "properties": {
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "QueuedResp": {
+        "properties": {
+          "amount": {
+            "example": "12.34",
+            "type": "string"
+          },
+          "deposits": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "amount",
+          "symbol",
+          "deposits"
+        ],
+        "type": "object"
+      },
+      "RewardProofs": {
+        "properties": {
+          "amount": {
+            "example": "12.34",
+            "type": "string"
+          },
+          "claimed": {
+            "example": false,
+            "type": "boolean"
+          },
+          "epoch": {
+            "example": 3,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "proofs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "epoch",
+          "amount",
+          "claimed",
+          "proofs"
+        ],
+        "type": "object"
+      },
+      "RewardProofsReq": {
+        "properties": {
+          "address": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "address"
+        ],
+        "type": "object"
+      },
+      "RewardProofsResp": {
+        "properties": {
+          "rewardProofs": {
+            "items": {
+              "$ref": "#/components/schemas/RewardProofs"
+            },
+            "type": "array"
+          },
+          "totalAmount": {
+            "example": "1.23",
+            "type": "string"
+          }
+        },
+        "required": [
+          "totalAmount",
+          "rewardProofs"
+        ],
+        "type": "object"
+      },
+      "RewardSummaryReq": {
+        "properties": {
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "RewardSummaryResp": {
+        "properties": {
+          "claimed": {
+            "example": "23.8",
+            "type": "string"
+          },
+          "total": {
+            "example": "12.34",
+            "type": "string"
+          },
+          "unClaimed": {
+            "example": "23.8",
+            "type": "string"
+          }
+        },
+        "required": [
+          "total",
+          "claimed",
+          "unClaimed"
+        ],
+        "type": "object"
+      },
+      "SignTermsReq": {
+        "properties": {
+          "message": {
+            "example": "SIWE exposes a Message struct which implements EIP-4361",
+            "type": "string"
+          },
+          "signature": {
+            "example": "0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c",
+            "type": "string"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "signature",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "SignTermsResp": {
+        "properties": {
+          "address": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "termsMd5": {
+            "example": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "termsMd5",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "SignTermsStatusReq": {
+        "properties": {
+          "address": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "SignTermsStatusResp": {
+        "properties": {
+          "address": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "messageHash": {
+            "example": "0x0343453",
+            "type": "string"
+          },
+          "signed": {
+            "example": false,
+            "type": "boolean"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          },
+          "termsMd5": {
+            "example": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+            "type": "string"
+          }
+        },
+        "required": [
+          "signed",
+          "termsMd5",
+          "symbol",
+          "address",
+          "messageHash"
+        ],
+        "type": "object"
+      },
+      "TotalEarnedReq": {
+        "properties": {
+          "address": {
+            "example": "0x8cb37518330014E027396E3ED59A231FBe3B011A",
+            "type": "string"
+          },
+          "symbol": {
+            "description": "symbol of the strategy, empty indicate all",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address"
+        ],
+        "type": "object"
+      },
+      "TotalEarnedResp": {
+        "properties": {
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          },
+          "totalEarned": {
+            "description": "amount earned human readable",
+            "example": "0.023243",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "totalEarned"
+        ],
+        "type": "object"
+      },
+      "UserAction": {
+        "properties": {
+          "address": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "claimAt": {
+            "example": 1777349793,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "claimed": {
+            "example": false,
+            "type": "boolean"
+          },
+          "deposited": {
+            "example": "120.13",
+            "type": "string"
+          },
+          "epoch": {
+            "description": "epoch number",
+            "example": 10,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "lockupPeriod": {
+            "description": "lockup period in second",
+            "example": 86400,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "lockupStartTimestamp": {
+            "description": "lockup startTime",
+            "example": 1777649793,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "operatePeriod": {
+            "description": "operate period in second",
+            "example": 86400,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "operateStartTimestamp": {
+            "description": "operate startTime",
+            "example": 1777349793,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "queued": {
+            "example": "2.34",
+            "type": "string"
+          },
+          "rewards": {
+            "example": "0.34",
+            "type": "string"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "epoch",
+          "operateStartTimestamp",
+          "operatePeriod",
+          "lockupStartTimestamp",
+          "lockupPeriod",
+          "symbol",
+          "address",
+          "deposited",
+          "rewards",
+          "queued",
+          "claimAt",
+          "claimed"
+        ],
+        "type": "object"
+      },
+      "UserActionListResp": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/UserAction"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Number of items per page, consistent with the request",
+            "example": 10,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset, consistent with the request",
+            "example": 0,
+            "type": "integer"
+          },
+          "total": {
+            "description": "Total data count",
+            "example": 1234,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "limit",
+          "offset",
+          "data"
+        ],
+        "type": "object"
+      },
+      "UserActionsListReq": {
+        "properties": {
+          "epoch": {
+            "description": "epoch number",
+            "example": 10,
+            "format": "uint64",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 10,
+            "description": "Number of items per page",
+            "example": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset",
+            "example": 0,
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "limit",
+          "offset",
+          "symbol",
+          "epoch"
+        ],
+        "type": "object"
+      },
+      "WithdrawalHistoryReq": {
+        "properties": {
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "WithdrawalHistoryResp": {
+        "properties": {
+          "claimed": {
+            "example": "21.2",
+            "type": "string"
+          },
+          "requested": {
+            "example": "12.34",
+            "type": "string"
+          },
+          "requests": {
+            "example": 4,
+            "format": "int64",
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "symbol of the stratedy",
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "requested",
+          "requests",
+          "claimed"
+        ],
+        "type": "object"
+      },
+      "WithdrawalInfo": {
+        "properties": {
+          "address": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "amount": {
+            "example": "0.23",
+            "type": "string"
+          },
+          "claimAt": {
+            "example": 1777349793,
+            "format": "int64",
+            "type": "integer"
+          },
+          "claimed": {
+            "example": false,
+            "type": "boolean"
+          },
+          "createAt": {
+            "example": 1784105760,
+            "format": "int64",
+            "type": "integer"
+          },
+          "epoch": {
+            "example": 3,
+            "format": "uint64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "address",
+          "amount",
+          "epoch",
+          "createAt",
+          "claimAt",
+          "claimed"
+        ],
+        "type": "object"
+      },
+      "WithdrawalListReq": {
+        "properties": {
+          "address": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "end": {
+            "example": 1784105760,
+            "format": "int64",
+            "type": "integer"
+          },
+          "epoch": {
+            "example": "10",
+            "type": "string"
+          },
+          "limit": {
+            "default": 10,
+            "description": "Number of items per page",
+            "example": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset",
+            "example": 0,
+            "type": "integer"
+          },
+          "start": {
+            "example": 1784105760,
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "example": "claimed|unClaimed|coolingDown",
+            "type": "string"
+          },
+          "symbol": {
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "limit",
+          "offset",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "WithdrawalListResp": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/WithdrawalInfo"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Number of items per page, consistent with the request",
+            "example": 10,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset, consistent with the request",
+            "example": 0,
+            "type": "integer"
+          },
+          "total": {
+            "description": "Total data count",
+            "example": 1234,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "limit",
+          "offset",
+          "data"
+        ],
+        "type": "object"
+      },
+      "WithdrawalRequestsInfo": {
+        "properties": {
+          "amount": {
+            "example": "0.23",
+            "type": "string"
+          },
+          "claimed": {
+            "example": false,
+            "type": "boolean"
+          },
+          "createAt": {
+            "example": 1784105760,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "amount",
+          "createAt",
+          "claimed"
+        ],
+        "type": "object"
+      },
+      "WithdrawalRequestsListReq": {
+        "properties": {
+          "address": {
+            "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD",
+            "type": "string"
+          },
+          "limit": {
+            "default": 10,
+            "description": "Number of items per page",
+            "example": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset",
+            "example": 0,
+            "type": "integer"
+          },
+          "symbol": {
+            "example": "cuniBTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "limit",
+          "offset",
+          "symbol",
+          "address"
+        ],
+        "type": "object"
+      },
+      "WithdrawalRequestsListResp": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/WithdrawalRequestsInfo"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Number of items per page, consistent with the request",
+            "example": 10,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Data offset, consistent with the request",
+            "example": 0,
+            "type": "integer"
+          },
+          "total": {
+            "description": "Total data count",
+            "example": 1234,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "limit",
+          "offset",
+          "data"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "in": "header",
+        "name": "Authorization",
+        "type": "apiKey"
+      }
+    }
+  },
   "info": {
     "title": "cuniBTCReward API",
     "version": "1.0"
   },
-  "basePath": "/",
+  "openapi": "3.0.3",
   "paths": {
     "/api/v1/apy": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "Apy",
         "operationId": "apy",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ApyReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "symbol",
-                      "apy"
-                    ],
-                    "properties": {
-                      "apy": {
-                        "type": "number",
-                        "example": 0.05
-                      },
-                      "symbol": {
-                        "description": "symbol of the stratedy",
-                        "type": "string",
-                        "example": "cuniBTC"
-                      }
-                    }
-                  },
-                  "$ref": "#/definitions/ApyResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApyReq"
               }
             }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/ApyResp"
+                      },
+                      "type": "array"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
           }
-        }
+        },
+        "summary": "Apy"
       }
     },
     "/api/v1/console/activeUsers": {
       "post": {
+        "operationId": "activeUsers",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActiveUsersReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ActiveUsersResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "ActiveUsers",
         "tags": [
           "console"
-        ],
-        "summary": "ActiveUsers",
-        "operationId": "activeUsers",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ActiveUsersReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ActiveUsersResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/console/distributeRewards": {
       "post": {
+        "operationId": "distributeRewards",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DistributeRewardsReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DistributeRewardsResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "DistributeRewards",
         "tags": [
           "console"
-        ],
-        "summary": "DistributeRewards",
-        "operationId": "distributeRewards",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/DistributeRewardsReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/DistributeRewardsResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/console/epochInfo": {
       "post": {
+        "operationId": "epochInfo",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EpochInfoReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/EpochInfo"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "EpochInfo",
         "tags": [
           "console"
-        ],
-        "summary": "EpochInfo",
-        "operationId": "epochInfo",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/EpochInfoReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/EpochInfo"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/console/epochList": {
       "post": {
+        "operationId": "epochList",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EpochListReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/EpochListResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "EpochList",
         "tags": [
           "console"
-        ],
-        "summary": "EpochList",
-        "operationId": "epochList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/EpochListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/EpochListResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/console/pendingWithdrawal": {
       "post": {
+        "operationId": "pendingWithdrawal",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PendingWithdrawalReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PendingWithdrawalResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "PendingWithdrawal",
         "tags": [
           "console"
-        ],
-        "summary": "PendingWithdrawal",
-        "operationId": "pendingWithdrawal",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/PendingWithdrawalReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/PendingWithdrawalResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/console/queue": {
       "post": {
+        "operationId": "queue",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueuedReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/QueuedResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "Queue",
         "tags": [
           "console"
-        ],
-        "summary": "Queue",
-        "operationId": "queue",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueuedReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/QueuedResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/console/queuedList": {
       "post": {
+        "operationId": "queuedList",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueuedListReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/QueuedListResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "QueuedList",
         "tags": [
           "console"
-        ],
-        "summary": "QueuedList",
-        "operationId": "queuedList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QueuedListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/QueuedListResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/console/rewardSummary": {
       "post": {
+        "operationId": "rewardSummary",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RewardSummaryReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/RewardSummaryResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "RewardSummary",
         "tags": [
           "console"
-        ],
-        "summary": "RewardSummary",
-        "operationId": "rewardSummary",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RewardSummaryReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/RewardSummaryResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/console/userActions": {
       "post": {
+        "operationId": "userActions",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserActionsListReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserActionListResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "UserActions",
         "tags": [
           "console"
-        ],
-        "summary": "UserActions",
-        "operationId": "userActions",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/UserActionsListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/UserActionListResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/console/withdrawalHistory": {
       "post": {
+        "operationId": "withdrawalHistory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawalHistoryReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/WithdrawalHistoryResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "WithdrawalHistory",
         "tags": [
           "console"
-        ],
-        "summary": "WithdrawalHistory",
-        "operationId": "withdrawalHistory",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/WithdrawalHistoryReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/WithdrawalHistoryResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/console/withdrawalList": {
       "post": {
+        "operationId": "withdrawalList",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawalListReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/WithdrawalListResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
+        "summary": "WithdrawalList",
         "tags": [
           "console"
-        ],
-        "summary": "WithdrawalList",
-        "operationId": "withdrawalList",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/WithdrawalListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/WithdrawalListResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/currentEpoch": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "CurrentEpoch",
         "operationId": "currentEpoch",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CurrentEpochReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer"
-                  }
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CurrentEpochReq"
               }
             }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "items": {
+                        "type": "integer"
+                      },
+                      "type": "array"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
           }
-        }
+        },
+        "summary": "CurrentEpoch"
       }
     },
     "/api/v1/positionOverview": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "PositionOverview",
         "operationId": "positionOverview",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/PositionOverviewReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "symbol",
-                      "amount",
-                      "earning",
-                      "queued",
-                      "withdrawing",
-                      "rewards",
-                      "totalRewards"
-                    ],
-                    "properties": {
-                      "amount": {
-                        "description": "amount of this symbol",
-                        "type": "string",
-                        "example": "0.023"
-                      },
-                      "earning": {
-                        "description": "amount earning human readable",
-                        "type": "string",
-                        "example": "0.023243"
-                      },
-                      "queued": {
-                        "description": "amount queued human readable",
-                        "type": "string",
-                        "example": "0.023243"
-                      },
-                      "rewards": {
-                        "description": "amount withdrawing human readable",
-                        "type": "string",
-                        "example": "0.023243"
-                      },
-                      "symbol": {
-                        "description": "symbol of the stratedy",
-                        "type": "string",
-                        "example": "cuniBTC"
-                      },
-                      "totalRewards": {
-                        "description": "amount withdrawing human readable",
-                        "type": "string",
-                        "example": "0.023243"
-                      },
-                      "withdrawing": {
-                        "description": "amount withdrawing human readable",
-                        "type": "string",
-                        "example": "0.023243"
-                      }
-                    }
-                  },
-                  "$ref": "#/definitions/PositionOverviewResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PositionOverviewReq"
               }
             }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/PositionOverviewResp"
+                      },
+                      "type": "array"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
           }
-        }
+        },
+        "summary": "PositionOverview"
       }
     },
     "/api/v1/rewardProofs": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "RewardProofs",
         "operationId": "rewardProofs",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RewardProofsReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/RewardProofsResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RewardProofsReq"
               }
             }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/RewardProofsResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
           }
-        }
+        },
+        "summary": "RewardProofs"
       }
     },
     "/api/v1/signTerms": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "SignTerms",
         "operationId": "signTerms",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/SignTermsReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/SignTermsResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignTermsReq"
               }
             }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/SignTermsResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
           }
-        }
+        },
+        "summary": "SignTerms"
       }
     },
     "/api/v1/signTerms/status": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "SignTermsStatus",
         "operationId": "signTermsStatus",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/SignTermsStatusReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/SignTermsStatusResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignTermsStatusReq"
               }
             }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/SignTermsStatusResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
           }
-        }
+        },
+        "summary": "SignTermsStatus"
       }
     },
     "/api/v1/totalEarned": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "TotalEarned",
         "operationId": "totalEarned",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/TotalEarnedReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "symbol",
-                      "totalEarned"
-                    ],
-                    "properties": {
-                      "symbol": {
-                        "description": "symbol of the stratedy",
-                        "type": "string",
-                        "example": "cuniBTC"
-                      },
-                      "totalEarned": {
-                        "description": "amount earned human readable",
-                        "type": "string",
-                        "example": "0.023243"
-                      }
-                    }
-                  },
-                  "$ref": "#/definitions/TotalEarnedResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TotalEarnedReq"
               }
             }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/TotalEarnedResp"
+                      },
+                      "type": "array"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
           }
-        }
+        },
+        "summary": "TotalEarned"
       }
     },
     "/api/v1/uniBTCPrice": {
       "post": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "UniBTCPrice",
         "operationId": "uniBTCPrice",
         "responses": {
           "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "type": "integer"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "integer"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Successful response"
           }
-        }
+        },
+        "summary": "UniBTCPrice"
       }
     },
     "/api/v1/withdrawalRequestsList": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "WithdrawalRequestsListReq",
         "operationId": "withdrawalRequestsListReq",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/WithdrawalRequestsListReq"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/WithdrawalRequestsListResp"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawalRequestsListReq"
               }
             }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/WithdrawalRequestsListResp"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
           }
-        }
+        },
+        "summary": "WithdrawalRequestsListReq"
       }
     },
     "/ping": {
       "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "healthCheck"
-        ],
-        "summary": "ping",
         "operationId": "ping",
         "responses": {
           "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "type": "string"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "business code",
+                      "example": 0,
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "string"
+                    },
+                    "msg": {
+                      "description": "business message",
+                      "example": "ok",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Successful response"
           }
-        }
+        },
+        "summary": "ping",
+        "tags": [
+          "healthCheck"
+        ]
       }
     }
   },
-  "definitions": {
-    "ActiveUsersReq": {
-      "type": "object",
-      "required": [
-        "symbol"
-      ],
-      "properties": {
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "ActiveUsersResp": {
-      "type": "object",
-      "required": [
-        "signedUsers",
-        "symbol",
-        "participants"
-      ],
-      "properties": {
-        "participants": {
-          "type": "integer",
-          "example": 1234
-        },
-        "signedUsers": {
-          "type": "integer",
-          "example": 123
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "ApyReq": {
-      "type": "object",
-      "properties": {
-        "symbol": {
-          "description": "symbol of the strategy, empty indicate all",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "ApyResp": {
-      "type": "object",
-      "required": [
-        "symbol",
-        "apy"
-      ],
-      "properties": {
-        "apy": {
-          "type": "number",
-          "example": 0.05
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "CurrentEpochReq": {
-      "type": "object",
-      "properties": {
-        "symbol": {
-          "description": "symbol of the strategy, empty indicate all",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "CurrentEpochResp": {
-      "type": "object",
-      "required": [
-        "epoch",
-        "operateStartTimestamp",
-        "operatePeriod",
-        "lockupStartTimestamp",
-        "lockupPeriod",
-        "symbol"
-      ],
-      "properties": {
-        "epoch": {
-          "description": "epoch number",
-          "type": "integer",
-          "example": 10
-        },
-        "lockupPeriod": {
-          "description": "lockup period in second",
-          "type": "integer",
-          "example": 86400
-        },
-        "lockupStartTimestamp": {
-          "description": "lockup startTime",
-          "type": "integer",
-          "example": 1777649793
-        },
-        "operatePeriod": {
-          "description": "operate period in second",
-          "type": "integer",
-          "example": 86400
-        },
-        "operateStartTimestamp": {
-          "description": "operate startTime",
-          "type": "integer",
-          "example": 1777349793
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "DistributeRewardsReq": {
-      "type": "object",
-      "required": [
-        "symbol",
-        "epoch",
-        "totalRewards"
-      ],
-      "properties": {
-        "epoch": {
-          "description": "epoch number",
-          "type": "integer",
-          "example": 10
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        },
-        "totalRewards": {
-          "type": "string",
-          "example": "0.123"
-        }
-      }
-    },
-    "DistributeRewardsResp": {
-      "type": "object",
-      "required": [
-        "symbol",
-        "epoch",
-        "totalRewards",
-        "participants"
-      ],
-      "properties": {
-        "epoch": {
-          "description": "epoch number",
-          "type": "integer",
-          "example": 10
-        },
-        "participants": {
-          "type": "integer",
-          "example": 1234
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        },
-        "totalRewards": {
-          "type": "string",
-          "example": "0.123"
-        }
-      }
-    },
-    "EpochInfo": {
-      "type": "object",
-      "required": [
-        "epoch",
-        "operateStartTimestamp",
-        "operatePeriod",
-        "lockupStartTimestamp",
-        "lockupPeriod",
-        "symbol",
-        "participants",
-        "tvl",
-        "rewards",
-        "claimed",
-        "queued",
-        "apy",
-        "root",
-        "merkleRoot",
-        "rewardToken",
-        "submitAt",
-        "submitBy",
-        "creator",
-        "creatorAt"
-      ],
-      "properties": {
-        "apy": {
-          "type": "number",
-          "example": 0.12345
-        },
-        "claimed": {
-          "type": "string",
-          "example": "123.45"
-        },
-        "creator": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "creatorAt": {
-          "type": "integer",
-          "example": 3234535
-        },
-        "epoch": {
-          "description": "epoch number",
-          "type": "integer",
-          "example": 10
-        },
-        "lockupPeriod": {
-          "description": "lockup period in second",
-          "type": "integer",
-          "example": 86400
-        },
-        "lockupStartTimestamp": {
-          "description": "lockup startTime",
-          "type": "integer",
-          "example": 1777649793
-        },
-        "merkleRoot": {
-          "type": "string",
-          "example": "0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"
-        },
-        "operatePeriod": {
-          "description": "operate period in second",
-          "type": "integer",
-          "example": 86400
-        },
-        "operateStartTimestamp": {
-          "description": "operate startTime",
-          "type": "integer",
-          "example": 1777349793
-        },
-        "participants": {
-          "type": "integer",
-          "example": 1234
-        },
-        "queued": {
-          "type": "string",
-          "example": "13.45"
-        },
-        "rewardToken": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "rewards": {
-          "type": "string",
-          "example": "1112.34"
-        },
-        "root": {
-          "type": "string",
-          "example": "0xbe61b01644a8590d584af06354d45f9347b68724aefc9d546cb15b5c78049741"
-        },
-        "submitAt": {
-          "type": "integer",
-          "example": 3234535
-        },
-        "submitBy": {
-          "type": "string",
-          "example": "abc@abc.com"
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        },
-        "tvl": {
-          "type": "string",
-          "example": "120.13"
-        }
-      }
-    },
-    "EpochInfoReq": {
-      "type": "object",
-      "required": [
-        "symbol",
-        "epoch"
-      ],
-      "properties": {
-        "epoch": {
-          "description": "epoch number",
-          "type": "integer",
-          "example": 10
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "EpochListReq": {
-      "type": "object",
-      "required": [
-        "limit",
-        "offset",
-        "symbol"
-      ],
-      "properties": {
-        "limit": {
-          "description": "Number of items per page",
-          "type": "integer",
-          "default": 10,
-          "maximum": 50,
-          "minimum": 1,
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "EpochListResp": {
-      "type": "object",
-      "required": [
-        "total",
-        "limit",
-        "offset",
-        "data"
-      ],
-      "properties": {
-        "data": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/EpochInfo"
-          }
-        },
-        "limit": {
-          "description": "Number of items per page, consistent with the request",
-          "type": "integer",
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset, consistent with the request",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "total": {
-          "description": "Total data count",
-          "type": "integer",
-          "example": 1234
-        }
-      }
-    },
-    "ListReq": {
-      "type": "object",
-      "required": [
-        "limit",
-        "offset"
-      ],
-      "properties": {
-        "limit": {
-          "description": "Number of items per page",
-          "type": "integer",
-          "default": 10,
-          "maximum": 50,
-          "minimum": 1,
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        }
-      }
-    },
-    "PageData": {
-      "type": "object",
-      "required": [
-        "total",
-        "limit",
-        "offset"
-      ],
-      "properties": {
-        "limit": {
-          "description": "Number of items per page, consistent with the request",
-          "type": "integer",
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset, consistent with the request",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "total": {
-          "description": "Total data count",
-          "type": "integer",
-          "example": 1234
-        }
-      }
-    },
-    "PendingWithdrawalReq": {
-      "type": "object",
-      "required": [
-        "symbol"
-      ],
-      "properties": {
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "PendingWithdrawalResp": {
-      "type": "object",
-      "required": [
-        "symbol",
-        "requested",
-        "requests"
-      ],
-      "properties": {
-        "requested": {
-          "type": "string",
-          "example": "12.34"
-        },
-        "requests": {
-          "type": "integer",
-          "example": 4
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "PositionOverviewReq": {
-      "type": "object",
-      "required": [
-        "address"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0x8cb37518330014E027396E3ED59A231FBe3B011A"
-        },
-        "symbol": {
-          "description": "symbol of the strategy, empty indicate all",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "PositionOverviewResp": {
-      "type": "object",
-      "required": [
-        "symbol",
-        "amount",
-        "earning",
-        "queued",
-        "withdrawing",
-        "rewards",
-        "totalRewards"
-      ],
-      "properties": {
-        "amount": {
-          "description": "amount of this symbol",
-          "type": "string",
-          "example": "0.023"
-        },
-        "earning": {
-          "description": "amount earning human readable",
-          "type": "string",
-          "example": "0.023243"
-        },
-        "queued": {
-          "description": "amount queued human readable",
-          "type": "string",
-          "example": "0.023243"
-        },
-        "rewards": {
-          "description": "amount withdrawing human readable",
-          "type": "string",
-          "example": "0.023243"
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        },
-        "totalRewards": {
-          "description": "amount withdrawing human readable",
-          "type": "string",
-          "example": "0.023243"
-        },
-        "withdrawing": {
-          "description": "amount withdrawing human readable",
-          "type": "string",
-          "example": "0.023243"
-        }
-      }
-    },
-    "QueuedInfo": {
-      "type": "object",
-      "required": [
-        "address",
-        "queued",
-        "createAt"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "createAt": {
-          "type": "integer",
-          "example": 34354465
-        },
-        "queued": {
-          "type": "string",
-          "example": "2.34"
-        }
-      }
-    },
-    "QueuedListReq": {
-      "type": "object",
-      "required": [
-        "limit",
-        "offset",
-        "symbol"
-      ],
-      "properties": {
-        "limit": {
-          "description": "Number of items per page",
-          "type": "integer",
-          "default": 10,
-          "maximum": 50,
-          "minimum": 1,
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "QueuedListResp": {
-      "type": "object",
-      "required": [
-        "total",
-        "limit",
-        "offset",
-        "data"
-      ],
-      "properties": {
-        "data": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/QueuedInfo"
-          }
-        },
-        "limit": {
-          "description": "Number of items per page, consistent with the request",
-          "type": "integer",
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset, consistent with the request",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "total": {
-          "description": "Total data count",
-          "type": "integer",
-          "example": 1234
-        }
-      }
-    },
-    "QueuedReq": {
-      "type": "object",
-      "required": [
-        "symbol"
-      ],
-      "properties": {
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "QueuedResp": {
-      "type": "object",
-      "required": [
-        "amount",
-        "symbol",
-        "deposits"
-      ],
-      "properties": {
-        "amount": {
-          "type": "string",
-          "example": "12.34"
-        },
-        "deposits": {
-          "type": "integer"
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "RewardProofs": {
-      "type": "object",
-      "required": [
-        "epoch",
-        "amount",
-        "claimed",
-        "proofs"
-      ],
-      "properties": {
-        "amount": {
-          "type": "string",
-          "example": "12.34"
-        },
-        "claimed": {
-          "type": "boolean",
-          "example": false
-        },
-        "epoch": {
-          "type": "integer",
-          "example": 3
-        },
-        "proofs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "RewardProofsReq": {
-      "type": "object",
-      "required": [
-        "symbol",
-        "address"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "RewardProofsResp": {
-      "type": "object",
-      "required": [
-        "totalAmount",
-        "rewardProofs"
-      ],
-      "properties": {
-        "rewardProofs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/RewardProofs"
-          }
-        },
-        "totalAmount": {
-          "type": "string",
-          "example": "1.23"
-        }
-      }
-    },
-    "RewardSummaryReq": {
-      "type": "object",
-      "required": [
-        "symbol"
-      ],
-      "properties": {
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "RewardSummaryResp": {
-      "type": "object",
-      "required": [
-        "total",
-        "claimed",
-        "unClaimed"
-      ],
-      "properties": {
-        "claimed": {
-          "type": "string",
-          "example": "23.8"
-        },
-        "total": {
-          "type": "string",
-          "example": "12.34"
-        },
-        "unClaimed": {
-          "type": "string",
-          "example": "23.8"
-        }
-      }
-    },
-    "SignTermsReq": {
-      "type": "object",
-      "required": [
-        "message",
-        "signature",
-        "symbol"
-      ],
-      "properties": {
-        "message": {
-          "type": "string",
-          "example": "SIWE exposes a Message struct which implements EIP-4361"
-        },
-        "signature": {
-          "type": "string",
-          "example": "0x4c46904b62a8889db17b3d84b129eea1283e6313f6ca635802e95d4da72bf06f74b270b1fd28de9f0931cf0ca079229d5088743ae117e743a17af2205b0dda6a1c"
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "SignTermsResp": {
-      "type": "object",
-      "required": [
-        "address",
-        "termsMd5",
-        "symbol"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "symbol": {
-          "type": "string"
-        },
-        "termsMd5": {
-          "type": "string",
-          "example": "5eb63bbbe01eeed093cb22bb8f5acdc3"
-        }
-      }
-    },
-    "SignTermsStatusReq": {
-      "type": "object",
-      "required": [
-        "address",
-        "symbol"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "SignTermsStatusResp": {
-      "type": "object",
-      "required": [
-        "signed",
-        "termsMd5",
-        "symbol",
-        "address",
-        "messageHash"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "messageHash": {
-          "type": "string",
-          "example": "0x0343453"
-        },
-        "signed": {
-          "type": "boolean",
-          "example": false
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        },
-        "termsMd5": {
-          "type": "string",
-          "example": "5eb63bbbe01eeed093cb22bb8f5acdc3"
-        }
-      }
-    },
-    "TotalEarnedReq": {
-      "type": "object",
-      "required": [
-        "address"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0x8cb37518330014E027396E3ED59A231FBe3B011A"
-        },
-        "symbol": {
-          "description": "symbol of the strategy, empty indicate all",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "TotalEarnedResp": {
-      "type": "object",
-      "required": [
-        "symbol",
-        "totalEarned"
-      ],
-      "properties": {
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        },
-        "totalEarned": {
-          "description": "amount earned human readable",
-          "type": "string",
-          "example": "0.023243"
-        }
-      }
-    },
-    "UserAction": {
-      "type": "object",
-      "required": [
-        "epoch",
-        "operateStartTimestamp",
-        "operatePeriod",
-        "lockupStartTimestamp",
-        "lockupPeriod",
-        "symbol",
-        "address",
-        "deposited",
-        "rewards",
-        "queued",
-        "claimAt",
-        "claimed"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "claimAt": {
-          "type": "integer",
-          "example": 1777349793
-        },
-        "claimed": {
-          "type": "boolean",
-          "example": false
-        },
-        "deposited": {
-          "type": "string",
-          "example": "120.13"
-        },
-        "epoch": {
-          "description": "epoch number",
-          "type": "integer",
-          "example": 10
-        },
-        "lockupPeriod": {
-          "description": "lockup period in second",
-          "type": "integer",
-          "example": 86400
-        },
-        "lockupStartTimestamp": {
-          "description": "lockup startTime",
-          "type": "integer",
-          "example": 1777649793
-        },
-        "operatePeriod": {
-          "description": "operate period in second",
-          "type": "integer",
-          "example": 86400
-        },
-        "operateStartTimestamp": {
-          "description": "operate startTime",
-          "type": "integer",
-          "example": 1777349793
-        },
-        "queued": {
-          "type": "string",
-          "example": "2.34"
-        },
-        "rewards": {
-          "type": "string",
-          "example": "0.34"
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "UserActionListResp": {
-      "type": "object",
-      "required": [
-        "total",
-        "limit",
-        "offset",
-        "data"
-      ],
-      "properties": {
-        "data": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/UserAction"
-          }
-        },
-        "limit": {
-          "description": "Number of items per page, consistent with the request",
-          "type": "integer",
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset, consistent with the request",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "total": {
-          "description": "Total data count",
-          "type": "integer",
-          "example": 1234
-        }
-      }
-    },
-    "UserActionsListReq": {
-      "type": "object",
-      "required": [
-        "limit",
-        "offset",
-        "symbol",
-        "epoch"
-      ],
-      "properties": {
-        "epoch": {
-          "description": "epoch number",
-          "type": "integer",
-          "example": 10
-        },
-        "limit": {
-          "description": "Number of items per page",
-          "type": "integer",
-          "default": 10,
-          "maximum": 50,
-          "minimum": 1,
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "WithdrawalHistoryReq": {
-      "type": "object",
-      "required": [
-        "symbol"
-      ],
-      "properties": {
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "WithdrawalHistoryResp": {
-      "type": "object",
-      "required": [
-        "symbol",
-        "requested",
-        "requests",
-        "claimed"
-      ],
-      "properties": {
-        "claimed": {
-          "type": "string",
-          "example": "21.2"
-        },
-        "requested": {
-          "type": "string",
-          "example": "12.34"
-        },
-        "requests": {
-          "type": "integer",
-          "example": 4
-        },
-        "symbol": {
-          "description": "symbol of the stratedy",
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "WithdrawalInfo": {
-      "type": "object",
-      "required": [
-        "address",
-        "amount",
-        "epoch",
-        "createAt",
-        "claimAt",
-        "claimed"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "amount": {
-          "type": "string",
-          "example": "0.23"
-        },
-        "claimAt": {
-          "type": "integer",
-          "example": 1777349793
-        },
-        "claimed": {
-          "type": "boolean",
-          "example": false
-        },
-        "createAt": {
-          "type": "integer",
-          "example": 1784105760
-        },
-        "epoch": {
-          "type": "integer",
-          "example": 3
-        }
-      }
-    },
-    "WithdrawalListReq": {
-      "type": "object",
-      "required": [
-        "limit",
-        "offset",
-        "symbol"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "end": {
-          "type": "integer",
-          "example": 1784105760
-        },
-        "epoch": {
-          "type": "string",
-          "example": "10"
-        },
-        "limit": {
-          "description": "Number of items per page",
-          "type": "integer",
-          "default": 10,
-          "maximum": 50,
-          "minimum": 1,
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "start": {
-          "type": "integer",
-          "example": 1784105760
-        },
-        "status": {
-          "type": "string",
-          "example": "claimed|unClaimed|coolingDown"
-        },
-        "symbol": {
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "WithdrawalListResp": {
-      "type": "object",
-      "required": [
-        "total",
-        "limit",
-        "offset",
-        "data"
-      ],
-      "properties": {
-        "data": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/WithdrawalInfo"
-          }
-        },
-        "limit": {
-          "description": "Number of items per page, consistent with the request",
-          "type": "integer",
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset, consistent with the request",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "total": {
-          "description": "Total data count",
-          "type": "integer",
-          "example": 1234
-        }
-      }
-    },
-    "WithdrawalRequestsInfo": {
-      "type": "object",
-      "required": [
-        "amount",
-        "createAt",
-        "claimed"
-      ],
-      "properties": {
-        "amount": {
-          "type": "string",
-          "example": "0.23"
-        },
-        "claimed": {
-          "type": "boolean",
-          "example": false
-        },
-        "createAt": {
-          "type": "integer",
-          "example": 1784105760
-        }
-      }
-    },
-    "WithdrawalRequestsListReq": {
-      "type": "object",
-      "required": [
-        "limit",
-        "offset",
-        "symbol",
-        "address"
-      ],
-      "properties": {
-        "address": {
-          "type": "string",
-          "example": "0xbf63Fba8137ce3043289f1BDbdC1700f65ee1aAD"
-        },
-        "limit": {
-          "description": "Number of items per page",
-          "type": "integer",
-          "default": 10,
-          "maximum": 50,
-          "minimum": 1,
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "symbol": {
-          "type": "string",
-          "example": "cuniBTC"
-        }
-      }
-    },
-    "WithdrawalRequestsListResp": {
-      "type": "object",
-      "required": [
-        "total",
-        "limit",
-        "offset",
-        "data"
-      ],
-      "properties": {
-        "data": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/WithdrawalRequestsInfo"
-          }
-        },
-        "limit": {
-          "description": "Number of items per page, consistent with the request",
-          "type": "integer",
-          "example": 10
-        },
-        "offset": {
-          "description": "Data offset, consistent with the request",
-          "type": "integer",
-          "default": 0,
-          "example": 0
-        },
-        "total": {
-          "description": "Total data count",
-          "type": "integer",
-          "example": 1234
-        }
-      }
+  "servers": [
+    {
+      "url": "/"
     }
-  },
-  "securityDefinitions": {
-    "bearerAuth": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header"
-    }
-  },
-  "x-date": "2026-08-05 13:16:07",
-  "x-description": "This is a goctl generated swagger file.",
+  ],
+  "x-description": "Converted from a goctl-generated Swagger document.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
   "x-goctl-version": "1.10.1"
