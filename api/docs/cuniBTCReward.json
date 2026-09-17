@@ -2007,9 +2007,6 @@
     },
     "TotalEarnedReq": {
       "type": "object",
-      "required": [
-        "address"
-      ],
       "properties": {
         "address": {
           "type": "string",
@@ -2437,7 +2434,7 @@
       "in": "header"
     }
   },
-  "x-date": "2026-08-05 13:16:07",
+  "x-date": "2026-09-17 12:04:15",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

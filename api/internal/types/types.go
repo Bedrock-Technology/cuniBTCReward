@@ -194,7 +194,7 @@ type SignTermsStatusResp struct {
 
 type TotalEarnedReq struct {
 	Symbol  string `json:"symbol,optional,example=cuniBTC"` //symbol of the strategy, empty indicate all
-	Address string `json:"address,example=0x8cb37518330014E027396E3ED59A231FBe3B011A"`
+	Address string `json:"address,optional,example=0x8cb37518330014E027396E3ED59A231FBe3B011A"`
 }
 
 type TotalEarnedResp struct {
