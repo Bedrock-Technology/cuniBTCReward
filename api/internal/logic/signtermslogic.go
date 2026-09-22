@@ -10,7 +10,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/big"
-	"net/http"
 	"strings"
 
 	"cuniBTCReward/api/internal/svc"
@@ -26,9 +25,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/spruceid/siwe-go"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/rest/httpc"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type SignTermsLogic struct {
@@ -78,19 +74,22 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 	if contract {
 		messageHash := accounts.TextHash([]byte(req.Message))
 		safeHash := fmt.Sprintf("0x%x", GetSafeMessageHash(common.HexToAddress(message.GetAddress().String()), big.NewInt(1), messageHash))
-		safeResp, err1 := httpc.Do(l.ctx, http.MethodGet,
-			fmt.Sprintf("https://api.safe.global/tx-service/eth/api/v1/messages/%s", safeHash), nil)
-		if err1 != nil {
-			logx.Errorf("get safe error")
-			return nil, err1
-		}
-		defer safeResp.Body.Close()
-		if safeResp.StatusCode != http.StatusOK {
-			logx.Errorf("not found in safe, status: %d", safeResp.StatusCode)
-			return nil, fmt.Errorf("not found in safe")
-		}
+		// safeResp, err1 := httpc.Do(l.ctx, http.MethodGet,
+		// 	fmt.Sprintf("https://api.safe.global/tx-service/eth/api/v1/messages/%s", safeHash), nil)
+		// if err1 != nil {
+		// 	logx.Errorf("get safe error")
+		// 	return nil, err1
+		// }
+		// defer safeResp.Body.Close()
+		// if safeResp.StatusCode != http.StatusOK {
+		// 	logx.Errorf("not found in safe, status: %d", safeResp.StatusCode)
+		// 	return nil, fmt.Errorf("not found in safe")
+		// }
 		//safe wallet is 1/1
-		valid, _ := VerifySafeSignature(l.svcCtx.Config.EvmHost, message.GetAddress().String(), fmt.Sprintf("0x%x", messageHash), req.Signature)
+		valid, err := VerifySafeSignature(l.svcCtx.Config.EvmHost, message.GetAddress().String(), fmt.Sprintf("0x%x", messageHash), req.Signature)
+		if err != nil || !valid {
+			return nil, fmt.Errorf("safe sign err:%s", message.GetAddress().String())
+		}
 		//save into db
 		term := model.SignTerms{
 			Address:     message.GetAddress().String(),
@@ -99,18 +98,18 @@ func (l *SignTermsLogic) SignTerms(req *types.SignTermsReq) (resp *types.SignTer
 			Message:     req.Message,
 			Signature:   req.Signature,
 			MessageHash: safeHash,
+			Valid:       true,
 		}
-		if valid {
-			term.Valid = true
-		}
-		if err := l.svcCtx.Database.WithContext(l.ctx).Clauses(clause.OnConflict{
-			Columns: []clause.Column{{Name: "address"}, {Name: "symbol"}, {Name: "term_hash"}},
-			DoUpdates: clause.Assignments(map[string]interface{}{
-				"message_hash": term.MessageHash,
-				"valid":        term.Valid,
-				"updated_at":   gorm.Expr("NOW()"),
-			}),
-		}).Create(&term).Error; err != nil {
+		if err := l.svcCtx.Database.WithContext(l.ctx).
+			// Clauses(clause.OnConflict{
+			// 	Columns: []clause.Column{{Name: "address"}, {Name: "symbol"}, {Name: "term_hash"}},
+			// 	DoUpdates: clause.Assignments(map[string]interface{}{
+			// 		"message_hash": term.MessageHash,
+			// 		"valid":        term.Valid,
+			// 		"updated_at":   gorm.Expr("NOW()"),
+			// 	}),
+			// }).
+			Create(&term).Error; err != nil {
 			return nil, err
 		}
 	} else {
