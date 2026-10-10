@@ -474,7 +474,6 @@ func (s *Scanner) processCuniBTCVaultLog(log types.Log, chainInfo config.ChainIn
 		}
 		epoch := epochs[0]
 		epoch.StartGenesis = periodSetEvent.Start.Uint64()
-		epoch.OperateStart = periodSetEvent.Start.Uint64()
 		epoch.OperatePeriod = periodSetEvent.OperatePeriod.Uint64()
 		epoch.LockupStart = epoch.OperateStart + epoch.OperatePeriod
 		epoch.LockupPeriod = periodSetEvent.LockupPeriod.Uint64()
