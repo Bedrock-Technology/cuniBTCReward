@@ -34,7 +34,7 @@ type withdrawalRow struct {
 	Address  string          `gorm:"column:address"`
 	Amount   decimal.Decimal `gorm:"column:amount"`
 	Epoch    uint64          `gorm:"column:epoch"`
-	CreateAt int64           `gorm:"column:create_at"`
+	CreateAt time.Time       `gorm:"column:create_at"`
 	ClaimAt  int64           `gorm:"column:claim_at"`
 	Claimed  bool            `gorm:"column:claimed"`
 }
@@ -61,6 +61,7 @@ func (l *WithdrawalListLogic) WithdrawalList(req *types.WithdrawalListReq) (resp
     FROM delay_redeem_records drr 
     INNER JOIN epoches e ON UNIX_TIMESTAMP(drr.create_block_time) >= e.operate_start 
                         AND UNIX_TIMESTAMP(drr.create_block_time) < e.lockup_start + e.lockup_period
+	INNER JOIN strat s ON drr.contract = s.delay_redeem_router
     WHERE drr.deleted_at IS NULL`
 
 	args := []interface{}{
@@ -140,7 +141,7 @@ func (l *WithdrawalListLogic) WithdrawalList(req *types.WithdrawalListReq) (resp
 			Address:  r.Address,
 			Amount:   r.Amount.Mul(decimal.New(1, -8)).String(),
 			Epoch:    r.Epoch,
-			CreateAt: r.CreateAt,
+			CreateAt: r.CreateAt.Unix(),
 			ClaimAt:  r.ClaimAt,
 			Claimed:  r.Claimed,
 		})

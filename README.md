@@ -7,3 +7,7 @@
 ```
 ## symbotic api
 https://app.symbiotic.fi/api/v3/account/0xb8b0aed0a1ce913183665b71bd9653fe378f2230
+
+## no lock period update.
+1.create ExtraRewardRec, ExtraRewardDis 
+2.add AirDropRecord, SharesExtra, AmountExtra

@@ -18,6 +18,6 @@ func TestMigrate(t *testing.T) {
 	}
 	err = db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci").
 		AutoMigrate(&EvmTransaction{}, &Cursor{}, &Strategy{}, &AirDropRecord{}, &AirDropEpoch{}, &Epoch{}, &DelayRedeemRecord{},
-			&SignTerms{})
+			&SignTerms{}, &ExtraRewardDis{}, &ExtraRewardRec{})
 	fmt.Printf("err: %v", err)
 }

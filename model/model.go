@@ -72,8 +72,10 @@ type AirDropRecord struct {
 	Epoch           uint64          `gorm:"default:0;index:t_chainid_address"`
 	Address         string          `gorm:"size:255;index:t_chainid_address"`
 	Shares          decimal.Decimal `gorm:"type:decimal(38);default:0"`
+	SharesExtra     decimal.Decimal `gorm:"type:decimal(38);default:0"`
 	Queued          decimal.Decimal `gorm:"type:decimal(38);default:0"`
 	Amount          decimal.Decimal `gorm:"type:decimal(38);default:0"`
+	AmountExtra     decimal.Decimal `gorm:"type:decimal(38);default:0"`
 	Claimed         bool            `gorm:"default:false"`
 	ClaimTx         string          `gorm:"size:255"`
 	ClaimAt         time.Time       `gorm:"default:0"`
@@ -119,6 +121,22 @@ type SignTerms struct {
 	Signature   string `gorm:"size:10240"`
 	MessageHash string `gorm:"size:255"`
 	Valid       bool   `gorm:"default:0"`
+}
+
+type ExtraRewardDis struct {
+	gorm.Model
+	Address         string          `gorm:"size:128;index:t_address_nonce,unique"`
+	Symbol          string          `gorm:"size:128;index:t_address_nonce"`
+	Timestamp       uint64          `gorm:"default:0;index:t_address_nonce"`
+	Amount          decimal.Decimal `gorm:"type:decimal(38);default:0"`
+	Share           decimal.Decimal `gorm:"type:decimal(38);default:0"`
+	LastDepositTime int64           `gorm:"default:0"`
+}
+type ExtraRewardRec struct {
+	gorm.Model
+	Symbol      string          `gorm:"size:128;index:t_address_nonce,unique"`
+	Timestamp   uint64          `gorm:"default:0;index:t_address_nonce"`
+	TotalAmount decimal.Decimal `gorm:"type:decimal(38);default:0"`
 }
 
 func GetCursor(database *gorm.DB, chainID uint) (*Cursor, error) {

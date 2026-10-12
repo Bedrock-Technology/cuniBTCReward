@@ -43,7 +43,7 @@ type EpochRecord struct {
 	LastDepositTime int64           `gorm:"column:last_deposit_time"`
 }
 
-func (l *DistributeRewardsLogic) DistributeRewards(req *types.DistributeRewardsReq) (resp *types.DistributeRewardsResp, err error) {
+func (l *DistributeRewardsLogic) DistributeRewardsWithLock(req *types.DistributeRewardsReq) (resp *types.DistributeRewardsResp, err error) {
 	chainID := uint(l.svcCtx.Config.DefaultChainId)
 	//check range
 	totalRewards, err := decimal.NewFromString(req.TotalRewards)
@@ -128,7 +128,7 @@ HAVING share > 0 OR queue > 0`
 	}
 
 	for i := range records {
-		records[i].Amount = records[i].Share.Div(totalShare).Mul(totalRewards)
+		records[i].Amount = records[i].Share.Div(totalShare).Mul(totalRewards).Floor()
 	}
 	// Get Proof
 	leaves := lo.Map(records, func(item EpochRecord, _ int) airdrop.TreeLeaf {
@@ -187,5 +187,67 @@ HAVING share > 0 OR queue > 0`
 		DistributeRewardsReq: *req,
 		Participants:         int64(len(records)),
 	}
+	return
+}
+
+func (l *DistributeRewardsLogic) DistributeRewards(req *types.DistributeRewardsReq) (resp *types.DistributeRewardsResp, err error) {
+	if req.Symbol == "b2uniBTC" {
+		resp, err = l.DistributeRewardsNoLock(req)
+	} else {
+		resp, err = l.DistributeRewardsWithLock(req)
+	}
+	return
+}
+
+func (l *DistributeRewardsLogic) DistributeRewardsNoLock(req *types.DistributeRewardsReq) (resp *types.DistributeRewardsResp, err error) {
+	chainID := uint(l.svcCtx.Config.DefaultChainId)
+	//check range
+	totalRewards, err := decimal.NewFromString(req.TotalRewards)
+	if err != nil {
+		return nil, err
+	}
+	totalRewards = totalRewards.Mul(decimal.New(1, 8))
+	// if totalRewards.IsZero() {
+	// 	return nil, fmt.Errorf("total rewards is zero for epoch %d, symbol: %s", req.Epoch, req.Symbol)
+	// }
+	//1
+	if totalRewards.Cmp(decimal.New(1, 8)) > 0 {
+		return nil, fmt.Errorf("totalReward too large")
+	}
+	// Step 1: find Strategy by symbol, get vault and airdrop contract addresses
+	var strategy model.Strategy
+	err = l.svcCtx.Database.WithContext(l.ctx).
+		Where("chain_id = ? AND symbol = ? AND deleted_at IS NULL", chainID, req.Symbol).
+		First(&strategy).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("strategy not found for symbol: %s", req.Symbol)
+		}
+		return nil, err
+	}
+
+	// Step 2: find Epoch by vault contract and epoch number, validate it exists and has ended
+	var epoch model.Epoch
+	err = l.svcCtx.Database.WithContext(l.ctx).
+		Where("chain_id = ? AND contract = ? AND epoch = ? AND deleted_at IS NULL",
+			chainID, strategy.Vault, req.Epoch).
+		First(&epoch).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("epoch %d not found for symbol: %s", req.Epoch, req.Symbol)
+		}
+		return nil, err
+	}
+
+	// Check if epoch has ended: lockup_start + lockup_period < now
+	epochEndTime := epoch.LockupStart + epoch.LockupPeriod
+	if uint64(time.Now().Unix()) < epochEndTime {
+		return nil, fmt.Errorf("epoch %d has not ended yet, end time: %d, now: %d",
+			req.Epoch, epochEndTime, time.Now().Unix())
+	}
+
+	l.Infof("Processing distribution for symbol: %s, epoch: %d, vault: %s, airdrop: %s",
+		req.Symbol, req.Epoch, strategy.Vault, strategy.Airdrop)
+
 	return
 }
