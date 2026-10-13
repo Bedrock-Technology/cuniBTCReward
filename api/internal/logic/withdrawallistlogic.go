@@ -34,7 +34,7 @@ type withdrawalRow struct {
 	Address  string          `gorm:"column:address"`
 	Amount   decimal.Decimal `gorm:"column:amount"`
 	Epoch    uint64          `gorm:"column:epoch"`
-	CreateAt time.Time       `gorm:"column:create_at"`
+	CreateAt int64           `gorm:"column:create_at"`
 	ClaimAt  int64           `gorm:"column:claim_at"`
 	Claimed  bool            `gorm:"column:claimed"`
 }
