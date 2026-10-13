@@ -66,7 +66,7 @@ WHERE drr.address = ? AND drr.deleted_at IS NULL ORDER BY create_at DESC
 	data := lo.Map(rows, func(r withdrawalRow, index int) types.WithdrawalRequestsInfo {
 		return types.WithdrawalRequestsInfo{
 			Amount:   r.Amount.Mul(decimal.New(1, -8)).String(),
-			CreateAt: r.CreateAt.Unix(),
+			CreateAt: r.CreateAt,
 			Claimed:  r.Claimed,
 		}
 	})

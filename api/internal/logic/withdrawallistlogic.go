@@ -141,7 +141,7 @@ func (l *WithdrawalListLogic) WithdrawalList(req *types.WithdrawalListReq) (resp
 			Address:  r.Address,
 			Amount:   r.Amount.Mul(decimal.New(1, -8)).String(),
 			Epoch:    r.Epoch,
-			CreateAt: r.CreateAt.Unix(),
+			CreateAt: r.CreateAt,
 			ClaimAt:  r.ClaimAt,
 			Claimed:  r.Claimed,
 		})
