@@ -21,10 +21,17 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64
 	}
-	UniBTC string `json:""`
+	UniBTC       string        `json:""`
+	ExtraRewards []ExtraReward `json:",optional"`
 }
 
 type Term struct {
 	Symbol  string
 	TermMd5 string //terms content hash. md5
+}
+
+type ExtraReward struct {
+	Symbol         string `json:""`
+	Url            string `json:""`
+	BaseProfitStep int64  `json:",default=86400"`
 }

@@ -107,12 +107,9 @@ func (a *Airdrop) CreateAirdropEpoch(chainId uint, contract string, epoch uint64
 	return tree.GetRoot(), nil
 }
 
-func GetAirdrop(chainId uint, contract string, epoch uint64, leaves []TreeLeaf, shares []string) (*[]*model.AirDropRecord, []byte, error) {
+func GetAirdrop(chainId uint, contract string, epoch uint64, leaves []TreeLeaf) (*[]*model.AirDropRecord, []byte, error) {
 	if len(leaves) == 0 {
 		return nil, nil, fmt.Errorf("leaves is empty")
-	}
-	if len(leaves) != len(shares) {
-		return nil, nil, fmt.Errorf("leaves length does not match shares length")
 	}
 
 	tree, err := GetMerkleRootAndProof(leaves)
@@ -145,14 +142,6 @@ func GetAirdrop(chainId uint, contract string, epoch uint64, leaves []TreeLeaf, 
 			return nil, fmt.Errorf("amount is negative for address[%s]", common.HexToAddress(address).String())
 		}
 
-		decimalShares, err := decimal.NewFromString(shares[k])
-		if err != nil {
-			return nil, fmt.Errorf("failed to convert shares string to decimal: %v", err)
-		}
-		if decimalShares.IsNegative() {
-			return nil, fmt.Errorf("shares is negative for address[%s]", common.HexToAddress(address).String())
-		}
-
 		proofString, err := json.Marshal(proofData.Proof)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal proof: %v", err)
@@ -164,7 +153,6 @@ func GetAirdrop(chainId uint, contract string, epoch uint64, leaves []TreeLeaf, 
 			Epoch:    epoch,
 			Address:  common.HexToAddress(address).String(),
 			Amount:   decimalAmount,
-			Shares:   decimalShares,
 			Claimed:  false,
 			ClaimTx:  "",
 			ClaimAt:  time.Unix(0, 0).UTC(),

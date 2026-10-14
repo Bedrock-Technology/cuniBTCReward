@@ -10,4 +10,5 @@ https://app.symbiotic.fi/api/v3/account/0xb8b0aed0a1ce913183665b71bd9653fe378f22
 
 ## no lock period update.
 1.create ExtraRewardRec, ExtraRewardDis 
-2.add AirDropRecord, SharesExtra, AmountExtra
+2.add AirDropRecord, SharesExtra, AmountExtra, AmountBase,BaseDuration
+  fill AirDropRecord,AmountBase = Amount ; BaseDuration=-1

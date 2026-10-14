@@ -76,6 +76,7 @@ type AirDropRecord struct {
 	Queued          decimal.Decimal `gorm:"type:decimal(38);default:0"`
 	Amount          decimal.Decimal `gorm:"type:decimal(38);default:0"`
 	AmountExtra     decimal.Decimal `gorm:"type:decimal(38);default:0"`
+	AmountBase      decimal.Decimal `gorm:"type:decimal(38);default:0"`
 	Claimed         bool            `gorm:"default:false"`
 	ClaimTx         string          `gorm:"size:255"`
 	ClaimAt         time.Time       `gorm:"default:0"`
